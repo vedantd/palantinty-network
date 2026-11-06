@@ -1,47 +1,103 @@
 # PulseMesh
 
-An opt-in, privacy-first, decentralized Bluetooth activity sensing experiment.
+**A community-operated, privacy-first sensor network for understanding how places change over time.**
 
-**Status:** Experimental M01 sensor adapter. The repository contains a local
-activity aggregator, a Palantiny-compatible Unix socket relay, and automated
-tests. It does **not** yet contain a live libp2p network, installer, or map.
+[![CI](https://github.com/vedantd/pulsemesh/actions/workflows/ci.yml/badge.svg)](https://github.com/vedantd/pulsemesh/actions/workflows/ci.yml) ![Status](https://img.shields.io/badge/status-experimental-orange) ![Runtime](https://img.shields.io/badge/runtime-Node.js%2022%2B-blue)
 
-## Quick start
+> **Today:** an experimental *local-only* Bluetooth activity processing prototype and a Palantiny-compatible relay. **Not** an operational P2P network, people counter, smartphone app, or crowdsourced city map.
 
-Node.js 22+:
+![Where the idea came from: recreated excerpt of a discussion with the Palantiny author](assets/origin-conversation.svg)
+
+*Origin: [Palantiny](https://github.com/narasim-teja/palantiny) by [@narasim-teja](https://github.com/narasim-teja) inspired a discussion about independently run sensors publishing **anonymous counts rather than device identities**. The image above is a recreated text excerpt, **not the original screenshot**. PulseMesh is an independent experiment; no author partnership is implied.*
+
+## Why build this?
+
+Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi, or other supported sensor:
+
+1. **Sense locally.** A node passively observes nearby Bluetooth Low Energy advertisements, subject to operating-system permissions.
+2. **Aggregate privately.** On-device software creates time-bucketed, coarse-location **activity signals** and discards identifying fields before any potential release.
+3. **Join the network.** The long-term design uses existing P2P libraries for peer discovery, secure exchange, and independently run participants.
+4. **Explore the map.** A shared, delayed heatmap could reveal relative activity trends over time—*only* where coverage and privacy safeguards allow.
+
+**Crucial distinction:** BLE aliases are **not people counts**. Many devices rotate identifiers; some people carry several discoverable devices, others none, and stationary electronics introduce background signals. Calibration and uncertainty reporting are prerequisites for stronger claims.
+
+### Intended system
+
+```text
+   Palantiny / Linux / future mobile sensors
+                       |
+                   local events
+                       v
+            +----------------------+
+            | PulseMesh node       |
+            | bounded BLE windows  |
+            | privacy export gate  |
+            | opt-in, coarse area  |
+            +----------------------+
+                       |
+               signed aggregates     (PLANNED)
+                       v
+           libp2p peer-to-peer mesh  (PLANNED)
+                       |
+           regional index / quality (PLANNED)
+                       v
+             city activity heatmap   (PLANNED)
+```
+
+**What does not leave a sensor:** raw Bluetooth identities, MAC addresses, manufacturer payloads, device names, Find My keys, Wi-Fi BSSIDs, or device-level location trails. Simple thresholding or coarse cells alone do not guarantee anonymity. Sensor locations and P2P metadata introduce additional privacy considerations.
+
+## What works now
+
+| Component | State | Notes |
+| --- | --- | --- |
+| Windowed BLE alias aggregation | Implemented / tested | Local only; counts aliases, not individuals |
+| Export schema and consent gate | Implemented / tested | Allowlisted aggregate fields, delay and threshold; not a formal privacy guarantee |
+| Bounded JSONL event parser | Implemented / tested | Reads compatible Palantiny-style BLE events |
+| Local Unix socket relay | Implemented / simulated | Forwards original bytes unchanged to Palantiny |
+| Offline synthetic demonstration | Implemented | No hardware scanning or network calls |
+| Signed reports, durable outbox, libp2p | Planned | Not part of current public application |
+| Real Mac scanner interoperability | Awaiting hardware validation | Follow the [test guide](docs/PALANTINY_INTEGRATION.md) |
+| Multi-node map and accuracy study | Planned | No public heatmap yet |
+
+We intentionally **do not** modify Palantiny's remote access settings or expose its local device database. The relay leaves the original Palantiny server local.
+
+## Try the prototype
+
+Requires **Node.js 22 or newer**.
 
 ```bash
+git clone https://github.com/vedantd/pulsemesh.git
+cd pulsemesh
 npm test
 npm run demo
 ```
 
-Synthetic demo data only. No Bluetooth devices are scanned by these commands,
-and no traffic is sent to an external server.
+The demo uses **synthetic data** and requires no BLE permissions. It prints an aggregate observation; it does not scan devices or publish to a public network.
 
-## Palantiny integration
+### Try the Palantiny integration on macOS
 
-The Palantiny macOS scanner sends JSONL events to the Palantiny Bun server.
-PulseMesh's **local-only bridge** can forward those events without modification
-while independently computing a private aggregate activity signal.
+The first real hardware validation uses a local Unix socket relay between Palantiny's native scanner and its Bun server. You also need macOS 14+, Bun, and Xcode Command Line Tools.
 
-To connect a real Mac scanner, follow the
-[macOS integration walkthrough](docs/PALANTINY_INTEGRATION.md).
-The relay has been integration-tested with simulated Unix sockets, but
-**has not yet been validated on macOS hardware**.
+**Follow [M01: macOS integration guide](docs/PALANTINY_INTEGRATION.md)** for the exact three-terminal setup and permission checks. This integration has been tested with simulated sockets, **not verified with a real Mac sensor yet**.
 
-## Architecture
+## Roadmap
 
-```text
-Palantiny native sensor
-  -> PulseMesh Unix socket relay
-       | -> unchanged bytes -> Palantiny local server/UI
-       | -> local parser -> activity windows -> strict privacy gate
-                                      -> P2P publisher (NOT YET IMPLEMENTED)
-                                      -> shared map (NOT YET IMPLEMENTED)
-```
+- **P0 — Foundation:** sensor event format, bounded aggregation, privacy constraints, automated tests.
+- **P1 — Hardware verification and calibration:** connect real sensors, measure scan quality, compare activity with independent ground truth.
+- **P2 — Decentralized exchange:** signed aggregate observations, replay protection, durable outbox, libp2p peer discovery and pub/sub.
+- **P3 — Regional queries:** independent indexers, overlapping coverage, minimum-node release requirements, and historical series.
+- **P4 — Map:** delayed, coverage-aware heatmap with clearly labeled uncertainty.
+- **P5 — Hardening:** security review, adversarial data validation, operational metrics and privacy assessment.
+- **Later:** incentives and additional sensor platforms, only if fundamental sensing and privacy assumptions hold.
 
-PulseMesh remains separate from [Palantiny](https://github.com/narasim-teja/palantiny).
-We will propose a narrow, optional local event hook upstream only with the
-author's agreement. Bluetooth device aliases are not reliable people counts.
+Track work in [GitHub Issues](https://github.com/vedantd/pulsemesh/issues) and read the [detailed roadmap](docs/ROADMAP.md) and [security notes](SECURITY.md).
 
-See [roadmap](docs/ROADMAP.md) and [security](SECURITY.md).
+## Relationship to Palantiny
+
+[Palantiny](https://github.com/narasim-teja/palantiny) is an independent, **local-first** open-source application by Teja Reddy. PulseMesh currently uses its documented event format as an integration target, **without copying or distributing Palantiny's source code**. We plan to propose a narrow, optional upstream event hook if its maintainer is interested. No upstream PR or endorsement is assumed.
+
+## Contributing
+
+Start with an [issue](https://github.com/vedantd/pulsemesh/issues). Useful areas include Linux/Raspberry Pi sensing, calibration datasets, libp2p transport, spatial indexing, and security/privacy reviews. Avoid posting real device identifiers or raw radio captures in issues.
+
+**Project maturity:** research prototype. Do not rely on it for personal surveillance, precise crowd counting, safety monitoring, or decisions affecting individuals.
