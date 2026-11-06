@@ -69,3 +69,33 @@ test('future events rejected and incomplete startup bucket excluded',()=>{
   assert.equal(session.rejected,1);
   assert.equal(session.accepted,0);
 });
+
+
+test('partial Wi-Fi and location status updates preserve explicit Bluetooth state',()=>{
+  let now=START;
+  const session=new ScanSession({clock:()=>now,windowSeconds:20});
+  session.onConnected();
+  session.onLine(JSON.stringify({t:'status',ts:now,bluetooth:'on'}));
+  assert.equal(session.radio,'on');
+  session.onLine(JSON.stringify({t:'status',ts:now+1,wifi:'on',location:'allowed'}));
+  session.onLine(JSON.stringify({t:'status',ts:now+2,location:'waiting'}));
+  session.onLine(JSON.stringify({t:'wifi',ts:now+3,nets:[{ssid:'private-network',bssid:'aa:bb:cc:dd:ee:ff'}]}));
+  assert.equal(session.summary().radio,'on');
+  assert.equal(JSON.stringify(session.summary()).includes('private-network'),false);
+  session.onLine(JSON.stringify({t:'status',ts:now+4,bluetooth:'off'}));
+  assert.equal(session.summary().radio,'off');
+  session.onLine(JSON.stringify({t:'status',ts:now+5,wifi:'off'}));
+  assert.equal(session.summary().radio,'off');
+});
+test('unknown Bluetooth state only when explicitly reported',()=>{
+  let now=START;
+  const session=new ScanSession({clock:()=>now,windowSeconds:20});
+  session.onConnected();
+  session.onLine(JSON.stringify({t:'status',ts:now,wifi:'on'}));
+  assert.equal(session.radio,'unknown');
+  session.onLine(JSON.stringify({t:'status',ts:now+1,bluetooth:'on'}));
+  session.onLine(JSON.stringify({t:'status',ts:now+2,bluetooth:'broken-unrecognized'}));
+  assert.equal(session.radio,'on');
+  session.onLine(JSON.stringify({t:'status',ts:now+3,bluetooth:'unknown'}));
+  assert.equal(session.radio,'unknown');
+});
