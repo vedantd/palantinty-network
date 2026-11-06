@@ -59,6 +59,7 @@ Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi
 | libp2p network | Experimental private synthetic demo | Noise-encrypted loopback transport, signed two-contributor regional gate; no public broadcast |
 | CoreBluetooth sensing | Independently tested on Mac | A 73-second diagnostic run processed 632 BLE advertisements; the repeatable one-command CLI was also successfully tested for 120 seconds on Mac |
 | Local scan calibration against manual passage counts | Implemented / awaiting field trials | Correlation + quality checks; not an occupancy estimate |
+| Persistent regional indexer | Experimental synthetic only | SQLite, crash-safe replay checks and multi-process local delivery |
 | Multi-node map | Planned | No public heatmap yet |
 
 We intentionally **do not** modify Palantiny's remote access settings or expose its local device database. The relay leaves the original Palantiny server local.
@@ -91,6 +92,24 @@ The command has automated fixture tests but still requires its first
 end-to-end hardware validation using the exact CLI. It excludes the
 partially observed first window and keeps the normal release delay
 separate from the local diagnostic display.
+
+### M05: persistent regional indexer (synthetic only)
+
+The [M05 test harness](docs/DURABLE_INDEXER.md) launches **three independent
+Node.js processes**, connects contributor outboxes to a persistent SQLite
+regional indexer over private, Noise-encrypted libp2p streams, then simulates
+a lost acknowledgment and indexer restart.
+
+```bash
+npm install
+npm run network:durable
+```
+
+The indexer deduplicates already-committed reports across restarts, rejects
+stale sequences, and provides time-series queries for multi-contributor
+experimental activity indices. **Still loopback-only and synthetic**—no
+public API, Internet P2P, real-world sensor data transfer, or anonymity
+guarantee.
 
 ### M04: three-node private network (synthetic only)
 
