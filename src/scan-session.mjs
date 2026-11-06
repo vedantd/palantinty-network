@@ -50,7 +50,10 @@ export class ScanSession {
   onLine(line) {
     const event = parseSensorEvent(line);
     if (!event) return;
-    if (event.t === 'status') {\n      if (event.bluetooth !== undefined) this.radio = event.bluetooth;\n      return;\n    }
+    if (event.t === 'status') {
+      if (event.bluetooth !== undefined) this.radio = event.bluetooth;
+      return;
+    }
     if (!this.connected || event.ts < this.notBefore) return;
     const now = this.clock();
     if (event.ts < now - 3 * this.windowMs || event.ts > now + 5000) {
