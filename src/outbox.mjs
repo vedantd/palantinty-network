@@ -35,7 +35,12 @@ export class SignedOutbox {
       created_at INTEGER NOT NULL, next_attempt INTEGER NOT NULL, attempts INTEGER NOT NULL DEFAULT 0
     );
     INSERT OR IGNORE INTO config(id,enabled,next_sequence) VALUES(1,0,1);
-    CREATE INDEX IF NOT EXISTS outgoing_ready ON outgoing(status,next_attempt,sequence);`);
+    CREATE INDEX IF NOT EXISTS outgoing_ready ON outgoing(status,next_attempt,sequence);
+    CREATE UNIQUE INDEX IF NOT EXISTS outgoing_unique_window ON outgoing(
+      json_extract(payload,'$.body.report.area'),
+      json_extract(payload,'$.body.report.bucketStart'),
+      json_extract(payload,'$.body.report.bucketSeconds')
+    );`);
   }
   get enabled() { return this.db.prepare('SELECT enabled FROM config WHERE id=1').get().enabled === 1; }
   setConsent(enabled) {
@@ -59,16 +64,15 @@ export class SignedOutbox {
       if (!this.enabled) {this.db.exec('ROLLBACK');return {ok:false,reason:'opt_in_required'};}
       const pending=this.db.prepare("SELECT count(*) AS n FROM outgoing WHERE status='queued'").get().n;
       if(pending>=this.maxPending) {this.db.exec('ROLLBACK');return {ok:false,reason:'outbox_full'};}
-      // Never queue two reports for the same contributor, area and window.
-      // Existing outbox rows are verified before extracting the signed fields.
-      for (const row of this.db.prepare('SELECT payload FROM outgoing').all()) {
-        const prior = verifyEnvelope(JSON.parse(row.payload)).report;
-        if (prior.area === result.report.area &&
-            prior.bucketStart === result.report.bucketStart &&
-            prior.bucketSeconds === result.report.bucketSeconds) {
-          this.db.exec('ROLLBACK');
-          return { ok:false, reason:'duplicate_window' };
-        }
+      // Indexed SQLite lookup avoids an O(queue size) JSON scan.
+      const existing=this.db.prepare(`SELECT 1 FROM outgoing WHERE
+        json_extract(payload,'$.body.report.area')=? AND
+        json_extract(payload,'$.body.report.bucketStart')=? AND
+        json_extract(payload,'$.body.report.bucketSeconds')=?`).get(
+          result.report.area,result.report.bucketStart,result.report.bucketSeconds);
+      if(existing) {
+        this.db.exec('ROLLBACK');
+        return {ok:false,reason:'duplicate_window'};
       }
       const seq=this.db.prepare('SELECT next_sequence FROM config WHERE id=1').get().next_sequence;
       const env=signReport(result.report,this.identity,seq);
