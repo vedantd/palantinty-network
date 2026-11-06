@@ -11,7 +11,8 @@
     "demo": "node apps/demo.mjs",
     "bridge": "node apps/palantiny-bridge.mjs",
     "scan": "node apps/scan.mjs",
-    "calibrate": "node apps/calibrate.mjs"
+    "calibrate": "node apps/calibrate.mjs",
+    "outbox:demo": "node apps/outbox-demo.mjs"
   },
   "license": "MIT"
 }
