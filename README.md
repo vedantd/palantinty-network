@@ -56,7 +56,7 @@ Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi
 | Local Unix socket relay | Implemented / simulated | Forwards original bytes unchanged to Palantiny |
 | Offline synthetic demonstration | Implemented | No hardware scanning or network calls |
 | Signed reports, durable outbox, libp2p | Planned | Not part of current public application |
-| Real Mac scanner interoperability | Awaiting hardware validation | Follow the [test guide](docs/PALANTINY_INTEGRATION.md) |
+| CoreBluetooth sensing | Independently tested on Mac | A 73-second diagnostic run processed 632 BLE advertisements; the new one-command CLI still needs verification |
 | Multi-node map and accuracy study | Planned | No public heatmap yet |
 
 We intentionally **do not** modify Palantiny's remote access settings or expose its local device database. The relay leaves the original Palantiny server local.
@@ -73,6 +73,22 @@ npm run demo
 ```
 
 The demo uses **synthetic data** and requires no BLE permissions. It prints an aggregate observation; it does not scan devices or publish to a public network.
+
+### Repeatable local macOS scan (experimental)
+
+The [M01b diagnostic](docs/LOCAL_SCAN.md) runs Palantiny's built macOS
+CoreBluetooth sensor through a temporary local Unix socket and prints
+**aggregate-only** results. It does **not** publish to a P2P network.
+
+```bash
+# First build the native app in your sibling ../palantiny checkout.
+npm run scan -- --seconds=120 --window-seconds=20
+```
+
+The command has automated fixture tests but still requires its first
+end-to-end hardware validation using the exact CLI. It excludes the
+partially observed first window and keeps the normal release delay
+separate from the local diagnostic display.
 
 ### Try the Palantiny integration on macOS
 
