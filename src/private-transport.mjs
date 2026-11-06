@@ -1,4 +1,5 @@
 import { JsonLineDecoder } from './jsonl.mjs';
+import { verifyEnvelope } from './protocol.mjs';
 import { RegionalIngest } from './regional-ingest.mjs';
 import { DurableRegionalIngest } from './durable-ingest.mjs';
 
@@ -74,6 +75,8 @@ export function registerPrivateIngest(node, ingest) {
 export async function sendPrivateReport(node, peerId, envelope, {timeoutMs=5000}={}) {
   if (!Number.isSafeInteger(timeoutMs)||timeoutMs<100||timeoutMs>60_000)
     throw new RangeError('Invalid timeout');
+  // Reject malformed outbound reports before opening any network stream.
+  const expectedReportId=verifyEnvelope(envelope).reportId;
   const stream=await node.dialProtocol(peerId,PULSE_PROTOCOL);
   return new Promise((resolve,reject)=>{
     let finished=false;
@@ -98,6 +101,9 @@ export async function sendPrivateReport(node, peerId, envelope, {timeoutMs=5000}
             typeof response.duplicate!=='boolean' ||
             (response.reportId!==null&&typeof response.reportId!=='string'))
             throw new Error('Invalid acknowledgment schema');
+          if(response.ack && (response.reportId!==expectedReportId ||
+              !(response.accepted || response.duplicate)))
+            throw new Error('Acknowledgment does not match the signed report');
           settle(null,response);
         }catch(e){settle(e);}
       }
