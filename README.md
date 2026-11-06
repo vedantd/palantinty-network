@@ -56,7 +56,7 @@ Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi
 | Local Unix socket relay | Implemented / simulated | Forwards original bytes unchanged to Palantiny |
 | Offline synthetic demonstration | Implemented | No hardware scanning or network calls |
 | Signed aggregate reports and durable outbox | Implemented / synthetic only | Opt-in local queue, Ed25519 verification and crash recovery; no sender |
-| libp2p network | Planned | No network transport or public broadcast |
+| libp2p network | Experimental private synthetic demo | Noise-encrypted loopback transport, signed two-contributor regional gate; no public broadcast |
 | CoreBluetooth sensing | Independently tested on Mac | A 73-second diagnostic run processed 632 BLE advertisements; the repeatable one-command CLI was also successfully tested for 120 seconds on Mac |
 | Local scan calibration against manual passage counts | Implemented / awaiting field trials | Correlation + quality checks; not an occupancy estimate |
 | Multi-node map | Planned | No public heatmap yet |
@@ -91,6 +91,22 @@ The command has automated fixture tests but still requires its first
 end-to-end hardware validation using the exact CLI. It excludes the
 partially observed first window and keeps the normal release delay
 separate from the local diagnostic display.
+
+### M04: three-node private network (synthetic only)
+
+The network spike connects two contributor peers to one regional aggregator
+using **libp2p TCP, Noise encryption and Yamux**. This is an *explicitly
+loopback-only demonstration* with preselected peers and no public broadcast.
+Only generated synthetic signed activity reports are exchanged.
+
+```bash
+npm install
+npm run network:demo
+```
+
+See the [M04 protocol and security limitations](docs/PRIVATE_NETWORK.md).
+In particular, no real scan data is wired to the transport, and the
+aggregator is in-memory and not yet designed for public participation.
 
 ### M03: signed reports and durable local outbox
 
