@@ -14,7 +14,8 @@
     "calibrate": "node apps/calibrate.mjs",
     "outbox:demo": "node apps/outbox-demo.mjs",
     "network:demo": "node apps/network-demo.mjs",
-    "network:durable": "node apps/durable-network-demo.mjs"
+    "network:durable": "node apps/durable-network-demo.mjs",
+    "dashboard": "node apps/dashboard.mjs"
   },
   "license": "MIT",
   "dependencies": {
