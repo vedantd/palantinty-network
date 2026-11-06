@@ -4,6 +4,14 @@ logs/
 *.local-scan.json
 *.calibration.local.json
 
+# Local identity keys and durable queue state (NEVER COMMIT)
+.pulsemesh/
+identity.ed25519.pem
+*.sqlite
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+
 # Runtime artifacts
 node_modules/
 .DS_Store
