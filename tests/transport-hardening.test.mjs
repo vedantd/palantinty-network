@@ -26,7 +26,7 @@ function mockNode(response){
   stream.send=()=>{
    queueMicrotask(()=>{
     const evt=new Event('message');
-    evt.data=Buffer.from(JSON.stringify(response)+'\\n');
+    evt.data=Buffer.from(JSON.stringify(response)+String.fromCharCode(10));
     stream.dispatchEvent(evt);
    });
   };
