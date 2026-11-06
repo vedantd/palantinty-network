@@ -1,38 +1,47 @@
 # PulseMesh
 
-Opt-in, privacy-first Bluetooth radio activity network research.
+An opt-in, privacy-first, decentralized Bluetooth activity sensing experiment.
 
-**Status:** P0 experimental code. This branch has a synthetic local aggregator,
-an explicit privacy export boundary and tests. It does NOT have BLE sensor
-integration, a real P2P network, an installer, or a city heatmap.
+**Status:** Experimental M01 sensor adapter. The repository contains a local
+activity aggregator, a Palantiny-compatible Unix socket relay, and automated
+tests. It does **not** yet contain a live libp2p network, installer, or map.
 
 ## Quick start
 
-Node.js 22 or later:
+Node.js 22+:
 
 ```bash
 npm test
 npm run demo
 ```
 
-The demo generates synthetic BLE identifiers locally and produces an approved
-aggregate report. No devices are scanned and no network connections are made.
+Synthetic demo data only. No Bluetooth devices are scanned by these commands,
+and no traffic is sent to an external server.
 
-## Planned architecture
+## Palantiny integration
+
+The Palantiny macOS scanner sends JSONL events to the Palantiny Bun server.
+PulseMesh's **local-only bridge** can forward those events without modification
+while independently computing a private aggregate activity signal.
+
+To connect a real Mac scanner, follow the
+[macOS integration walkthrough](docs/PALANTINY_INTEGRATION.md).
+The relay has been integration-tested with simulated Unix sockets, but
+**has not yet been validated on macOS hardware**.
+
+## Architecture
 
 ```text
-Palantiny BLE scanner (future)
-    -> local-only adapter
-    -> windowed activity aggregator
-    -> strict privacy export gate
-    -> signed report + outbox (future)
-    -> libp2p network (future)
-    -> regional indexer (future)
-    -> public delayed heatmap (future)
+Palantiny native sensor
+  -> PulseMesh Unix socket relay
+       | -> unchanged bytes -> Palantiny local server/UI
+       | -> local parser -> activity windows -> strict privacy gate
+                                      -> P2P publisher (NOT YET IMPLEMENTED)
+                                      -> shared map (NOT YET IMPLEMENTED)
 ```
 
-We will build independently of [Palantiny](https://github.com/narasim-teja/palantiny)
-and propose only narrow, optional integration improvements to its author.
-BLE activity is NOT an estimate of unique people without calibration.
+PulseMesh remains separate from [Palantiny](https://github.com/narasim-teja/palantiny).
+We will propose a narrow, optional local event hook upstream only with the
+author's agreement. Bluetooth device aliases are not reliable people counts.
 
 See [roadmap](docs/ROADMAP.md) and [security](SECURITY.md).
