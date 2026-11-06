@@ -10,6 +10,8 @@
 
 *Origin: [Palantiny](https://github.com/narasim-teja/palantiny) by [@narasim-teja](https://github.com/narasim-teja) inspired a discussion about independently run sensors publishing **anonymous counts rather than device identities**. The image above is a recreated text excerpt, **not the original screenshot**. PulseMesh is an independent experiment; no author partnership is implied.*
 
+**Engineering audit:** [M01–M06 review, hardening decisions, and remaining risks](docs/ENGINEERING_REVIEW.md).
+
 ## Why build this?
 
 Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi, or other supported sensor:
@@ -35,13 +37,13 @@ Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi
             | opt-in, coarse area  |
             +----------------------+
                        |
-               signed aggregates     (PLANNED)
+               signed aggregates     (SYNTHETIC ONLY)
                        v
-           libp2p peer-to-peer mesh  (PLANNED)
+         private loopback libp2p    (EXPERIMENTAL)
                        |
-           regional index / quality (PLANNED)
+           durable regional index   (SYNTHETIC ONLY)
                        v
-             city activity heatmap   (PLANNED)
+           fictional zone dashboard (LOCAL DEMO)
 ```
 
 **What does not leave a sensor:** raw Bluetooth identities, MAC addresses, manufacturer payloads, device names, Find My keys, Wi-Fi BSSIDs, or device-level location trails. Simple thresholding or coarse cells alone do not guarantee anonymity. Sensor locations and P2P metadata introduce additional privacy considerations.
@@ -88,8 +90,9 @@ CoreBluetooth sensor through a temporary local Unix socket and prints
 npm run scan -- --seconds=120 --window-seconds=20
 ```
 
-The command has automated fixture tests but still requires its first
-end-to-end hardware validation using the exact CLI. It excludes the
+The command has automated fixture tests and was exercised end-to-end
+on macOS hardware during M01b. A fresh hardware scan was **not** part
+of the pre-M07 engineering audit. It excludes the
 partially observed first window and keeps the normal release delay
 separate from the local diagnostic display.
 

@@ -12,7 +12,8 @@ const BUCKET_MS_LIMIT = 60 * 60 * 1000;
 export class RegionalIngest {
   constructor({ authorizedKeys, now = () => Date.now(), maxAgeMs = 24*60*60_000,
     minOperators = 2, releaseDelayMs = 15 * 60_000 } = {}) {
-    if (!(authorizedKeys instanceof Set) || authorizedKeys.size === 0)
+    if (!(authorizedKeys instanceof Set) || authorizedKeys.size === 0 ||
+        ![...authorizedKeys].every(k=>typeof k==='string' && /^[a-f0-9]{64}$/.test(k)))
       throw new TypeError('authorizedKeys must be a nonempty Set of signing key IDs');
     if (!Number.isSafeInteger(minOperators) || minOperators < 2 ||
         !Number.isSafeInteger(maxAgeMs) || maxAgeMs < 60_000 ||
@@ -57,6 +58,8 @@ export class RegionalIngest {
     // keys represent operators for the demo; this is NOT real-world uniqueness.
     const cellKey = JSON.stringify([report.area, report.bucketStart, report.bucketSeconds]);
     if (!this.buckets.has(cellKey)) this.buckets.set(cellKey, new Map());
+    if (this.buckets.get(cellKey).has(body.keyId))
+      return { accepted:false,ack:false,code:'already_contributed_to_window' };
     this.buckets.get(cellKey).set(body.keyId, report.activityIndex);
     this.seenIds.add(body.reportId);
     this.highestSequence.set(body.keyId, body.sequence);

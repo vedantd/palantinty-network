@@ -1,8 +1,9 @@
 # Privacy and security
 
 PulseMesh is an experimental research prototype with macOS BLE sensing
-and **local-only** activity aggregation. The M03 signed report and SQLite
-outbox implementation uses synthetic samples and has **no network sender**.
+and **local-only** activity aggregation. M03–M06 include a synthetic-only encrypted libp2p loopback sender, a
+SQLite regional indexer, and a localhost-only fictional dashboard.
+**No live sensor data is wired to network transport.**
 
 - Raw Bluetooth identifiers, device names, Wi-Fi BSSIDs, Find My keys,
   manufacturer payloads, and individual sightings must **never** be transmitted
@@ -24,3 +25,14 @@ outbox implementation uses synthetic samples and has **no network sender**.
   calibration and an independent privacy/security review.
 
 See [docs/SIGNED_OUTBOX.md](docs/SIGNED_OUTBOX.md).
+
+## Hardening review
+
+Outbound outbox queueing enforces a 15-minute minimum delay even when
+local diagnostics use an explicit zero-delay override. The outbox now
+rejects duplicate region/window submissions; the regional indexer also
+rejects duplicate signer contributions. These are safeguards, **not**
+anonymity guarantees.
+
+See [the pre-M07 engineering review](docs/ENGINEERING_REVIEW.md) for
+remaining risks and required field/privacy gates.
