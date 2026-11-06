@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/vedantd/pulsemesh/actions/workflows/ci.yml/badge.svg)](https://github.com/vedantd/pulsemesh/actions/workflows/ci.yml) ![Status](https://img.shields.io/badge/status-experimental-orange) ![Runtime](https://img.shields.io/badge/runtime-Node.js%2022%2B-blue)
 
-> **Today:** an experimental *local-only* Bluetooth activity processing prototype and a Palantiny-compatible relay. **Not** an operational P2P network, people counter, smartphone app, or crowdsourced city map.
+> **Today:** a hardware-tested local BLE pipeline, an experimental **loopback-only** encrypted synthetic P2P network, and a synthetic regional dashboard. **Not** a public sensor network, people counter, smartphone app, or crowdsourced real-world map.
 
 ![Where the idea came from: recreated excerpt of a discussion with the Palantiny author](assets/origin-conversation.svg)
 
@@ -60,7 +60,7 @@ Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi
 | CoreBluetooth sensing | Independently tested on Mac | A 73-second diagnostic run processed 632 BLE advertisements; the repeatable one-command CLI was also successfully tested for 120 seconds on Mac |
 | Local scan calibration against manual passage counts | Implemented / awaiting field trials | Correlation + quality checks; not an occupancy estimate |
 | Persistent regional indexer | Experimental synthetic only | SQLite, crash-safe replay checks and multi-process local delivery |
-| Multi-node map | Planned | No public heatmap yet |
+| Interactive regional dashboard | Synthetic local demo | Fictional zones, delayed signed-indexer history, read-only localhost API; no public heatmap |
 
 We intentionally **do not** modify Palantiny's remote access settings or expose its local device database. The relay leaves the original Palantiny server local.
 
@@ -92,6 +92,20 @@ The command has automated fixture tests but still requires its first
 end-to-end hardware validation using the exact CLI. It excludes the
 partially observed first window and keeps the normal release delay
 separate from the local diagnostic display.
+
+### M06: interactive synthetic regional dashboard
+
+A localhost-only [Insights dashboard](docs/DASHBOARD.md) visualizes
+five **fictional** regions, aggregate activity scores, coverage warnings,
+and 24/48-hour history. The backend seeds the real M05 SQLite indexer
+with signed **synthetic** observations. It does not scan, track, publish,
+or ingest real sensor data.
+
+```bash
+npm install
+npm run dashboard
+# Open http://127.0.0.1:4177
+```
 
 ### M05: persistent regional indexer (synthetic only)
 
