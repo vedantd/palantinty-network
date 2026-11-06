@@ -55,7 +55,8 @@ Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi
 | Bounded JSONL event parser | Implemented / tested | Reads compatible Palantiny-style BLE events |
 | Local Unix socket relay | Implemented / simulated | Forwards original bytes unchanged to Palantiny |
 | Offline synthetic demonstration | Implemented | No hardware scanning or network calls |
-| Signed reports, durable outbox, libp2p | Planned | Not part of current public application |
+| Signed aggregate reports and durable outbox | Implemented / synthetic only | Opt-in local queue, Ed25519 verification and crash recovery; no sender |
+| libp2p network | Planned | No network transport or public broadcast |
 | CoreBluetooth sensing | Independently tested on Mac | A 73-second diagnostic run processed 632 BLE advertisements; the repeatable one-command CLI was also successfully tested for 120 seconds on Mac |
 | Local scan calibration against manual passage counts | Implemented / awaiting field trials | Correlation + quality checks; not an occupancy estimate |
 | Multi-node map | Planned | No public heatmap yet |
@@ -90,6 +91,20 @@ The command has automated fixture tests but still requires its first
 end-to-end hardware validation using the exact CLI. It excludes the
 partially observed first window and keeps the normal release delay
 separate from the local diagnostic display.
+
+### M03: signed reports and durable local outbox
+
+We now have an offline Ed25519-signed aggregate-report format and an
+opt-in, SQLite-backed outbox for future reliable transmission. The module
+**never sends data** and is **not wired into real sensor collection**.
+
+```bash
+npm run outbox:demo
+```
+
+The demonstration creates a disposable identity, queues one
+**synthetic** privacy-gated observation and verifies its signature. See
+[M03 protocol, queue and security notes](docs/SIGNED_OUTBOX.md).
 
 ### M02: validate the signal against manual counts
 
