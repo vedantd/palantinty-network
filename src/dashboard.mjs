@@ -18,7 +18,8 @@ export function createSyntheticDashboard({now=Date.now()}={}){
   const keys=[0,1,2].map(i=>openLocalIdentity(path.join(dir,'signer-'+i)));
   const ingest=new DurableRegionalIngest({dbPath:path.join(dir,'index','regional.sqlite'),
     authorizedKeys:new Set(keys.map(k=>k.keyId)),now:()=>now,maxAgeMs:72*HOUR,minOperators:2});
-  const sequences=[0,0,0],current=Math.floor(now/HOUR)*HOUR;
+  // Never seed a bucket whose end violates the normal 15-minute delay.
+  const sequences=[0,0,0],current=Math.floor((now-15*60000)/HOUR)*HOUR;
   for(let age=48;age>=1;age--){
    const ts=current-age*HOUR,hour=new Date(ts).getUTCHours();
    for(let j=0;j<REGIONS.length;j++){
