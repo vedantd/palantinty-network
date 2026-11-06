@@ -51,7 +51,7 @@ export function registerPrivateIngest(node, ingest) {
         try {
           sendFrame(stream,response);
           // Finish sending the ACK. The requesting node closes its side.
-          void stream.closeWrite().catch(()=>{});
+          void stream.close().catch(()=>{});
         } catch {stream.abort(new Error('Failed to send acknowledgment'));}
       }
     });
@@ -104,7 +104,7 @@ export async function sendPrivateReport(node, peerId, envelope, {timeoutMs=5000}
       if(!finished)decoder.push(evt.data.subarray());
     });
     stream.addEventListener('error',evt=>settle(evt.error??new Error('Stream error')));
-    try {sendFrame(stream,envelope);void stream.closeWrite().catch(e=>settle(e));}
+    try {sendFrame(stream,envelope);}
     catch(e){settle(e);}
   });
 }
