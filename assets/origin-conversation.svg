@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="438" viewBox="0 0 960 438" role="img" aria-labelledby="title desc">
+<title id="title">Conversation that inspired PulseMesh</title>
+<desc id="desc">A stylized text excerpt of the Palantiny discussion, not an original screenshot.</desc>
+<rect width="960" height="438" fill="#09090b"/>
+<rect x="25" y="24" width="910" height="390" rx="22" fill="#14171b" stroke="#353942" stroke-width="2"/>
+<text x="57" y="67" fill="#f5f5f5" font-family="Arial,sans-serif" font-size="22" font-weight="bold">narasim  ✓</text>
+<text x="210" y="67" fill="#9099a7" font-family="Arial,sans-serif" font-size="19">@narasim_reddy</text>
+<text x="57" y="110" fill="#f5f5f5" font-family="Arial,sans-serif" font-size="21">“so I built Palantiny, a thing that remembers every bluetooth</text>
+<text x="57" y="143" fill="#f5f5f5" font-family="Arial,sans-serif" font-size="21">device that walks past me”</text>
+<path d="M57 170H901" stroke="#30343b"/>
+<text x="57" y="208" fill="#4ade80" font-family="Arial,sans-serif" font-size="21" font-weight="bold">vedant</text>
+<text x="145" y="208" fill="#9099a7" font-family="Arial,sans-serif" font-size="18">@vedant__007</text>
+<text x="57" y="250" fill="#f5f5f5" font-family="Arial,sans-serif" font-size="21">“Can we co-ordinate bunch of incentivized Palantinies</text>
+<text x="57" y="282" fill="#f5f5f5" font-family="Arial,sans-serif" font-size="21">for aggregating massive amounts of spatiotemporal</text>
+<text x="57" y="314" fill="#f5f5f5" font-family="Arial,sans-serif" font-size="21">time-series data?”</text>
+<path d="M57 339H901" stroke="#30343b"/>
+<text x="57" y="374" fill="#77b7ff" font-family="Arial,sans-serif" font-size="18">The direction: aggregate activity counts, not device identities.</text>
+<text x="893" y="398" text-anchor="end" fill="#9298a1" font-family="Arial,sans-serif" font-size="13">Recreated excerpt of a public discussion · Nov 2026</text>
+</svg>
