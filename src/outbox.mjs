@@ -49,13 +49,27 @@ export class SignedOutbox {
   }
   enqueue(window, policy) {
     if (!this.enabled || policy?.consent !== true) return { ok:false, reason:'opt_in_required' };
-    const result = buildPublishableObservation(window, policy, this.now());
+    // The zero-delay override is reserved for *local* diagnostics. Outbound
+    // queueing always enforces the minimum 15-minute privacy delay.
+    const publishPolicy = { ...policy, delayMs: Math.max(15 * 60_000, policy?.delayMs ?? 0) };
+    const result = buildPublishableObservation(window, publishPolicy, this.now());
     if (!result.ok) return result;
     this.db.exec('BEGIN IMMEDIATE');
     try {
       if (!this.enabled) {this.db.exec('ROLLBACK');return {ok:false,reason:'opt_in_required'};}
       const pending=this.db.prepare("SELECT count(*) AS n FROM outgoing WHERE status='queued'").get().n;
       if(pending>=this.maxPending) {this.db.exec('ROLLBACK');return {ok:false,reason:'outbox_full'};}
+      // Never queue two reports for the same contributor, area and window.
+      // Existing outbox rows are verified before extracting the signed fields.
+      for (const row of this.db.prepare('SELECT payload FROM outgoing').all()) {
+        const prior = verifyEnvelope(JSON.parse(row.payload)).report;
+        if (prior.area === result.report.area &&
+            prior.bucketStart === result.report.bucketStart &&
+            prior.bucketSeconds === result.report.bucketSeconds) {
+          this.db.exec('ROLLBACK');
+          return { ok:false, reason:'duplicate_window' };
+        }
+      }
       const seq=this.db.prepare('SELECT next_sequence FROM config WHERE id=1').get().next_sequence;
       const env=signReport(result.report,this.identity,seq);
       this.db.prepare(`INSERT INTO outgoing(report_id,sequence,payload,status,created_at,next_attempt,attempts)
