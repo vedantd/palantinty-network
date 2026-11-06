@@ -56,8 +56,9 @@ Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi
 | Local Unix socket relay | Implemented / simulated | Forwards original bytes unchanged to Palantiny |
 | Offline synthetic demonstration | Implemented | No hardware scanning or network calls |
 | Signed reports, durable outbox, libp2p | Planned | Not part of current public application |
-| CoreBluetooth sensing | Independently tested on Mac | A 73-second diagnostic run processed 632 BLE advertisements; the new one-command CLI still needs verification |
-| Multi-node map and accuracy study | Planned | No public heatmap yet |
+| CoreBluetooth sensing | Independently tested on Mac | A 73-second diagnostic run processed 632 BLE advertisements; the repeatable one-command CLI was also successfully tested for 120 seconds on Mac |
+| Local scan calibration against manual passage counts | Implemented / awaiting field trials | Correlation + quality checks; not an occupancy estimate |
+| Multi-node map | Planned | No public heatmap yet |
 
 We intentionally **do not** modify Palantiny's remote access settings or expose its local device database. The relay leaves the original Palantiny server local.
 
@@ -89,6 +90,31 @@ The command has automated fixture tests but still requires its first
 end-to-end hardware validation using the exact CLI. It excludes the
 partially observed first window and keeps the normal release delay
 separate from the local diagnostic display.
+
+### M02: validate the signal against manual counts
+
+Our next field milestone is checking whether changes in local Bluetooth alias
+activity actually correspond to changes in pedestrian passage activity.
+**Do not interpret BLE aliases as people.**
+
+```bash
+# Complete a local, aggregate-only experiment (Palantiny sensor required):
+mkdir -p calibration-data
+npm run scan -- --seconds=1500 --window-seconds=60 \
+  --summary-file=calibration-data/pilot-01.json
+
+# Make an exact UTC time-bucket template; fill counts observed concurrently:
+npm run calibrate -- --scan=calibration-data/pilot-01.json \
+  --template=csv > calibration-data/pilot-01-manual.csv
+
+# Generate descriptive correlation, coverage, and data-quality results:
+npm run calibrate -- --scan=calibration-data/pilot-01.json \
+  --manual=calibration-data/pilot-01-manual.csv
+```
+
+See the [M02 calibration protocol](docs/CALIBRATION.md), especially its
+instructions for synchronized independent manual counts and no raw device logs.
+The calibration export remains local: it is **not** a P2P publishable payload.
 
 ### Try the Palantiny integration on macOS
 
