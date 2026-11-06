@@ -1,0 +1,10 @@
+# Local private sensor reports and experiment logs
+calibration-data/
+logs/
+*.local-scan.json
+*.calibration.local.json
+
+# Runtime artifacts
+node_modules/
+.DS_Store
+coverage/

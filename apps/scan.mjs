@@ -4,6 +4,8 @@ import { mkdtempSync, chmodSync, existsSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { execFile } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
+import { makeLocalScanArtifact } from '../src/local-scan-artifact.mjs';
 import { ScanSession } from '../src/scan-session.mjs';
 import { JsonLineDecoder } from '../src/jsonl.mjs';
 
@@ -11,15 +13,17 @@ function options(argv) {
   const raw = new Map();
   for (const item of argv) {
     const match = item.match(/^--([a-z-]+)=(.*)$/);
-    if (!match || raw.has(match[1])) throw new Error('Use --seconds=N --window-seconds=N --app=/path/to/palantiny-sensor.app');
+    if (!match || raw.has(match[1])) throw new Error('Use --seconds=N --window-seconds=N --app=/path/to/palantiny-sensor.app --summary-file=/path/to/file.json');
     raw.set(match[1], match[2]);
   }
-  for (const key of raw.keys()) if (!['seconds','window-seconds','app'].includes(key)) throw new Error(`Unknown option: --${key}`);
+  for (const key of raw.keys()) if (!['seconds','window-seconds','app','summary-file'].includes(key)) throw new Error(`Unknown option: --${key}`);
   const seconds=Number(raw.get('seconds')??90);
   const windowSeconds=Number(raw.get('window-seconds')??20);
   if (!Number.isSafeInteger(seconds)||seconds<30||seconds>1800) throw new RangeError('seconds must be 30..1800');
   if (!Number.isSafeInteger(windowSeconds)||windowSeconds<10||windowSeconds>300) throw new RangeError('window-seconds must be 10..300');
-  return { seconds, windowSeconds, app:path.resolve(raw.get('app')??'../palantiny/native/macos/build/palantiny-sensor.app') };
+  return { seconds, windowSeconds,
+    app:path.resolve(raw.get('app')??'../palantiny/native/macos/build/palantiny-sensor.app'),
+    summaryFile:raw.has('summary-file') ? path.resolve(raw.get('summary-file')) : null };
 }
 
 async function main() {
@@ -83,6 +87,14 @@ async function main() {
     if(requestedStop) report.complete=false;
     console.log('scan_done');
     console.log(JSON.stringify(report,null,2));
+    if (opts.summaryFile && report.complete) {
+      const artifact=makeLocalScanArtifact(report);
+      // Exclusive creation prevents silently overwriting prior field observations.
+      // Only an explicit allowlist is persisted; no raw BLE IDs are serializable.
+      writeFileSync(opts.summaryFile, JSON.stringify(artifact,null,2)+'\n',
+        { flag:'wx', mode:0o600 });
+      console.log('Local aggregate-only scan summary saved:',opts.summaryFile);
+    }
   } finally {
     closed=true;
     for(const timer of timers) clearTimeout(timer);
