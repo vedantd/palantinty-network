@@ -56,3 +56,8 @@ An opt-in pinned RFC1918 synthetic GossipSub transport and isolated two-containe
 ## P02c-2 independent-host execution checkpoint
 
 Operator-specific persistent identity and private configuration CLI, synthetic-only receive/publish commands, offline evidence reviewer, and repeated local separate-process test are provided. **No independent physical-host deployment has been observed**, and reviewer output explicitly reports `remoteHostsVerified:false`. All public safety/release gates remain blocked. See [P02C_INDEPENDENT_HOST_PILOT.md](P02C_INDEPENDENT_HOST_PILOT.md).
+
+
+## P02c-3 private-pilot operational safety
+
+Local stop/revoke/resume and connection-health telemetry have been added for the pre-public pinned synthetic host pilot; no public listener, open enrollment or real BLE publishing is enabled. This does not satisfy independently administered physical-host, incident ownership, hostile Internet fault testing or public supply-chain gates. See [P02C_OPERATOR_CONTROLS.md](P02C_OPERATOR_CONTROLS.md).
