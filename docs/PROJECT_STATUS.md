@@ -1,3 +1,7 @@
+## P01a implementation checkpoint
+
+Standalone synthetic-only indexer CLI has pre-provisioned per-operator private config, persistent libp2p identity, signed archive ACL and private Noise sync; separate-process integration tests do not use Docker coordination volumes. This is not open participation or two independently administered physical machines. See [P01_STANDALONE_OPERATOR.md](P01_STANDALONE_OPERATOR.md).
+
 ## Public launch P00 checkpoint
 
 The open-source repository is public, but both the public synthetic testnet and real-sensing network remain **blocked** pending safety and operational gates in [the public participation plan](PUBLIC_PARTICIPATION_ROADMAP.md), [threat model](PUBLIC_THREAT_MODEL.md), and [evidence ledger](../config/public-release-gates.json). A verified release gate requires evidence and independent review; this static ledger is not a runtime authorization system.
