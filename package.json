@@ -21,7 +21,8 @@
     "network:replay": "node apps/history-replay-demo.mjs",
     "network:dht": "node apps/dht-discovery-demo.mjs",
     "network:indexer-sync": "node apps/indexer-sync-demo.mjs",
-    "network:auto-sync": "node apps/auto-indexer-sync-demo.mjs"
+    "network:auto-sync": "node apps/auto-indexer-sync-demo.mjs",
+    "operator:identity": "node apps/operator-identity.mjs"
   },
   "license": "MIT",
   "dependencies": {
@@ -33,6 +34,8 @@
     "@libp2p/gossipsub": "^17.2.1",
     "@libp2p/identify": "^4.1.18",
     "@libp2p/kad-dht": "^16.4.9",
-    "@libp2p/ping": "^3.1.17"
+    "@libp2p/ping": "^3.1.17",
+    "@libp2p/crypto": "^5.1.8",
+    "@libp2p/peer-id": "^6.0.0"
   }
 }

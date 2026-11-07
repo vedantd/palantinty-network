@@ -162,6 +162,16 @@ docker compose -f deploy/compose.m10.yml down --volumes
 
 The shared Docker coordination volume distributes **test-only public identities**, not a secure enrollment protocol. [Read M10 deployment controls and limitations](docs/M10_PRIVATE_NETWORK.md).
 
+### M10b-1: restart-stable node identities and explicit operator trust
+
+Private pilot nodes now retain a stable libp2p Ed25519 Peer ID across restarts. Operator provisioning requires an independently verified peer identity and a pinned private-LAN address; a public manifest **does not** establish trust by itself.
+
+```sh
+npm run operator:identity -- /path/to/private-directory
+```
+
+[Security decisions and operator onboarding guide](docs/M10B_OPERATOR_IDENTITY.md). No two-physical-machine validation has been performed yet.
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.
