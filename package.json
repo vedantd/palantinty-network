@@ -22,7 +22,8 @@
     "network:dht": "node apps/dht-discovery-demo.mjs",
     "network:indexer-sync": "node apps/indexer-sync-demo.mjs",
     "network:auto-sync": "node apps/auto-indexer-sync-demo.mjs",
-    "operator:identity": "node apps/operator-identity.mjs"
+    "operator:identity": "node apps/operator-identity.mjs",
+    "release:check": "node apps/release-readiness.mjs"
   },
   "license": "MIT",
   "dependencies": {
