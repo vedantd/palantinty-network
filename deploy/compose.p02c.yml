@@ -1,0 +1,35 @@
+# Synthetic-only isolated Docker bridge; fixed RFC1918 IPs, NO host ports.
+# Shared coordination volume exchanges PUBLIC CI Peer IDs only.
+services:
+  observer:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.p02c
+    command: ["observer"]
+    networks:
+      synthetic:
+        ipv4_address: 172.28.90.10
+    volumes:
+      - ephemeral-public-ids:/coord
+    security_opt:
+      - no-new-privileges:true
+  publisher:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.p02c
+    command: ["publisher"]
+    networks:
+      synthetic:
+        ipv4_address: 172.28.90.11
+    volumes:
+      - ephemeral-public-ids:/coord
+    security_opt:
+      - no-new-privileges:true
+networks:
+  synthetic:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.28.90.0/24
+volumes:
+  ephemeral-public-ids:
