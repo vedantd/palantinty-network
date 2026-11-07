@@ -13,7 +13,7 @@
 | Slice | Outcome | Testing/exit criteria |
 | --- | --- | --- |
 | P00 | Release gates, threat model, backlog | CI validates complete blocked ledger and dependency of real-sensing on synthetic-testnet |
-| P01 | Standalone synthetic-only operator runtime, no shared Docker volume | Two independent configs, persistent Peer IDs, no implicit trust, restart and failure tests |
+| P01 | Standalone synthetic-only operator runtime, no shared Docker volume | **P01a:** separate-process, operator-configured runtime (pending merge); **P01b:** supervised restart/failure and cross-host evidence still required |
 | P02 | Secure public transport: non-wildcard remote listeners, resource limits, bootstrap policy | Unauthorized peers, malformed frames, traffic floods, slow peers, NAT/relay testing |
 | P03 | Open synthetic enrollment and node lifecycle | Join/leave/ban/revoke, pinned identity, downloadable packages, default-deny real sensing |
 | P04 | Replicated archive hardening, observability and incident playbooks | Fault tests, network partitions, database backup/restore and monitoring, no silent divergence |
