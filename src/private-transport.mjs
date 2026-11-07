@@ -1,3 +1,4 @@
+import {parseTrustedListen} from './private-lan-policy.mjs';
 import { JsonLineDecoder } from './jsonl.mjs';
 import { verifyEnvelope } from './protocol.mjs';
 
@@ -10,9 +11,11 @@ const UTF8 = new TextEncoder();
  * Using libp2p TCP, Noise, and Yamux. No DHT/GossipSub/public bootstrap.
  * The handler is a *confidential* report receiver, not a public topic.
  */
-export async function createPrivateNode({ listen = '/ip4/127.0.0.1/tcp/0' } = {}) {
-  if (!/^\/ip4\/127\.0\.0\.1\/tcp\/(?:0|[1-9]\d{0,4})$/.test(listen))
-    throw new Error('M04 demo only supports loopback IPv4 listeners');
+export async function createPrivateNode({
+  listen = '/ip4/127.0.0.1/tcp/0', allowPrivateLan=false
+} = {}) {
+  // Never bind wildcard/public interfaces. RFC1918 requires explicit opt-in.
+  parseTrustedListen(listen,{allowPrivateLan});
   const [{createLibp2p},{tcp},{noise},{yamux}]=await Promise.all([
     import('libp2p'),import('@libp2p/tcp'),
     import('@chainsafe/libp2p-noise'),import('@chainsafe/libp2p-yamux'),
