@@ -37,6 +37,12 @@ npm run release:check -- public-real-sensing --assert-blocked
 
 Includes persistent stop/restart refusal, exact-peer revocation, replacement-peer-only resume, malformed/dangling-marker behavior, one-shot watcher, a real libp2p observer terminated by a marker, and blocked preflight after emergency shutdown. Existing P02c-2 delivery and outage tests remain in CI.
 
+## H0 amendment: approved enrollment required by pilot runtime
+
+The standalone P02c pilot now requires an independently approved P03a local enrollment entry at startup and preflight. The running process also polls for revoked/missing/corrupt ledger, unexpected revision, private config changes and the existing emergency-stop marker, shutting down when it detects them. This is a local enforcement check; existing `pilot:control revoke` remains a separate persistent emergency-stop mechanism. Changing enrollment never automatically approves or connects a new peer.
+
+The polling interval and event loop leave a residual race; for incidents also stop the process and block the overlay port at the host firewall. See [HARDENING_AUDIT_2026_11_07.md](HARDENING_AUDIT_2026_11_07.md).
+
 ## Risks, limitations and next exit criteria
 
 - Local polling is a **best-effort** stop mechanism. An unresponsive event loop, machine outage, compromised host or another uncooperative process can prevent timely termination. Shut down the host process and **block the overlay TCP port at the firewall** during incidents; do not rely only on the marker.
