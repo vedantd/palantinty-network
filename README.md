@@ -8,7 +8,7 @@
 
 ![Where the idea came from: recreated excerpt of a discussion with the Palantiny author](assets/origin-conversation.svg)
 
-*Origin: [Palantiny](https://github.com/narasim-teja/palantiny) by [Narasimha (@narasim-teja)](https://github.com/narasim-teja) inspired a discussion about independently run sensors publishing **anonymous counts rather than device identities**. The image above is a recreated text excerpt, **not the original screenshot**. Palantiny-Network is an independent experiment; no author partnership is implied.*
+*Origin: [Palantiny](https://github.com/narasim-teja/palantiny) by [Narasimha (@narasim-teja)](https://github.com/narasim-teja) inspired a discussion about independently run sensors exploring **aggregate activity rather than device identities**. The image above is a recreated text excerpt, **not the original screenshot**. Palantiny-Network is an independent experiment; no author partnership is implied.*
 
 **Evidence-gated roadmap:** [Phase A research and field calibration → Phase B trusted multi-node pilot → Phase C product experience](docs/ROADMAP_2026.md). **Tweet demo is synthetic-only** and does not represent deployed sensors.
 
@@ -46,24 +46,26 @@ Imagine a future network that people can join by running Palantiny plus a separa
 ### Intended system
 
 ```text
-   Palantiny / Linux / future mobile sensors
-                       |
-                   local events
-                       v
-            +----------------------+
-            | Palantiny-Network node       |
-            | bounded BLE windows  |
-            | privacy export gate  |
-            | opt-in, coarse area  |
-            +----------------------+
-                       |
-               signed aggregates     (SYNTHETIC ONLY)
-                       v
-         private loopback libp2p    (EXPERIMENTAL)
-                       |
-           durable regional index   (SYNTHETIC ONLY)
-                       v
-           fictional zone dashboard (LOCAL DEMO)
+  Palantiny A       Palantiny B       Palantiny C
+  (independent installations / proposed contributors)
+       |                |                |
+       v                v                v
+  local privacy     local privacy     local privacy
+  + opt-in gate     + opt-in gate     + opt-in gate
+       |                |                |
+       +----------- signed coarse reports --------+
+                            |
+              private encrypted libp2p
+                  (synthetic local demo)
+                            |
+                durable regional index
+                  (synthetic local demo)
+                            |
+                 fictional zone insights
+                  (localhost only today)
+
+  NOT YET: live volunteer nodes, trusted locations,
+           real-sensor P2P publishing or public map
 ```
 
 **What does not leave a sensor:** raw Bluetooth identities, MAC addresses, manufacturer payloads, device names, Find My keys, Wi-Fi BSSIDs, or device-level location trails. Simple thresholding or coarse cells alone do not guarantee anonymity. Sensor locations and P2P metadata introduce additional privacy considerations.
@@ -205,9 +207,9 @@ The calibration export remains local: it is **not** a P2P publishable payload.
 
 ### Try the Palantiny integration on macOS
 
-The first real hardware validation uses a local Unix socket relay between Palantiny's native scanner and its Bun server. You also need macOS 14+, Bun, and Xcode Command Line Tools.
+The macOS integration uses a local Unix socket relay between Palantiny's native scanner and its Bun server. You also need macOS 14+, Bun, and Xcode Command Line Tools.
 
-**Follow [M01: macOS integration guide](docs/PALANTINY_INTEGRATION.md)** for the exact three-terminal setup and permission checks. This integration has been tested with simulated sockets, **not verified with a real Mac sensor yet**.
+**Follow [M01: macOS integration guide](docs/PALANTINY_INTEGRATION.md)** for the exact three-terminal setup and permission checks. The local relay itself was exercised with simulated sockets; the separate M01b CoreBluetooth scan workflow was also verified on macOS hardware. Neither experiment connects real sensor data to a remote network.
 
 ## Roadmap
 
@@ -221,7 +223,7 @@ The first real hardware validation uses a local Unix socket relay between Palant
 
 Track work in [GitHub Issues](https://github.com/vedantd/pulsemesh/issues) and read the [detailed roadmap](docs/ROADMAP.md) and [security notes](SECURITY.md).
 
-## Relationship to Palantiny
+## Relationship to upstream Palantiny
 
 [Palantiny](https://github.com/narasim-teja/palantiny) is an independent, **local-first** open-source application by Narasimha (@narasim-teja). Palantiny-Network currently uses its documented event format as an integration target, **without copying or distributing Palantiny's source code**. We plan to propose a narrow, optional upstream event hook if its maintainer is interested. No upstream PR or endorsement is assumed.
 
