@@ -66,3 +66,7 @@ Synthetic-only localhost GossipSub with independent durable regional recipients 
 ## P01a independent operator runtime
 
 See [P01a operator design](docs/P01_STANDALONE_OPERATOR.md). `apps/operator-indexer.mjs` requires strict 0600 per-operator config, existing persistent key, pre-approved authorized report signers and Noise-authenticated indexer Peer ID pins. Synthetic-only config must remain mandatory. Never feed this source from real BLE data, silently enable public IP interfaces or infer trust from a downloaded manifest. The source and target processes share no bootstrap filesystem.
+
+## P01b manual operator enrollment
+
+See [private host pilot runbook](docs/P01_PRIVATE_HOST_RUNBOOK.md). Config must be 0600 and syntheticOnly=true. CLI must refuse a missing/rotated private identity, wildcard/public listener, self-peering and unverified manifest. `operator:seed` is strictly synthetic and refuses an existing SQLite archive. Do not use manifests as proof of authenticity; verify Peer IDs through an authenticated second channel. No physical two-host validation yet.

@@ -24,7 +24,10 @@
     "network:auto-sync": "node apps/auto-indexer-sync-demo.mjs",
     "operator:identity": "node apps/operator-identity.mjs",
     "release:check": "node apps/release-readiness.mjs",
-    "operator:indexer": "node apps/operator-indexer.mjs"
+    "operator:indexer": "node apps/operator-indexer.mjs",
+    "operator:manifest": "node apps/operator-manifest.mjs",
+    "operator:preflight": "node apps/operator-preflight.mjs",
+    "operator:seed": "node apps/operator-seed-synthetic.mjs"
   },
   "license": "MIT",
   "dependencies": {
