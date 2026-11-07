@@ -3,8 +3,6 @@ import {REGIONS} from './dashboard-regions.mjs';
 const HOUR=3600000;
 /** Synthetic fixture only: never used to manufacture production observations. */
 export function seedSyntheticReports({ingest,now,keys}) {
-  const ingest=new DurableRegionalIngest({dbPath:path.join(dir,'index','regional.sqlite'),
-    authorizedKeys:new Set(keys.map(k=>k.keyId)),now:()=>now,maxAgeMs:72*HOUR,minOperators:2});
   // Never seed a bucket whose end violates the normal 15-minute delay.
   const sequences=[0,0,0],current=Math.floor((now-15*60000)/HOUR)*HOUR;
   for(let age=48;age>=1;age--){
