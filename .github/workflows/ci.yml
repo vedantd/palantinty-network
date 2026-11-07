@@ -16,6 +16,8 @@ jobs:
           node-version: '22'
       - run: npm install --no-audit --no-fund
       - run: timeout 90s npm test
+      - name: Validate execution DAG and public release gates
+        run: npm run release:plan-check
       - name: Confirm both public release profiles remain gated
         run: |
           npm run release:check -- open-synthetic-testnet --assert-blocked

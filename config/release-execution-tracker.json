@@ -1,0 +1,370 @@
+{
+  "schema": "palantiny.release-execution-tracker.v1",
+  "updatedOn": "2026-11-07",
+  "policy": "Tracking implementation is distinct from independently verified release gates; never mark release ready based on CI only",
+  "sliceStatuses": [
+    "planned",
+    "partial",
+    "done",
+    "blocked-external"
+  ],
+  "slices": [
+    {
+      "id": "F00",
+      "title": "Release policy and threat model",
+      "status": "done",
+      "dependsOn": [],
+      "gateIds": [],
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/39"
+      ]
+    },
+    {
+      "id": "F01",
+      "title": "Private synthetic P2P and indexer archive",
+      "status": "partial",
+      "dependsOn": [
+        "F00"
+      ],
+      "gateIds": [],
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/57"
+      ]
+    },
+    {
+      "id": "H00",
+      "title": "Approved peer runtime guard",
+      "status": "done",
+      "dependsOn": [
+        "F01"
+      ],
+      "gateIds": [],
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/64"
+      ]
+    },
+    {
+      "id": "H01a",
+      "title": "Deterministic dependency lock and npm ci",
+      "status": "planned",
+      "dependsOn": [
+        "H00"
+      ],
+      "gateIds": [
+        "release-supply-chain"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "H01b",
+      "title": "Supply-chain provenance and release checks",
+      "status": "planned",
+      "dependsOn": [
+        "H01a"
+      ],
+      "gateIds": [
+        "release-supply-chain"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "H02a",
+      "title": "Crash-safe trust ledger transactions",
+      "status": "partial",
+      "dependsOn": [
+        "H00"
+      ],
+      "gateIds": [
+        "public-enrollment-exit"
+      ],
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/58"
+      ]
+    },
+    {
+      "id": "H02b",
+      "title": "Live revocation, rotation, stale-pin refusal",
+      "status": "partial",
+      "dependsOn": [
+        "H02a"
+      ],
+      "gateIds": [
+        "public-enrollment-exit"
+      ],
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/64"
+      ]
+    },
+    {
+      "id": "H03",
+      "title": "Two independently administered physical hosts",
+      "status": "blocked-external",
+      "dependsOn": [
+        "H01a",
+        "H02b"
+      ],
+      "gateIds": [
+        "independent-host-runtime"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "I01",
+      "title": "Indexer backup/restore integrity",
+      "status": "planned",
+      "dependsOn": [
+        "H01a",
+        "F01"
+      ],
+      "gateIds": [
+        "incident-operations"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "I02",
+      "title": "Indexer partition and convergence recovery",
+      "status": "partial",
+      "dependsOn": [
+        "I01"
+      ],
+      "gateIds": [
+        "incident-operations"
+      ],
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/57"
+      ]
+    },
+    {
+      "id": "I03",
+      "title": "Monitoring, incident ownership, backups",
+      "status": "planned",
+      "dependsOn": [
+        "H03",
+        "I02"
+      ],
+      "gateIds": [
+        "incident-operations"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "D01a",
+      "title": "Coarse region namespace and privacy contract",
+      "status": "planned",
+      "dependsOn": [
+        "F00"
+      ],
+      "gateIds": [],
+      "evidence": []
+    },
+    {
+      "id": "D01b",
+      "title": "Signed short-lived indexer coverage records",
+      "status": "planned",
+      "dependsOn": [
+        "D01a",
+        "H02b"
+      ],
+      "gateIds": [],
+      "evidence": []
+    },
+    {
+      "id": "D02a",
+      "title": "Private Kademlia indexer discovery",
+      "status": "planned",
+      "dependsOn": [
+        "D01b"
+      ],
+      "gateIds": [],
+      "evidence": []
+    },
+    {
+      "id": "D02b",
+      "title": "Churn/NAT-resilient provider selection",
+      "status": "planned",
+      "dependsOn": [
+        "D02a",
+        "H03"
+      ],
+      "gateIds": [],
+      "evidence": []
+    },
+    {
+      "id": "D03a",
+      "title": "Authenticated regional query protocol",
+      "status": "planned",
+      "dependsOn": [
+        "D01b",
+        "I01"
+      ],
+      "gateIds": [],
+      "evidence": []
+    },
+    {
+      "id": "D03b",
+      "title": "Independent indexer query comparison",
+      "status": "planned",
+      "dependsOn": [
+        "D02a",
+        "D03a",
+        "I02"
+      ],
+      "gateIds": [],
+      "evidence": []
+    },
+    {
+      "id": "N01",
+      "title": "Public transport and hostile peer controls",
+      "status": "planned",
+      "dependsOn": [
+        "H03",
+        "H01b"
+      ],
+      "gateIds": [
+        "network-abuse-controls",
+        "untrusted-peer-fault-tests"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "N02",
+      "title": "Open synthetic enrollment and revocation",
+      "status": "planned",
+      "dependsOn": [
+        "N01",
+        "H02b"
+      ],
+      "gateIds": [
+        "public-enrollment-exit"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "N03",
+      "title": "Multi-operator synthetic operations",
+      "status": "planned",
+      "dependsOn": [
+        "N02",
+        "I03",
+        "D03b"
+      ],
+      "gateIds": [
+        "incident-operations"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "R-SYN",
+      "title": "Open synthetic testnet readiness",
+      "status": "blocked-external",
+      "dependsOn": [
+        "N03"
+      ],
+      "gateIds": [
+        "independent-host-runtime",
+        "network-abuse-controls",
+        "untrusted-peer-fault-tests",
+        "public-enrollment-exit",
+        "incident-operations",
+        "release-supply-chain"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "S01",
+      "title": "Sensing provenance and anti-Sybil",
+      "status": "planned",
+      "dependsOn": [
+        "R-SYN"
+      ],
+      "gateIds": [
+        "anti-sybil-location-and-independence"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "S02",
+      "title": "Field calibration and uncertainty",
+      "status": "blocked-external",
+      "dependsOn": [
+        "S01"
+      ],
+      "gateIds": [
+        "field-calibration"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "S03",
+      "title": "Privacy, consent, retention, deletion",
+      "status": "blocked-external",
+      "dependsOn": [
+        "S01"
+      ],
+      "gateIds": [
+        "participant-informed-consent",
+        "retention-and-deletion"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "S04",
+      "title": "Independent privacy/legal review",
+      "status": "blocked-external",
+      "dependsOn": [
+        "S02",
+        "S03"
+      ],
+      "gateIds": [
+        "privacy-independent-review",
+        "legal-venue-approval"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "S05",
+      "title": "Restricted real-sensor field pilot",
+      "status": "blocked-external",
+      "dependsOn": [
+        "S04"
+      ],
+      "gateIds": [
+        "safe-regional-publication"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "S06",
+      "title": "Progressive real sensor operations",
+      "status": "planned",
+      "dependsOn": [
+        "S05",
+        "I03"
+      ],
+      "gateIds": [
+        "safe-regional-publication"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "R-REAL",
+      "title": "Public real-sensing readiness",
+      "status": "blocked-external",
+      "dependsOn": [
+        "R-SYN",
+        "S06"
+      ],
+      "gateIds": [
+        "field-calibration",
+        "privacy-independent-review",
+        "participant-informed-consent",
+        "retention-and-deletion",
+        "anti-sybil-location-and-independence",
+        "legal-venue-approval",
+        "safe-regional-publication"
+      ],
+      "evidence": []
+    }
+  ]
+}
