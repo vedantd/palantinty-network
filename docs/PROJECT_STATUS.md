@@ -31,6 +31,10 @@ occupancy, unique-device, pedestrian-count, safety or surveillance claims.
 | Calibration | Manual-count template and descriptive analysis tooling | No credible multi-site, multi-device, repeated field study or validated predictive accuracy |
 | Testing | Automated unit/integration tests, failure injection, synthetic demo, network demos in GitHub Actions | CI does not test physical sensor hardware, Internet networking, adversarial Sybil attacks or statistical validity |
 
+## Decentralization milestone (M07)
+
+The first decentralized-message slice is being exercised: synthetic GossipSub report publication over loopback among five libp2p peers and two independently persisted indexers. It removes the single common receiver from **the test message topology**, but does not yet include discovery, offline anti-entropy, remote deployment or real Palantiny data. See [M07_GOSSIPSUB.md](M07_GOSSIPSUB.md). Earlier limitations below describe the pre-M07 topology and still apply to live-data/production readiness.
+
 ## Recent engineering milestones
 
 - PR #18: transport receiver interface decoupling and pipeline loss diagnostics.

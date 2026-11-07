@@ -30,6 +30,10 @@ Research should inform **study design, confounders and baselines**, not substitu
 
 **Deliverable:** reproducible anonymized analysis, limitations report and a decision memo. Do not announce a measured footfall product before this exists.
 
+## Phase B — decentralized network (synthetic M07 underway, real data conditional on A)
+
+M07 first demonstrates synthetic GossipSub delivery to multiple independent indexers without a required central recipient. It is explicitly local and best-effort. M08 must add controlled peer discovery and reconnect tests; M09 durable anti-entropy/index convergence; M10 multi-machine/private deployment. None authorize real-data publishing before Phase A and privacy gates.
+
 ## Phase B — real multi-node prototype (conditional on A)
 
 **B0 (trust design):** manual trusted onboarding for 2–3 volunteer nodes and a coarse site attestation procedure, threat modeling for Sybil/signing-key duplication, address spoofing and location fraud. Explicit retention and operator consent review.
