@@ -8,7 +8,7 @@ import {generateKeyPair} from '@libp2p/crypto/keys';
 import {peerIdFromPrivateKey} from '@libp2p/peer-id';
 import {
  initializePeerLedger,proposePrivatePeer,approvePrivatePeer,revokePrivatePeer,
- readPrivatePeerLedger,approvedPrivatePeers
+ readPrivatePeerLedger,approvedPrivatePeers,rotatePrivatePeer
 } from '../src/p03-private-peer-ledger.mjs';
 
 async function fixture(){
@@ -171,5 +171,101 @@ test('ledger revisions cannot overflow and wrap to a fresh-looking value',async(
   }),/revision exhausted/);
   assert.equal(readPrivatePeerLedger(f.dir,f.pilot).revision,Number.MAX_SAFE_INTEGER);
   assert.equal(readPrivatePeerLedger(f.dir,f.pilot).entries.length,0);
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+
+test('rotation atomically tombstones an approved old peer and stages only a candidate',async()=>{
+ const f=await fixture();
+ try{
+  const next=peerIdFromPrivateKey(await generateKeyPair('Ed25519')).toString();
+  initializePeerLedger(f.dir,f.pilot);
+  proposePrivatePeer(f.dir,f.pilot,{
+   peerId:f.id,remoteIp:'10.80.1.2',seedAddress:f.seed
+  });
+  approvePrivatePeer(f.dir,f.pilot,f.id,{verifiedOutOfBand:true});
+  const rotated=rotatePrivatePeer(f.dir,f.pilot,{
+   oldPeerId:f.id,newPeerId:next,remoteIp:'10.80.1.3',
+   seedAddress:'/ip4/10.80.1.3/tcp/4099/p2p/'+next,
+   expectedRevision:2
+  });
+  assert.equal(rotated.revision,3,'one transaction must use one revision');
+  const old=rotated.entries.find(e=>e.peerId===f.id);
+  const replacement=rotated.entries.find(e=>e.peerId===next);
+  assert.equal(old.state,'revoked');
+  assert.equal(typeof old.revokedAt,'string');
+  assert.equal(replacement.state,'candidate');
+  assert.equal(replacement.approvedAt,null);
+  assert.equal(replacement.revokedAt,null);
+  assert.equal(approvedPrivatePeers(f.dir,f.pilot).peers.length,0);
+  assert.throws(()=>approvePrivatePeer(f.dir,f.pilot,f.id,{
+   verifiedOutOfBand:true
+  }),/Only unapproved/);
+  assert.throws(()=>proposePrivatePeer(f.dir,f.pilot,{
+   peerId:f.id,remoteIp:'10.80.1.2',seedAddress:f.seed
+  }),/already exists/);
+  assert.throws(()=>rotatePrivatePeer(f.dir,f.pilot,{
+   oldPeerId:f.id,newPeerId:next,remoteIp:'10.80.1.3',
+   seedAddress:'/ip4/10.80.1.3/tcp/4099/p2p/'+next,
+   expectedRevision:3
+  }),/Only an approved/);
+  assert.equal(approvePrivatePeer(f.dir,f.pilot,next,{
+   verifiedOutOfBand:true,expectedRevision:3
+  }).revision,4);
+  assert.deepEqual(approvedPrivatePeers(f.dir,f.pilot).peers,[{
+   peerId:next,remoteIp:'10.80.1.3',
+   seedAddress:'/ip4/10.80.1.3/tcp/4099/p2p/'+next
+  }]);
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+test('rotation refuses stale review and malformed replacement without revoking old',async()=>{
+ const f=await fixture();
+ try{
+  const next=peerIdFromPrivateKey(await generateKeyPair('Ed25519')).toString();
+  initializePeerLedger(f.dir,f.pilot);
+  proposePrivatePeer(f.dir,f.pilot,{
+   peerId:f.id,remoteIp:'10.80.1.2',seedAddress:f.seed
+  });
+  approvePrivatePeer(f.dir,f.pilot,f.id,{verifiedOutOfBand:true});
+  const args={
+   oldPeerId:f.id,newPeerId:next,remoteIp:'10.80.1.3',
+   seedAddress:'/ip4/10.80.1.3/tcp/4099/p2p/'+next,
+   expectedRevision:2
+  };
+  for(const bad of [
+   {...args,expectedRevision:undefined},
+   {...args,expectedRevision:1},
+   {...args,expectedRevision:NaN},
+   {...args,oldPeerId:next,newPeerId:next},
+   {...args,newPeerId:f.id},
+   {...args,remoteIp:'8.8.8.8'},
+   {...args,seedAddress:f.seed},
+   {...args,seedAddress:'/ip4/10.80.1.3/tcp/4099/p2p/'+f.id}
+  ])assert.throws(()=>rotatePrivatePeer(f.dir,f.pilot,bad));
+  assert.equal(readPrivatePeerLedger(f.dir,f.pilot).revision,2);
+  assert.equal(readPrivatePeerLedger(f.dir,f.pilot).entries.length,1);
+  assert.equal(approvedPrivatePeers(f.dir,f.pilot).peers[0].peerId,f.id);
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+test('rotation cannot reintroduce an existing or revoked replacement identity',async()=>{
+ const f=await fixture();
+ try{
+  const next=peerIdFromPrivateKey(await generateKeyPair('Ed25519')).toString();
+  initializePeerLedger(f.dir,f.pilot);
+  proposePrivatePeer(f.dir,f.pilot,{
+   peerId:f.id,remoteIp:'10.80.1.2',seedAddress:f.seed
+  });
+  approvePrivatePeer(f.dir,f.pilot,f.id,{verifiedOutOfBand:true});
+  proposePrivatePeer(f.dir,f.pilot,{
+   peerId:next,remoteIp:'10.80.1.3',
+   seedAddress:'/ip4/10.80.1.3/tcp/4099/p2p/'+next
+  });
+  revokePrivatePeer(f.dir,f.pilot,next);
+  assert.throws(()=>rotatePrivatePeer(f.dir,f.pilot,{
+   oldPeerId:f.id,newPeerId:next,remoteIp:'10.80.1.3',
+   seedAddress:'/ip4/10.80.1.3/tcp/4099/p2p/'+next,
+   expectedRevision:4
+  }),/already exists/);
+  assert.equal(approvedPrivatePeers(f.dir,f.pilot).peers[0].peerId,f.id);
+  assert.equal(readPrivatePeerLedger(f.dir,f.pilot).revision,4);
  }finally{rmSync(f.root,{recursive:true,force:true});}
 });

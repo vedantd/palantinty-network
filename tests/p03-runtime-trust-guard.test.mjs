@@ -5,11 +5,12 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import net from 'node:net';
 import {once} from 'node:events';
-import {spawn} from 'node:child_process';
+import {spawn,spawnSync} from 'node:child_process';
 import {openPersistentPeerIdentity} from '../src/operator-identity.mjs';
 import {initializePeerLedger,proposePrivatePeer,approvePrivatePeer,
- revokePrivatePeer} from '../src/p03-private-peer-ledger.mjs';
+ revokePrivatePeer,rotatePrivatePeer,readPrivatePeerLedger} from '../src/p03-private-peer-ledger.mjs';
 import {assertApprovedPrivatePilot,watchApprovedPrivatePilot} from '../src/p03-runtime-trust-guard.mjs';
+import {stagePrivatePilotPeer} from '../src/p03-peer-staging.mjs';
 import {runPrivatePilotOperation} from '../src/p03-private-operation-gate.mjs';
 
 async function port(){
@@ -241,5 +242,77 @@ test('precheck denies an unauthorized operation; postcheck also runs on transpor
    assert.equal(calls,1,'no new network action while revoked');
    assert.equal(trips,1);
   }finally{ok.close();}
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+
+test('rotation trips an active guard; new candidate requires approval and separate staging',async()=>{
+ const f=await setup();let trips=0;
+ try{
+  enroll(f);
+  const replacement=await openPersistentPeerIdentity(path.join(f.root,'replacement'));
+  const seed='/ip4/127.0.0.1/tcp/40199/p2p/'+replacement.peerId;
+  const guard=watchApprovedPrivatePilot(f.configPath,{
+   onTrip:()=>trips++,intervalMs:5000
+  });
+  try{
+   guard.check();
+   const rotated=rotatePrivatePeer(f.state,f.config.pilotId,{
+    oldPeerId:f.remote.peerId,newPeerId:replacement.peerId,
+    remoteIp:'127.0.0.1',seedAddress:seed,expectedRevision:2
+   });
+   assert.equal(rotated.revision,3);
+   assert.throws(()=>guard.check(),/changed|revoked|not approved/i);
+   assert.equal(guard.tripped(),true);
+   assert.equal(trips,1);
+   assert.throws(()=>assertApprovedPrivatePilot(f.configPath),/not approved/i);
+   const staged=path.join(f.state,'rotated-peer.json');
+   await assert.rejects(stagePrivatePilotPeer({
+    configPath:f.configPath,peerId:replacement.peerId,
+    expectedRevision:3,outputPath:staged
+   }),/Only explicitly approved/);
+   const approved=approvePrivatePeer(f.state,f.config.pilotId,replacement.peerId,{
+    verifiedOutOfBand:true,expectedRevision:3
+   });
+   assert.equal(approved.revision,4);
+   assert.throws(()=>assertApprovedPrivatePilot(f.configPath),/not approved/i);
+   const result=await stagePrivatePilotPeer({
+    configPath:f.configPath,peerId:replacement.peerId,
+    expectedRevision:4,outputPath:staged
+   });
+   assert.equal(result.activated,false);
+   assert.equal(result.publicTestnetReady,false);
+   assert.equal(result.stagedPeerId,replacement.peerId);
+   assert.doesNotThrow(()=>assertApprovedPrivatePilot(staged));
+   assert.throws(()=>guard.check(),/trust revoked/i);
+   assert.equal(trips,1);
+   const ledger=readPrivatePeerLedger(f.state,f.config.pilotId);
+   assert.equal(ledger.entries.find(e=>e.peerId===f.remote.peerId).state,'revoked');
+  }finally{guard.close();}
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+
+test('offline rotation CLI rejects wrong configured peer and stale revision',async()=>{
+ const f=await setup();
+ try{
+  enroll(f);
+  const replacement=await openPersistentPeerIdentity(path.join(f.root,'replacement-cli'));
+  const seed='/ip4/127.0.0.1/tcp/40188/p2p/'+replacement.peerId;
+  const script=path.resolve(import.meta.dirname,'../apps/p03-peer-enrollment.mjs');
+  const call=(old,revision)=>spawnSync(process.execPath,[script,'rotate',f.configPath,
+   old,replacement.peerId,'127.0.0.1',seed,String(revision)],{
+   cwd:path.resolve(import.meta.dirname,'..'),encoding:'utf8',timeout:5000
+  });
+  const wrong=call(replacement.peerId,2);
+  assert.notEqual(wrong.status,0);
+  assert.match(wrong.stderr,/currently configured/);
+  assert.equal(readPrivatePeerLedger(f.state,f.config.pilotId).revision,2);
+  const success=call(f.remote.peerId,2);
+  assert.equal(success.status,0,success.stderr);
+  const output=JSON.parse(success.stdout);
+  assert.equal(output.revision,3);
+  assert.equal(output.publicTestnetReady,false);
+  assert.equal(output.entries.find(e=>e.peerId===replacement.peerId).state,'candidate');
+  assert.notEqual(call(f.remote.peerId,2).status,0);
+  assert.equal(readPrivatePeerLedger(f.state,f.config.pilotId).revision,3);
  }finally{rmSync(f.root,{recursive:true,force:true});}
 });

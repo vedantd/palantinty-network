@@ -1,3 +1,7 @@
+## H02b private peer identity rotation (2026-11-07; PR pending)
+
+A proposed H02b slice rotates an approved remote libp2p identity in a single revision-checked local ledger commit: old approved ID becomes a terminal revoked tombstone; a new independently provisioned ID is only an *unapproved candidate*. CLI checks the old ID matches the current private pilot config; subsequent approval, staging and restart remain deliberately manual. Tests target stale revisions, malicious seeds, reusing old keys, runtime guard shutdown and offline staging. See [rotation ADR](ADR_H02B_PEER_ROTATION.md). **H02b remains partial**, with no public participant admission or change to release gates.
+
 ## I01 private indexer recovery prototype (verified PR #86; 2026-11-07)
 
 An offline, operator-initiated synthetic-only SQLite backup/restore tool now uses Node's consistent SQLite backup API rather than raw file copying. It validates version 2 schema, signed archive envelopes/replay watermarks, snapshot SHA-256 manifest, private file permissions and no-overwrite restore into a new path. [PR #86](https://github.com/vedantd/palantinty-network/pull/86) merged with [CI 42406425587](https://github.com/vedantd/palantinty-network/actions/runs/42406425587) (**217/217 tests**), including private containers. See [I01 runbook](I01_PRIVATE_INDEXER_BACKUP.md). This first slice is **not** a secure distributed backup, automatic retention, cryptographic manifest attestation, live disaster recovery or proof of physical RPO/RTO; no public release gates advanced.
