@@ -60,7 +60,7 @@
     {
       "id": "H01b",
       "title": "Supply-chain provenance and release checks",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "H01a"
       ],
