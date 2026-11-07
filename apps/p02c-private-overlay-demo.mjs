@@ -6,6 +6,7 @@
 import {mkdirSync,writeFileSync,readFileSync,existsSync} from 'node:fs';
 import {setTimeout as sleep} from 'node:timers/promises';
 import {generateKeyPair} from '@libp2p/crypto/keys';
+import {multiaddr} from '@multiformats/multiaddr';
 import {peerIdFromPrivateKey} from '@libp2p/peer-id';
 import {openLocalIdentity} from '../src/identity.mjs';
 import {signReport} from '../src/protocol.mjs';
@@ -56,7 +57,7 @@ try{
  }else{
   await until(()=>existsSync(coord+'/observer-ready'),'observer ready marker');
   const addr='/ip4/'+peers.observer+'/tcp/'+port+'/p2p/'+counterparty.peerId;
-  await node.dial(addr,{signal:AbortSignal.timeout(10_000)});
+  await node.dial(multiaddr(addr),{signal:AbortSignal.timeout(10_000)});
   const topic=syntheticTopic(area);
   await until(()=>node.services.pubsub.getSubscribers(topic).some(
     peer=>peer.toString()===counterparty.peerId),'remote subscriber');
