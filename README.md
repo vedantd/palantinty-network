@@ -14,6 +14,8 @@
 
 **Engineering cleanup:** [P0 refactor notes](docs/REFACTOR_NOTES.md) describe the receiver interface, local data-loss counters, and remaining reliability gates.
 
+**Storage lifecycle:** [SQLite compatibility and recovery policy](docs/STORAGE.md).
+
 ## Why build this?
 
 Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi, or other supported sensor:
