@@ -28,7 +28,11 @@
     "operator:manifest": "node apps/operator-manifest.mjs",
     "operator:preflight": "node apps/operator-preflight.mjs",
     "operator:seed": "node apps/operator-seed-synthetic.mjs",
-    "network:synthetic": "node apps/synthetic-testnet-demo.mjs"
+    "network:synthetic": "node apps/synthetic-testnet-demo.mjs",
+    "pilot:preflight": "node apps/p02c-host-pilot.mjs preflight",
+    "pilot:observe": "node apps/p02c-host-pilot.mjs observe",
+    "pilot:publish": "node apps/p02c-host-pilot.mjs publish",
+    "pilot:review": "node apps/p02c-evidence-review.mjs"
   },
   "license": "MIT",
   "dependencies": {
