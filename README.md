@@ -191,6 +191,12 @@ npm run release:check -- public-real-sensing
 
 A blocked check exits nonzero deliberately.
 
+### P01a: independent synthetic-only indexer processes
+
+A pre-provisioned indexer can run with its own private configuration, persistent Peer ID and local signed archive—**without a shared Docker bootstrap directory**. The test launches distinct processes, authenticates the pinned peer and verifies signed-history convergence. Public admission and real sensor publishing are still disabled.
+
+[Standalone operator instructions](docs/P01_STANDALONE_OPERATOR.md).
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.
