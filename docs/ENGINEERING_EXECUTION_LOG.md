@@ -1,3 +1,10 @@
+## 2026-11-07 — H1a lockfile and CI verification merged
+
+- **PR:** [#70](https://github.com/vedantd/palantinty-network/pull/70), merged to main at `94fbddc0243831c4cc14174f7f5da0f0d37da689` from `c091096357c33457565926968ce0e6d3148743fa`.
+- **CI:** [run 42373905601](https://github.com/vedantd/palantinty-network/actions/runs/42373905601) **success** — `npm ci --ignore-scripts`, `build:lock-check`, `release:plan-check`, **182 tests passed / 0 failed**, both blocked release profiles, P02c private bridge and M10 two-run persistent indexer integration.
+- **Provenance:** `package-lock.json` SHA256 `1480492b81aeed9167a605b9c738392c384eb9cf8b7622b674deb516a8feed12`, 131 npm SHA512 tarball integrity records. Temporary trusted branch-only lock bootstrap and uploader removed before merge; `contents: read` remains the normal CI permission.
+- **Scope:** H01a complete. H01b **not complete** (immutable action/image digests, SBOM, advisory triage, reproducible release artifacts, signatures). Official `release-supply-chain` and other public gates stay blocked. Next H01b or H02a based on independent review.
+
 ## 2026-11-07 — H1a deterministic npm lockfile (draft PR #70, CI pending)
 
 - **Issue:** #65; previously CI/Docker used floating `npm install`.

@@ -25,7 +25,7 @@ A completed slice has (1) documented threat/problem statement and ADR, (2) narro
 | F00 | Public release gates and threat model | — | Machine-readable blocked-by-default gates; distinct synthetic vs real tracks | **done** |
 | F01 | Local synthetic P2P + private indexer replication | F00 | Signed fictional reports, GossipSub and recoverable authorized indexer archives | **partial** (private tested; durability and remote evidence incomplete) |
 | H00 | Local approved peer enforcement | F01 | Unapproved peer refuses startup, revocation interrupts active synthetic node | **done**, PR #64 |
-| H01a | Reproducible Node build | H00 | Audited `package-lock.json`, `npm ci` for CI and Docker, clean repeat installs, Node version policy | **planned**, #65 |
+| H01a | Reproducible Node build | H00 | Audited `package-lock.json`, `npm ci` for CI and Docker, clean repeat installs, Node version policy | **done**, PR #70 / 182 tests |
 | H01b | Release supply chain integrity | H01a | Immutable CI dependencies, SBOM, dependency audit policy, SHA256 and reproducible signed/tagged artifacts, recovery drill | **planned**, #65 |
 | H02a | Crash-safe operator trust storage | H00 | Explicit permission checks, secure atomic state transitions, expected-revision CAS, symlink/partial-write/fault tests | **partial**, #66 |
 | H02b | Live revocation/identity replacement | H02a | Kill connection under in-flight Noise/publish, no stale pin reuse, tested restart/rotation and manual exit | **partial**, #66 |

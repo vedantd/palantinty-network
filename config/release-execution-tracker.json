@@ -46,7 +46,7 @@
     {
       "id": "H01a",
       "title": "Deterministic dependency lock and npm ci",
-      "status": "partial",
+      "status": "done",
       "dependsOn": [
         "H00"
       ],

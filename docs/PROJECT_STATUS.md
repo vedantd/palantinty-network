@@ -1,4 +1,4 @@
-## H1a reproducible synthetic pilot dependency installs (CI pending)
+## H1a reproducible synthetic pilot dependency installs (merged PR #70, 182/182 CI)
 
 Commits Node 22 npm lockfile v3, exact integrity-pinned resolution for 131 packages, and switches GitHub Actions and both private synthetic Dockerfiles to `npm ci --ignore-scripts`. Includes offline lockfile provenance validator and negative tests, with trusted CI artifact SHA documented. This is **not** a complete supply-chain release process: immutable action/image digests, SBOM, vulnerability triage and signed release artifacts remain H1b. See [H1_REPRODUCIBLE_BUILDS.md](H1_REPRODUCIBLE_BUILDS.md). Public release gates stay blocked.
 
