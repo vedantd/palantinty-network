@@ -211,25 +211,29 @@
     {
       "id": "D03a",
       "title": "Authenticated regional query protocol",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "D01b",
         "I01"
       ],
       "gateIds": [],
-      "evidence": []
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/94"
+      ]
     },
     {
       "id": "D03b",
       "title": "Independent indexer query comparison",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "D02a",
         "D03a",
         "I02"
       ],
       "gateIds": [],
-      "evidence": []
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/94"
+      ]
     },
     {
       "id": "N01",
