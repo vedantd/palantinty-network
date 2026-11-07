@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: '22'
       - run: npm install --no-audit --no-fund
-      - run: npm test
+      - run: timeout 90s npm test
       - name: Confirm both public release profiles remain gated
         run: |
           npm run release:check -- open-synthetic-testnet --assert-blocked
