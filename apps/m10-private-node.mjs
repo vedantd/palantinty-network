@@ -11,6 +11,7 @@ import {setTimeout as sleep} from 'node:timers/promises';
 import {openLocalIdentity} from '../src/identity.mjs';
 import {signReport} from '../src/protocol.mjs';
 import {createPrivateNode} from '../src/private-transport.mjs';
+import {openPersistentPeerIdentity} from '../src/operator-identity.mjs';
 import {DurableRegionalIngest} from '../src/durable-ingest.mjs';
 import {registerTrustedIndexerSync} from '../src/indexer-sync.mjs';
 import {createTrustedIndexerReconciler} from '../src/indexer-reconciler.mjs';
@@ -48,9 +49,13 @@ const until=async(fn,description,timeoutMs=30_000)=>{
  while(Date.now()<deadline){const value=fn();if(value)return value;await sleep(90);}
  throw Error('Timed out: '+description);
 };
+const operatorIdentity=await openPersistentPeerIdentity(path.join(state,'node-identity'));
 const node=await createPrivateNode({
- listen:'/ip4/'+ip+'/tcp/0',allowPrivateLan:true
+ listen:'/ip4/'+ip+'/tcp/0',allowPrivateLan:true,
+ privateKey:operatorIdentity.privateKey
 });
+if(node.peerId.toString()!==operatorIdentity.peerId)
+ throw Error('Persistent operator identity mismatch');
 const addr=node.getMultiaddrs()[0].toString();
 const address=addr.includes('/p2p/')?addr:addr+'/p2p/'+node.peerId.toString();
 const indexes=[];
