@@ -2,7 +2,7 @@
 
 **Connecting independent Palantiny sensors into a community-operated, privacy-conscious network of delayed, regional activity signals.**
 
-[![CI](https://github.com/vedantd/pulsemesh/actions/workflows/ci.yml/badge.svg)](https://github.com/vedantd/pulsemesh/actions/workflows/ci.yml) ![Status](https://img.shields.io/badge/status-experimental-orange) ![Runtime](https://img.shields.io/badge/runtime-Node.js%2022%2B-blue)
+[![CI](https://github.com/vedantd/palantinty-network/actions/workflows/ci.yml/badge.svg)](https://github.com/vedantd/palantinty-network/actions/workflows/ci.yml) ![Status](https://img.shields.io/badge/status-experimental-orange) ![Runtime](https://img.shields.io/badge/runtime-Node.js%2022%2B-blue)
 
 > **Today:** a hardware-tested local BLE pipeline, an experimental **loopback-only** encrypted synthetic P2P network, and a synthetic regional dashboard. **Not** a public sensor network, people counter, smartphone app, or crowdsourced real-world map.
 
@@ -225,7 +225,7 @@ This does **not** admit public peers or prove an untrusted publisher's data is g
 Requires **Node.js 22 or newer**.
 
 ```bash
-git clone https://github.com/vedantd/pulsemesh.git
+git clone https://github.com/vedantd/palantinty-network.git
 cd pulsemesh
 npm test
 npm run demo
@@ -353,7 +353,7 @@ The macOS integration uses a local Unix socket relay between Palantiny's native 
 - **P5 — Hardening:** security review, adversarial data validation, operational metrics and privacy assessment.
 - **Later:** incentives and additional sensor platforms, only if fundamental sensing and privacy assumptions hold.
 
-Track work in [GitHub Issues](https://github.com/vedantd/pulsemesh/issues) and read the [detailed roadmap](docs/ROADMAP.md) and [security notes](SECURITY.md).
+Track work in [GitHub Issues](https://github.com/vedantd/palantinty-network/issues) and read the [detailed roadmap](docs/ROADMAP.md) and [security notes](SECURITY.md).
 
 ## Relationship to upstream Palantiny
 
@@ -361,6 +361,6 @@ Track work in [GitHub Issues](https://github.com/vedantd/pulsemesh/issues) and r
 
 ## Contributing
 
-Start with an [issue](https://github.com/vedantd/pulsemesh/issues). Useful areas include Linux/Raspberry Pi sensing, calibration datasets, libp2p transport, spatial indexing, and security/privacy reviews. Avoid posting real device identifiers or raw radio captures in issues.
+Start with an [issue](https://github.com/vedantd/palantinty-network/issues). Useful areas include Linux/Raspberry Pi sensing, calibration datasets, libp2p transport, spatial indexing, and security/privacy reviews. Avoid posting real device identifiers or raw radio captures in issues.
 
 **Project maturity:** research prototype. Do not rely on it for personal surveillance, precise crowd counting, safety monitoring, or decisions affecting individuals.

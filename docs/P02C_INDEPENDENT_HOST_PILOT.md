@@ -44,6 +44,25 @@ Observer host example (substitute actual keys and overlay addresses):
 
 Publisher config uses `role:"publisher"`, `listen:"/ip4/10.77.10.2/tcp/40124"`, `remoteIp:"10.77.10.1"`, and the observer's verified Peer ID and seed `/ip4/10.77.10.1/tcp/40123/p2p/<verified-observer-id>`. The placeholder config must *not* pass validation: that's intentional.
 
+## Mandatory approved remote peer (H0 hardening)
+
+The operator-run pilot now refuses to start or pass preflight unless the current remote Peer ID, private source IP and exact seed address are **approved in the local P03 private ledger**. Each host must perform its own enrollment; enrollment is **not** automatically exchanged between hosts and merely setting a Peer ID in `host-config.json` is insufficient.
+
+After creating and independently verifying the private configuration on each host, run:
+
+```sh
+npm run peer:enrollment -- init /srv/palatiny-pilot/host-config.json
+npm run peer:enrollment -- propose /srv/palatiny-pilot/host-config.json VERIFIED_REMOTE_PEER_ID VERIFIED_REMOTE_OVERLAY_IP VERIFIED_REMOTE_SEED
+# Only after independently checking the Peer ID and overlay IP:
+npm run peer:enrollment -- approve /srv/palatiny-pilot/host-config.json VERIFIED_REMOTE_PEER_ID --verified-out-of-band
+npm run peer:enrollment -- pins /srv/palatiny-pilot/host-config.json
+npm run pilot:preflight -- /srv/palatiny-pilot/host-config.json
+```
+
+The ledger is a 0600 file under the operator's 0700 state directory. Revoking an approved peer (`npm run peer:enrollment -- revoke ...`) now triggers process-local shutdown if the standalone pilot is running; the process also stops on ledger revision/configuration drift and requires manual review/restart. A startup check is still vulnerable to a short filesystem/polling race, not a cryptographic distributed revocation guarantee. During a real incident, close the tunnel firewall TCP port immediately.
+
+See [P03_PRIVATE_ENROLLMENT.md](P03_PRIVATE_ENROLLMENT.md) and [HARDENING_AUDIT_2026_11_07.md](HARDENING_AUDIT_2026_11_07.md).
+
 ## Run and capture
 
 On each machine run `npm run pilot:preflight -- /srv/palatiny-pilot/host-config.json`. This only checks the local configuration and persistent identity.

@@ -12,7 +12,8 @@ import {readP02cHostConfig} from '../src/p02c-host-config.mjs';
 import {openPersistentPeerIdentity} from '../src/operator-identity.mjs';
 import {openLocalIdentity} from '../src/identity.mjs';
 import {signReport} from '../src/protocol.mjs';
-import {assertPilotEnabled,watchPilotStop} from '../src/p02c-pilot-operations.mjs';
+import {assertPilotEnabled,isPilotDisabled,watchPilotStop} from '../src/p02c-pilot-operations.mjs';
+import {assertApprovedPrivatePilot,watchApprovedPrivatePilot} from '../src/p03-runtime-trust-guard.mjs';
 import {createPinnedSyntheticGossipNode} from '../src/pinned-synthetic-node.mjs';
 import {observeSyntheticTopic,publishSynthetic,syntheticTopic} from '../src/synthetic-testnet.mjs';
 
@@ -23,7 +24,7 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
  console.error('Usage: node apps/p02c-host-pilot.mjs <preflight|observe|publish> <private-config.json> [round-number]');
  process.exitCode=2;
 }else{
- let node,observer,watchdog,healthTimer;
+ let node,observer,watchdog,trustWatch,healthTimer;
  let shutdown=false;
  const emit=event=>console.log(JSON.stringify({
   schema:'palantiny.p02c-pilot-evidence.v1',syntheticOnly:true,
@@ -46,8 +47,11 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
   if(command==='publish'&&(!/^[1-9][0-9]{0,4}$/.test(roundArg)||
      Number(roundArg)>10000))
    throw Error('Explicit synthetic fixture round must be 1..10000');
+  // Existing private synthetic pilot now requires an approved local ledger.
+  const approval=assertApprovedPrivatePilot(filename);
   if(command==='preflight'){
    emit({event:'config-validated',privateNetworkOnly:true,deliveryObserved:false,
+    peerApproved:true,ledgerRevision:approval.ledgerRevision,
     note:'Local checks only; no proof that independent hosts or firewall are configured'});
   }else{
    const requestShutdown=(cause)=>{
@@ -64,7 +68,12 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
    watchdog=watchPilotStop(config.stateDir,{
     onTrip:()=>requestShutdown('local-emergency-stop')
    });
-   watchdog.check();
+   trustWatch=watchApprovedPrivatePilot(filename,{
+    onTrip:()=>requestShutdown(isPilotDisabled(config.stateDir)?
+      'local-emergency-stop':'peer-approval-lost')
+   });
+   const checkTrust=()=>{watchdog.check();trustWatch.check();};
+   checkTrust();
    node=await createPinnedSyntheticGossipNode({
     privateKey:identity.privateKey,
     allowedPeerIds:[config.remotePeerId],
@@ -74,7 +83,7 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
    });
    if(node.peerId.toString()!==identity.peerId)
     throw Error('Persistent identity mismatch at libp2p startup');
-   watchdog.check();
+   checkTrust();
    emit({event:'started',addresses:node.getMultiaddrs().map(addr=>addr.toString()),
     privateNetworkOnly:true,deliveryObserved:false});
    const reportHealth=()=>{
@@ -96,9 +105,9 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
     }});
     const until=Date.now()+25000;
     while(received.length<1&&Date.now()<until&&!shutdown){
-     watchdog.check();await sleep(50);
+     checkTrust();await sleep(50);
     }
-    watchdog.check();
+    checkTrust();
     if(received.length!==1)throw Error('No synthetic report received before timeout');
     emit({event:'observer-complete',accepted:observer.stats().accepted,
      deliveryObserved:true});
@@ -106,7 +115,7 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
     const seed=multiaddr(config.remoteSeed);
     let connected=false;
     for(let attempt=1;attempt<=4&&!connected;attempt++){
-     watchdog.check();
+     checkTrust();
      try{
       await node.dial(seed,{signal:AbortSignal.timeout(4000)});
       connected=true;
@@ -119,14 +128,14 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
     const deadline=Date.now()+10000;
     while(!node.services.pubsub.getSubscribers(topic).some(
      peer=>peer.toString()===config.remotePeerId)&&Date.now()<deadline&&!shutdown){
-     watchdog.check();await sleep(50);
+     checkTrust();await sleep(50);
     }
-    watchdog.check();
+    checkTrust();
     if(!node.services.pubsub.getSubscribers(topic).some(
       peer=>peer.toString()===config.remotePeerId))
      throw Error('Remote synthetic topic subscription not observed');
     await sleep(1200);
-    watchdog.check();
+    checkTrust();
     // No BLE scanner or OS sensing permission is requested.
     const signer=openLocalIdentity(path.join(config.stateDir,'synthetic-fixture-signer'));
     const round=Number(roundArg);
@@ -135,7 +144,7 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
      bucketStart:Date.UTC(2026,10,6,20)+(round-1)*60_000,
      bucketSeconds:60,activityIndex:35,metric:'ble_alias_activity'
     },signer,round);
-    watchdog.check();
+    checkTrust();
     const published=await publishSynthetic(node,envelope);
     emit({event:'synthetic-published-no-ack',reportId:published.reportId,
      round,delivered:false,deliveryObserved:false,
@@ -150,6 +159,7 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
    syntheticOnly:true,publicTestnetReady:false}));
   process.exitCode=1;
  }finally{
+  trustWatch?.close();
   watchdog?.close();
   if(healthTimer)clearInterval(healthTimer);
   observer?.close();

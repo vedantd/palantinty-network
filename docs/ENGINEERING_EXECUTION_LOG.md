@@ -1,3 +1,13 @@
+## 2026-11-07 — H0 targeted hardening review and private runtime trust guard
+
+- **Audit:** Inspected P02c operator runtime, P03a approval ledger, P03b staging, P03c audit, P03d inspection, private file handling, CI build inputs, README/JOIN links and public release gates. Findings and severity are in [HARDENING_AUDIT_2026_11_07.md](HARDENING_AUDIT_2026_11_07.md).
+- **Decision ADR-H0-001:** A P03 approval ledger must not remain purely advisory for the operator-run private pilot; startup must refuse unapproved pins, and a running node must stop on observed revocation or unexpected local approval/config revision changes. Keep all network listeners private and synthetic-only.
+- **Implementation:** `src/p03-runtime-trust-guard.mjs` and integration into `apps/p02c-host-pilot.mjs`; migration of existing P02c test fixtures to explicit local approved enrollments; new live-node revocation tests; update runbooks and canonical links.
+- **Tradeoff:** Tightens local operator state, but polls files rather than offering atomic revocation. An unresponsive process, compromised host, or race within the poll window still requires OS firewall/process containment; no public peers or real sensor inputs are activated.
+- **Verification:** PR CI pending at authoring; final GitHub Actions and merge evidence should be recorded after successful full suite. Do not claim release-gate clearance from green CI.
+- **Unresolved:** No committed npm lockfile/\`npm ci\` (H-002), no independent two-physical-host trial (H-003), TOCTOU/revocation boundary (H-004), geographic indexer lookup (H-008), indexer disaster recovery, real-sensing rights/privacy. See [EXECUTION_ROADMAP_NEXT.md](EXECUTION_ROADMAP_NEXT.md).
+- **Next:** H1 reproducible dependency/build supply chain, then transactional private revocation and independently validated hosts; proceed to D01 private signed regional indexer directory only after core safety issues are understood.
+
 ## 2026-11-07 — P03d verified CI and merge evidence
 
 - **PR:** #62 P03d offline startup-readiness inspection, head `6730263e17109b19439202fd93de18e22b0685bf`, squash merged to `main` as `49078b9e8ca6f3eec4df493812e11b7706db7e5c` after successful checks.

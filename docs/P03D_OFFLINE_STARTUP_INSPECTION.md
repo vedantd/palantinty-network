@@ -5,3 +5,7 @@ ADR-P03d-001 (2026-11-07): Introduce a conservative operator-only readiness insp
 API: `inspectPrivatePilotStartup(configPath)` in `src/p03-startup-inspection.mjs`. A clean result is `readyForManualReview:true`, **not permission to start**. Unknown, candidate, revoked and drifted remote pins yield negative readiness. Missing identity, malformed config, unsafe ledger and emergency stop throw closed. The function does not create identities, clear stop markers, mutate pins or launch libp2p.
 
 Positive and negative automated tests: `tests/p03-startup-inspection.test.mjs`. CI evidence is recorded in the execution log only after checks complete. No independent physical-host, firewall, or adversarial network validation. A race remains between inspection and manual restart; a future separate runtime-integrated guard must address it. No public listener, untrusted enrollment, real BLE input, or release-gate change.
+
+H0 update (2026-11-07): this **P03d inspection API remains offline and advisory**. Separately, the standalone `apps/p02c-host-pilot.mjs` runtime now requires an approved enrollment entry and watches ledger/configuration drift; it does not call the P03d API. See [HARDENING_AUDIT_2026_11_07.md](HARDENING_AUDIT_2026_11_07.md). No atomic revocation guarantee or change to public release gates.
+
+

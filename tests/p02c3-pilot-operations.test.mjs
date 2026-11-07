@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {openPersistentPeerIdentity} from '../src/operator-identity.mjs';
+import {initializePeerLedger,proposePrivatePeer,approvePrivatePeer,revokePrivatePeer} from '../src/p03-private-peer-ledger.mjs';
 import {disablePilot,resumePilot,isPilotDisabled,assertPilotEnabled,
  pilotStopPath,watchPilotStop} from '../src/p02c-pilot-operations.mjs';
 
@@ -23,6 +24,11 @@ async function setup(){
  config.listen='/ip4/127.0.0.1/tcp/41249';
  const file=path.join(state,'host-config.json');
  writeFileSync(file,JSON.stringify(config),{mode:0o600});
+ initializePeerLedger(state,config.pilotId);
+ proposePrivatePeer(state,config.pilotId,{
+  peerId:other.peerId,remoteIp:config.remoteIp,seedAddress:config.remoteSeed
+ });
+ approvePrivatePeer(state,config.pilotId,other.peerId,{verifiedOutOfBand:true});
  return {root,state,file,local,other};
 }
 test('persistent local disable is fail-closed, survives restart and requires manual resumption',async()=>{
@@ -96,7 +102,14 @@ test('running pinned observer terminates after local control stop and refuses re
    await new Promise(resolve=>setTimeout(resolve,35));
   }
   assert.ok(events.some(e=>e.event==='started'),stderr);
-  assert.ok(events.some(e=>e.event==='connection-health'));
+  // The producer writes 'started' and health in adjacent stdout calls.
+  // Stream events are asynchronous; wait for the health record explicitly.
+  const healthDeadline=Date.now()+3000;
+  while(!events.some(e=>e.event==='connection-health')&&Date.now()<healthDeadline){
+   if(processRun.exitCode!==null)break;
+   await new Promise(resolve=>setTimeout(resolve,25));
+  }
+  assert.ok(events.some(e=>e.event==='connection-health'),stderr);
   disablePilot(fixture.state,{reason:'peer-revoked',revokedPeerId:fixture.other.peerId});
   const code=await completion;
   assert.notEqual(code,0);
