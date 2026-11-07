@@ -1,3 +1,12 @@
+## 2026-11-07 — I01a private synthetic indexer backup/restore prototype (PR pending)
+
+- **Starting point:** [#85](https://github.com/vedantd/palantinty-network/pull/85) merged to improve private dial/publish authorization rechecks; H02b remains partial. Start I01 offline snapshot/recovery without opening public networking.
+- **Failure model:** a raw copy of a changing SQLite file is not a verified consistent recovery point; restoration must not overwrite a running indexer and accidental snapshot corruption must be detected.
+- **Implementation:** Node 22.16+ SQLite backup API, private 0600 snapshot plus checksum/counters manifest, signature/SQL integrity verification, complete signed envelope to accepted-row checks, no-clobber hard-link restore to a fresh path.
+- **Tests:** signed synthetic report/aggregate replay recovery, corrupted snapshot and manifest refusal, existing target and dangling symlink denial, schema/permission refusal. [Runbook and residual risks](I01_PRIVATE_INDEXER_BACKUP.md).
+- **Residual:** backup not encrypted or cryptographically authenticated by operator, no periodic retention or cross-host restore, physical power-loss testing or monitored RPO/RTO. I01 will be **partial** if CI passes; both public launch profiles blocked.
+- **CI/merge:** Pending GitHub Actions full suite and container integrations.
+
 ## 2026-11-07 — H02b private async-operation trust rechecks (PR pending)
 
 - **Starting point:** #83 H02a optional expected-revision CAS and durable directory rename merged with 209/209 CI. Still open #66 for live revocation, rotation and handshake/publish races.

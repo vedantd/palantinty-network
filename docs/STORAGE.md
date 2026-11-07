@@ -34,3 +34,8 @@ restart. No physical hardware is needed.
 ## M09b addendum — regional signed archive v2
 
 Regional SQLite schema v2 adds `signed_archive(report_id,area,envelope)`; ingest writes it atomically with reports and contributor replay watermarks. The additive v1-to-v2 upgrade does **not** produce archives for old accepted rows. Such records remain queryable but cannot participate in cryptographically verifiable indexer-to-indexer history recovery. This archive increases metadata retention risk; keep databases private and synthetic-only. See [M09_INDEXER_SYNC.md](M09_INDEXER_SYNC.md). Outbox schema remains v1. Unsupported future schema versions still fail closed.
+
+
+## I01a offline private synthetic indexer backup/restore (2026-11-07; CI pending)
+
+Use `npm run indexer:backup -- <absolute-existing-index.sqlite> <absolute-new-private-backup-directory>` and `npm run indexer:restore -- <absolute-existing-backup-directory> <absolute-new-index.sqlite>` only for a **stopped synthetic-only** indexer. The Node.js 22.16+ built-in `sqlite.backup()` API produces a database-consistent snapshot; SHA-256 and signed-archive integrity checks detect accidental mismatches, and a new-file-only hard-link install refuses overwrite. There is **no encrypted/attested offsite backup, scheduled snapshot, RPO/RTO signoff, real sensor network or public access**. Full requirements and limitations: [I01 private runbook](I01_PRIVATE_INDEXER_BACKUP.md).

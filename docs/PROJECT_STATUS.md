@@ -1,3 +1,7 @@
+## I01 private indexer recovery prototype (2026-11-07; CI pending)
+
+An offline, operator-initiated synthetic-only SQLite backup/restore tool now uses Node's consistent SQLite backup API rather than raw file copying. It validates version 2 schema, signed archive envelopes/replay watermarks, snapshot SHA-256 manifest, private file permissions and no-overwrite restore into a new path. See [I01 runbook](I01_PRIVATE_INDEXER_BACKUP.md). This first slice is **not** a secure distributed backup, automatic retention, cryptographic manifest attestation, live disaster recovery or proof of physical RPO/RTO; no public release gates advanced.
+
 ## H02b private asynchronous network-operation guard (2026-11-07; CI pending)
 
 The pinned, synthetic-only host pilot now rechecks operator approval immediately before and after awaited dial and publish actions, at libp2p connection-open events, and before emitting received-report evidence. Tests simulate P03 ledger revocation or pinned seed drift during an awaited network action; the local one-way guard shuts down on observed failure. See [ADR](ADR_H02B_ASYNC_TRUST_BOUNDARIES.md). This does not revoke an already transmitted packet, prove instantaneous remote disconnect, or advance the H02b/public release gates.
