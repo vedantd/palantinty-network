@@ -16,11 +16,13 @@ export function topicForArea(area) {
  * M07 is synthetic, explicitly loopback-only GossipSub transport.
  * No public interface, discovery, real sensor publishing, or persistence.
  */
-export async function createGossipNode({listen='/ip4/127.0.0.1/tcp/0',enableDht=false}={}) {
+export async function createGossipNode({listen='/ip4/127.0.0.1/tcp/0',enableDht=false,privateKey}={}) {
   if (typeof listen !== 'string' ||
       !/^\/ip4\/127\.0\.0\.1\/tcp\/(?:0|[1-9]\d{0,4})$/.test(listen))
     throw new Error('M07 only allows 127.0.0.1 loopback listeners');
   if(typeof enableDht!=='boolean')throw new TypeError('enableDht must be boolean');
+  if(privateKey!==undefined && (privateKey?.type!=='Ed25519'||!privateKey?.publicKey))
+    throw new TypeError('Optional private libp2p identity must be Ed25519');
   const [{createLibp2p},{tcp},{noise},{yamux},{identify},{gossipsub}]=
     await Promise.all([
       import('libp2p'), import('@libp2p/tcp'),
@@ -36,6 +38,7 @@ export async function createGossipNode({listen='/ip4/127.0.0.1/tcp/0',enableDht=
       maxInboundStreams:8,maxOutboundStreams:8});
   }
   const node=await createLibp2p({
+    ...(privateKey===undefined?{}:{privateKey}),
     addresses:{listen:[listen]},transports:[tcp()],
     connectionEncrypters:[noise()],streamMuxers:[yamux()],services
   });
