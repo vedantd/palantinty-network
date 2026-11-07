@@ -20,7 +20,8 @@
     "network:reconnect": "node apps/reconnect-network-demo.mjs",
     "network:replay": "node apps/history-replay-demo.mjs",
     "network:dht": "node apps/dht-discovery-demo.mjs",
-    "network:indexer-sync": "node apps/indexer-sync-demo.mjs"
+    "network:indexer-sync": "node apps/indexer-sync-demo.mjs",
+    "network:auto-sync": "node apps/auto-indexer-sync-demo.mjs"
   },
   "license": "MIT",
   "dependencies": {

@@ -46,3 +46,7 @@ Synthetic-only localhost GossipSub with independent durable regional recipients 
 ## M09b authenticated indexer synchronization
 
 [Read M09b ADR](docs/M09_INDEXER_SYNC.md). Regional SQLite schema v2 atomically archives **exact already-accepted signed envelopes**. A trusted peer may fetch bounded pages only after an authenticated Noise Peer ID allowlist check and localhost address check. The requesting indexer independently verifies and ingests. Never expose the archive to dashboards, untrusted DHT/GossipSub peers or real sensors. V1 accepted reports without signed envelopes cannot be replicated cryptographically. This is a manually initiated local test, not automatic convergence or data-deletion support.
+
+## M09c — automatic trusted-indexer reconciliation
+
+[Read the M09c ADR](docs/M09_AUTOMATIC_RECONCILIATION.md). Trusted localhost indexers may automatically pull bounded pages of signed archives without duplicate ingestion and check private archive fingerprints. Cursor state is **not persisted**; retries after crashes rescan from zero. Status can be `partial`, `failed`, `consistent` or `divergent`; never equate a successful connection or archive fingerprint with validated BLE signal, independent sensor coverage or public-network safety.
