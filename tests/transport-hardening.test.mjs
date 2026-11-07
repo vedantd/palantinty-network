@@ -7,14 +7,14 @@ import {openLocalIdentity} from '../src/identity.mjs';
 import {signReport} from '../src/protocol.mjs';
 import {sendPrivateReport} from '../src/private-transport.mjs';
 
-function fixture(fn){
+async function fixture(fn){
  const dir=mkdtempSync(path.join(tmpdir(),'pulsemesh-ack-'));
  try{
   const key=openLocalIdentity(path.join(dir,'key'));
   const report={schema:'pulsemesh.activity.v1',area:'synthetic-cell',
    bucketStart:Date.UTC(2026,10,6,12),bucketSeconds:60,
    activityIndex:25,metric:'ble_alias_activity'};
-  return fn(signReport(report,key,1));
+  return await fn(signReport(report,key,1));
  }finally{rmSync(dir,{recursive:true,force:true});}
 }
 function mockNode(response){
