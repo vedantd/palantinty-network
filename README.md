@@ -63,7 +63,7 @@ flowchart LR
 
 The chart is generated from the [28-slice execution tracker](config/release-execution-tracker.json) and [release evidence ledger](config/public-release-gates.json). **Slice counts are not completion percentages**; CI passing does not count as external release approval.
 
-**Verified on `main`:** release policy and threat model, private approved-peer enforcement, and reproducible locked dependencies. Several working prototypes remain *partial* until their full acceptance tests and deployment evidence are available. The last pre-redesign `main` check passed **196 automated tests**, including private Docker integration; the [live CI badge](https://github.com/vedantd/palantinty-network/actions/workflows/ci.yml) reflects subsequent runs.
+**Verified on `main`:** release policy and threat model, private approved-peer enforcement, and reproducible locked dependencies. Several working prototypes remain *partial* until their full acceptance tests and deployment evidence are available. The [landing-page PR #78](https://github.com/vedantd/palantinty-network/pull/78) passed **198 automated tests** and private Docker integration in [CI run 42399271410](https://github.com/vedantd/palantinty-network/actions/runs/42399271410). The live CI badge reflects subsequent changes.
 
 > [!NOTE]
 > **No public release gates have passed:** open synthetic testnet **0/6**, real-sensor public release **0/7** additional gates. This is a deliberately blocked-by-default status.

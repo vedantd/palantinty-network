@@ -1,9 +1,9 @@
-## 2026-11-07 — Public-facing README and evidence-based progress visualization (PR pending)
+## 2026-11-07 — Public-facing README and evidence-based progress visualization (verified PR #78)
 
 - Replaced long README demo inventory with an architecture-first public landing page, accessible vector banner, existing editable Excalidraw network diagram and scoped runnable quickstart.
 - Added `assets/roadmap-progress.svg`, generated deterministically from `config/release-execution-tracker.json` and `config/public-release-gates.json`; new regression tests enforce consistency. No fabricated readiness or percentage claims.
 - Updated public launch and field-research roadmaps to reflect verified merges #76/#77, open conflicting #74/#75, and the unverified six plus seven launch gates. Detailed demo commands remain reachable in `docs/PROTOTYPE_DEMOS.md`.
-- Scope: documentation/presentation and a native Node SVG generator. **No networking, trust or live-sensing behavior changed.** CI/PR merge evidence must be recorded after verification.
+- **Verification:** [PR #78](https://github.com/vedantd/palantinty-network/pull/78) merged as `7c220db8ba46f12c7228a11cb6c6023cd1f39c28` after successful [GitHub Actions run 42399271410](https://github.com/vedantd/palantinty-network/actions/runs/42399271410): **198/198 tests passed**, including P02c and M10 private Docker integration, and release gate assertions remained blocked. Fifteen local README links were checked for existing repository targets. The first CI attempt failed an existing branding documentation contract; explicit project heading and nonlive warning were restored and verified on the final head.
 
 ## 2026-11-07 — H1c least-privilege CI policy regression guard (PR pending)
 
