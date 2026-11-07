@@ -37,7 +37,8 @@
     "pilot:incident-review": "node apps/p02c-incident-review.mjs",
     "peer:enrollment": "node apps/p03-peer-enrollment.mjs",
     "peer:stage": "node apps/p03-peer-stage.mjs",
-    "release:plan-check": "node apps/check-release-execution-tracker.mjs"
+    "release:plan-check": "node apps/check-release-execution-tracker.mjs",
+    "build:lock-check": "node apps/check-dependency-lock.mjs"
   },
   "license": "MIT",
   "dependencies": {
