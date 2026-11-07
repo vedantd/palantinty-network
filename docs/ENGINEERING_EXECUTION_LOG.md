@@ -1,3 +1,10 @@
+## 2026-11-07 — Public-facing README and evidence-based progress visualization (PR pending)
+
+- Replaced long README demo inventory with an architecture-first public landing page, accessible vector banner, existing editable Excalidraw network diagram and scoped runnable quickstart.
+- Added `assets/roadmap-progress.svg`, generated deterministically from `config/release-execution-tracker.json` and `config/public-release-gates.json`; new regression tests enforce consistency. No fabricated readiness or percentage claims.
+- Updated public launch and field-research roadmaps to reflect verified merges #76/#77, open conflicting #74/#75, and the unverified six plus seven launch gates. Detailed demo commands remain reachable in `docs/PROTOTYPE_DEMOS.md`.
+- Scope: documentation/presentation and a native Node SVG generator. **No networking, trust or live-sensing behavior changed.** CI/PR merge evidence must be recorded after verification.
+
 ## 2026-11-07 — H1c least-privilege CI policy regression guard (PR pending)
 
 - **Starting point:** inspected current main CI, H1a/#70 and H1b/#72 logged merges, open H1/#65, H2/#66 and independent-host/#67, and open H2 PR #74. Avoided overlapping H2.
