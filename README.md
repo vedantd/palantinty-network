@@ -141,6 +141,16 @@ npm run network:indexer-sync
 
 This is a **trusted, manually initiated, localhost-only** indexer sync, not a public archive or proof of eventual network-wide convergence. [Read the M09b protocol and security decisions](docs/M09_INDEXER_SYNC.md).
 
+### M09c: bounded automatic indexer recovery (synthetic only)
+
+Authorized localhost indexers can now schedule independent signed-archive reconciliation and compare private archive counts/digests. Interrupted cycles resume at the last completed page; a process restart safely rescans from the beginning. This is **not** a public service or production eventual-consistency guarantee.
+
+```bash
+npm run network:auto-sync
+```
+
+[Automatic reconciliation decisions and limitations](docs/M09_AUTOMATIC_RECONCILIATION.md).
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.
