@@ -4,5 +4,4 @@ COPY package.json ./
 RUN npm install --no-audit --no-fund
 COPY src/ ./src/
 COPY apps/ ./apps/
-USER node
 ENTRYPOINT ["node","apps/p02c-private-overlay-demo.mjs"]
