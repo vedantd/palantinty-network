@@ -103,7 +103,7 @@ test('D03 never dials unvalidated, duplicate or unapproved D02a providers',async
   start:NOW-60*60_000,end:NOW-16*60_000,clock:()=>NOW};
  await assert.rejects(queryDiscoveredPrivateRegion(node,{
   ...options,discovery:{region:REGION,results:[{peerId:'a',verified:true,region:REGION,
-   expiresAt:NOW+1000}]} }),/two D02a/);
+   expiresAt:NOW+1000}]} }),/two to four D02a/);
  await assert.rejects(queryDiscoveredPrivateRegion(node,{
   ...options,discovery:{region:REGION,results:[
    {peerId:'a',verified:true,region:REGION,expiresAt:NOW+1000},
@@ -181,7 +181,7 @@ test('D03b malformed/stale/auth failures cannot be hidden by two valid peers',()
   good,goodB,{status:'fulfilled',value:{peerId:'c',rows:[
    {...row,bucketStart:NOW-3*60_000}
   ]}}
- ],request,NOW),/unreleased/);
+ ],request,NOW),/Unreleased/);
  assert.throws(()=>settlePrivateSyntheticQuorum([good,goodB,good,good,good],
   request,NOW),/bounded/);
 });
