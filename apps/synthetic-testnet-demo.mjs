@@ -7,7 +7,7 @@ import {setTimeout as sleep} from 'node:timers/promises';
 import {openLocalIdentity} from '../src/identity.mjs';
 import {signReport} from '../src/protocol.mjs';
 import {createGossipNode} from '../src/gossip-network.mjs';
-import {observeSyntheticTopic,publishSynthetic}
+import {observeSyntheticTopic,publishSynthetic,syntheticTopic}
  from '../src/synthetic-testnet.mjs';
 
 const root=mkdtempSync(path.join(tmpdir(),'palantiny-testnet-'));
@@ -31,6 +31,12 @@ try{
  await a.dial(b.peerId);
  await b.peerStore.patch(c.peerId,{multiaddrs:c.getMultiaddrs()});
  await b.dial(c.peerId);
+ // GossipSub needs explicit topic subscribers; an un-subscribed relay does
+ // not magically forward messages. Connect publishers to the subscribed
+ // indexer and also subscribe the middle peer as a testnet relay.
+ b.services.pubsub.subscribe(syntheticTopic(area));
+ await a.peerStore.patch(c.peerId,{multiaddrs:c.getMultiaddrs()});
+ await a.dial(c.peerId);
  await until(()=>a.services.pubsub.getSubscribers(observer.topic).length>0,
   'synthetic topic subscription');
  for(const [i,key]of keys.entries()){
@@ -52,6 +58,7 @@ try{
  },null,2));
 }finally{
  observer?.close();
+ try{peers[1]?.services.pubsub.unsubscribe(syntheticTopic(area));}catch{}
  await Promise.allSettled(peers.map(x=>x.stop()));
  rmSync(root,{recursive:true,force:true});
 }
