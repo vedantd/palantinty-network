@@ -26,6 +26,7 @@ The three-peer synthetic integration demo:
 - `replaySignedHistory` operates on **explicitly trusted local addresses** and validates every receiver ACK. GossipSub publish is still not a durable ACK.
 - Reconciliation depends on the **original contributor staying online or retaining its SQLite outbox**. An offline producer, lost outbox, and disconnected indexers can still cause permanent divergent history.
 - This is a proof of a sender-assisted recovery path, **not** indexer-to-indexer anti-entropy or a distributed agreement algorithm. No public sync protocol has been exposed; a public signed report archive risks correlating signers with their data.
+- Consent revocation now transactionally purges **both queued and previously acknowledged signed history** from the local outbox. Re-enabling consent cannot resurrect the old archive; the signing sequence remains monotonic. This cannot retract reports already received by remote indexers, so retention and deletion rights still need a separate policy.
 - The local signed-history API is not a privacy-free source of shareable contributor metadata; do not expose it over unauthenticated network interfaces.
 - Not implemented: automatic missing-range detection, independently replicated signed archives, remote identity enrollment, DHT discovery, NAT traversal, or real Palantiny publishing.
 

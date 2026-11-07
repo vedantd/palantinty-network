@@ -82,3 +82,7 @@ After M02 calibration, implement an authenticated **synthetic-data-only**
 three-node exchange and an ingest verifier with replay checks. Do not
 enable real-world report broadcast without review of location privacy,
 threshold aggregation, and contributor linkability.
+
+## Revocation and retained history (M09 privacy hardening)
+
+Signed envelopes can remain locally in the ACKed archive solely to help another trusted indexer catch up. **Turning consent off now deletes all local outgoing rows, including ACKed historical envelopes, in the same transaction as the consent flag update.** Re-enabling consent starts a fresh local history while preserving the monotonically increasing signing sequence. This is not a remote deletion command: a report already distributed to independent indexers cannot be withdrawn by deleting the contributor's local copy. Such deletion/retention guarantees have not yet been designed.
