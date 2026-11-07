@@ -1,3 +1,7 @@
+## P02a synthetic-testnet protocol boundary
+
+An isolated synthetic GossipSub topic and strict signed envelope wrapper, sanitized observer and bounded per-forwarding-peer limiter now have adversarial tests and a localhost three-peer demonstration. **No public admission, proven synthetic provenance, Sybil resistance or real BLE input.** See [P02_SYNTHETIC_PROTOCOL.md](P02_SYNTHETIC_PROTOCOL.md).
+
 ## P01b manual private-host tooling
 
 An offline operator preflight, public manifest generator, and synthetic-only fresh database fixture seed are available, with a private-host runbook. They enable an independently provisioned private multi-machine test when hosts are supplied, but **there is no evidence of an actual two-physical-host run**. See [P01_PRIVATE_HOST_RUNBOOK.md](P01_PRIVATE_HOST_RUNBOOK.md).
