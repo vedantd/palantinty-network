@@ -20,15 +20,15 @@ async function availablePort(){
  return port;
 }
 function launch(args){
- const process=spawn(processExec(),[runScript,...args],{
+ const child=spawn(processExec(),[runScript,...args],{
   cwd:projectRoot,env:process.env,stdio:['ignore','pipe','pipe']
  });
  const events=[];
  let stderr='';
- process.stdout.setEncoding('utf8');
- process.stderr.setEncoding('utf8');
+ child.stdout.setEncoding('utf8');
+ child.stderr.setEncoding('utf8');
  let text='';
- process.stdout.on('data',chunk=>{
+ child.stdout.on('data',chunk=>{
   text+=chunk;
   while(text.includes('\n')){
    const idx=text.indexOf('\n');
@@ -36,12 +36,12 @@ function launch(args){
    try{events.push(JSON.parse(line));}catch{}
   }
  });
- process.stderr.on('data',chunk=>{stderr+=chunk;});
+ child.stderr.on('data',chunk=>{stderr+=chunk;});
  const finished=new Promise((resolve,reject)=>{
-  process.once('error',reject);
-  process.once('close',code=>resolve({code,events,stderr}));
+  child.once('error',reject);
+  child.once('close',code=>resolve({code,events,stderr}));
  });
- return {process,events,finished};
+ return {process:child,events,finished};
 }
 function processExec(){return process.execPath;}
 async function until(fn,ms=10_000){
