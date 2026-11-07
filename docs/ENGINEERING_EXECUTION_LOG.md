@@ -1,3 +1,10 @@
+## 2026-11-07 — P03c CI and merge evidence
+
+- **PR:** #60 merged into `main` after review of its read-only audit implementation and positive/negative tests. Source head `2d72cc58486aa89748f9df22413136639bf8a63e`; squash merge `0a1c63cd768c2434ab4452d1b1c16b528e3bde16`.
+- **GitHub Actions:** workflow `test` run `42344860645` completed **success**; `node-tests` job `128320295455` passed `npm test`, synthetic network demos, private container checks, and the public-release-gates assertion. This is CI evidence, not an independent physical-host test.
+- **Decision:** keep P03c an offline diagnostic only; no runtime enrollment or automatic trust update. Follow-up should address fail-closed operator-controlled startup reconciliation in a separate slice.
+- **Outstanding:** no independent physical-host evidence, no public admission, no real BLE ingestion, and all public release gates remain blocked.
+
 ## 2026-11-07 — P03c offline pinned peer trust audit (PR pending CI)
 
 - **Starting point:** main included merged P03b PR #59; no open PRs at inspection. Reviewed P03a ledger, P03b staging, P02c host-config validator, existing tests, status and execution ledger.
