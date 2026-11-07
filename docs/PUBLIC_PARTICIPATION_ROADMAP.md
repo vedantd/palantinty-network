@@ -51,3 +51,8 @@ Keep PRs small and anchored in explicit acceptance tests. Each slice updates thi
 ## P02c-1 restricted-private transport checkpoint
 
 An opt-in pinned RFC1918 synthetic GossipSub transport and isolated two-container demo are now available. This does not complete P02: actual independently administered host evidence, hostile remote-load testing, emergency disable procedures, public Internet NAT/bootstrap policy, onboarding and operational signoff are outstanding. All release gates remain blocked. See [P02C_PRIVATE_OVERLAY.md](P02C_PRIVATE_OVERLAY.md).
+
+
+## P02c-2 independent-host execution checkpoint
+
+Operator-specific persistent identity and private configuration CLI, synthetic-only receive/publish commands, offline evidence reviewer, and repeated local separate-process test are provided. **No independent physical-host deployment has been observed**, and reviewer output explicitly reports `remoteHostsVerified:false`. All public safety/release gates remain blocked. See [P02C_INDEPENDENT_HOST_PILOT.md](P02C_INDEPENDENT_HOST_PILOT.md).

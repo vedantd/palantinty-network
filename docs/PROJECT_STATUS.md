@@ -1,3 +1,7 @@
+## P02c-2 operator-run independent-host pilot tooling
+
+Standalone `pilot:preflight`, `pilot:observe`, `pilot:publish`, and `pilot:review` commands use independently provisioned persistent libp2p identities, strict private config, synthetic-only reporting and offline receipt matching. A two-process localhost test covers identity reuse, receipt and offline publisher failure. **No independently operated physical-host run or VPN/firewall drill has been executed**; the release evidence ledger remains blocked. See [P02C_INDEPENDENT_HOST_PILOT.md](P02C_INDEPENDENT_HOST_PILOT.md).
+
 ## P02c-1 pinned private-overlay synthetic GossipSub
 
 The synthetic GossipSub factory now offers **explicit RFC1918 private-overlay opt-in** requiring both independently pinned Noise Peer IDs and exact private source IPs. A separate two-container internal-bridge demo exercises encrypted GossipSub and sanitized synthetic delivery. This is **not** a public listener or proof of independently administered physical-host operation. See [P02C_PRIVATE_OVERLAY.md](P02C_PRIVATE_OVERLAY.md). Both public release profiles remain blocked.
