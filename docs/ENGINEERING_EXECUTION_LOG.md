@@ -1,3 +1,10 @@
+## 2026-11-07 — P03d verified CI and merge evidence
+
+- **PR:** #62 P03d offline startup-readiness inspection, head `6730263e17109b19439202fd93de18e22b0685bf`, squash merged to `main` as `49078b9e8ca6f3eec4df493812e11b7706db7e5c` after successful checks.
+- **CI:** GitHub Actions `test` run [42357868052](https://github.com/vedantd/palantinty-network/actions/runs/42357868052), completed **success**; `node-tests` job `128359811468` passed `npm test`, synthetic demos, private-container checks and the public-release-gates assertion. CI is not independent physical-host evidence.
+- **Decision:** Preserve ADR-P03d-001 as read-only, operator-reviewed inspection. No runtime authorization, live trust mutation or public admission. Next slice should consider an independently tested private discovery mechanism without widening listeners or trust.
+- **Outstanding:** Snapshot TOCTOU and revocation race, runtime not integrated, no independently administered physical-host test, no real BLE ingestion, public release gates blocked.
+
 ## 2026-11-07 — P03d offline private startup-readiness inspection (CI pending)
 
 - **Starting state:** `main` at `7524de1aed5388f9c55625191bd9443c53c4c2bf`; no open PRs. Inspected P03c audit, P03a ledger, P02c host config and emergency-stop operations, existing tests, project status and prior CI evidence.
