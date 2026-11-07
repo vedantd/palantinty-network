@@ -73,6 +73,10 @@ Adds an automated two-process localhost baseline → outage → recovery test, l
 A bounded, durable offline candidate/approve/revoke registry establishes operator-reviewed private synthetic peer state, with no network advertising, no runtime-config activation and no open enrollment. See [P03_PRIVATE_ENROLLMENT.md](P03_PRIVATE_ENROLLMENT.md). P03 public lifecycle and all release gates remain incomplete.
 
 
+## H0 security hardening and refreshed engineering plan (2026-11-07)
+
+The standalone private P02c synthetic pilot now requires an approved local P03a enrollment ledger entry before startup and polls for revocation and local policy drift. This closes the earlier **advisory-only** gap for that pilot but does **not** close public admission, physical-host, release supply-chain or real-sensor gates. The separate P03d audit API remains read-only. See [targeted findings](HARDENING_AUDIT_2026_11_07.md) and the [prioritized next slices](EXECUTION_ROADMAP_NEXT.md); all release gate statuses remain blocked.
+
 ## P03b operator-reviewed peer activation staging
 
 Only approved private peer pins from an explicitly reviewed P03a ledger revision may be staged into a new pilot configuration. The running process does not reload it automatically. Public enrollment, automated discovery and real sensor sharing remain disabled. See [P03_PRIVATE_PEER_STAGING.md](P03_PRIVATE_PEER_STAGING.md).
