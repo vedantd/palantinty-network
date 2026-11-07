@@ -1,5 +1,5 @@
 import path from 'node:path';
-import {lstatSync,existsSync,openSync,writeFileSync,closeSync,
+import {lstatSync,openSync,writeFileSync,closeSync,
  readFileSync,unlinkSync} from 'node:fs';
 
 const FILE='PILOT_DISABLED.json';
@@ -21,7 +21,8 @@ export function assertPrivatePilotDir(stateDir){
 }
 export function isPilotDisabled(stateDir){
  assertPrivatePilotDir(stateDir);
- return existsSync(pilotStopPath(stateDir));
+ try{lstatSync(pilotStopPath(stateDir));return true;}
+ catch(error){if(error.code==='ENOENT')return false;throw error;}
 }
 export function assertPilotEnabled(stateDir){
  if(isPilotDisabled(stateDir))
@@ -48,7 +49,7 @@ export function disablePilot(stateDir,{reason='emergency-stop',revokedPeerId=nul
     (reason==='emergency-stop'&&revokedPeerId!==null))
   throw Error('Invalid local pilot disable reason');
  const p=pilotStopPath(stateDir);
- if(existsSync(p))return Object.freeze({disabled:true,newlyDisabled:false});
+ if(isPilotDisabled(stateDir))return Object.freeze({disabled:true,newlyDisabled:false});
  const entry={schema:'palantiny.p02c-local-stop.v1',reason,revokedPeerId,
   createdAt:new Date().toISOString()};
  const fd=openSync(p,'wx',0o600);
