@@ -1,3 +1,4 @@
+import { summarizeLocalMeasurementQuality } from './measurement-quality.mjs';
 import { ActivityAggregator } from './aggregator.mjs';
 import { buildPublishableObservation } from './privacy.mjs';
 
@@ -71,6 +72,9 @@ export class LocalActivityPipeline {
   diagnostics() {
     return Object.freeze({ ...this.metrics, pending: this.pending.length, connected: this.connected,
       retiredWindowsDropped: this.aggregator.droppedClosedWindows });
+  }
+  measurementQuality() {
+    return summarizeLocalMeasurementQuality(this.diagnostics());
   }
   revokeConsent() {
     this.policy = { ...this.policy, consent: false };
