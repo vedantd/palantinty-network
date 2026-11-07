@@ -44,7 +44,8 @@
     "indexer:backup": "node apps/private-indexer-backup.mjs backup",
     "indexer:restore": "node apps/private-indexer-backup.mjs restore",
     "network:region-dht": "node apps/private-region-discovery-demo.mjs",
-    "network:region-query": "node apps/private-region-query-demo.mjs"
+    "network:region-query": "node apps/private-region-query-demo.mjs",
+    "network:region-resilience": "node apps/private-region-resilience-demo.mjs"
   },
   "license": "MIT",
   "dependencies": {
