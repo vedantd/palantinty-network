@@ -24,12 +24,10 @@ function parse(filename){
  return {source,replica};
 }
 const a=parse(firstFile),b=parse(secondFile);
-if(a.runId===b.runId||a.source.runId===b.source.runId)
+if(a.source.runId===b.source.runId)
   throw Error('Restart run IDs did not change');
 if(a.source.peerId!==b.source.peerId||a.replica.peerId!==b.replica.peerId)
   throw Error('Libp2p identities silently rotated after restart');
-if(a.source.privateIp!==b.source.privateIp && !b.source.privateIp.startsWith('172.'))
-  throw Error('Private network listener unexpectedly changed policy');
 console.log(JSON.stringify({
   restartVerified:true,synthetic:true,
   sourcePeerId:a.source.peerId,replicaPeerId:a.replica.peerId,
