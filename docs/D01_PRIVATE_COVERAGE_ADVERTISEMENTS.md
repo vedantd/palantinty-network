@@ -8,6 +8,6 @@ This is an **offline validation primitive**, not a DHT provider record, online e
 
 Verification: `node --test tests/private-coverage-advert.test.mjs` and full CI. Supersedes the earlier PR #75 version, where a valid public `KeyObject` was erroneously passed to `createPublicKey` and rejected by Node.js; the verifier now consumes existing public keys directly, supports public PEM trust anchors, and rejects private or wrong-algorithm anchors. Tests cover acceptance, tampering, TTL expiry, signer removal and malformed trust stores. Next D01 slice: explicit reviewed peer-ID/key binding and signed address policy; only then private DHT candidate discovery (D02). Release gates stay blocked.
 
-## D01a synthetic routing-key compatibility (2026-11-07; PR #89 pending)
+## D01a synthetic routing-key compatibility (merged PR #89; 2026-11-07)
 
 For new private synthetic routing, produce deterministic `syn:<scenario>-cXX` fictional keys with [the D01a helper and ADR](ADR_D01A_SYNTHETIC_REGIONS.md). Generated keys are valid region entries for this unchanged signed-advertisement format. Legacy offline `syn:fictional-a` signatures remain accepted here for existing test compatibility; **they are not valid new D01a routing keys**. A SHA-256 routing digest is neither a CID nor an actual libp2p DHT provider record. No real location coarsening, privacy review or peer identity/key binding exists yet.

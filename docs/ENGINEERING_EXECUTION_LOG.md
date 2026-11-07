@@ -1,9 +1,9 @@
-## 2026-11-07 — D01a canonical fictional region routing keys (PR #89 pending)
+## 2026-11-07 — D01a canonical fictional region routing keys (verified PR #89)
 
 - **Scope:** deterministic local fictional region identifiers only, with a bounded scenario/cell index and a domain-separated SHA-256 digest for a future private DHT adapter. No real-location lookup or sensor ingestion.
 - **Implementation:** `syntheticRegionKey`, `parseSyntheticRegionKey`, `syntheticCoverageRegions`, `syntheticRegionRoutingDigest`; strict extra-field refusal, 64 bounded cells per fictional scenario and sorted maximum 16 coverage records.
 - **Integration:** existing D01b private Ed25519 coverage adverts accept generated keys; legacy `syn:fictional-a` examples remain supported by the old offline signing protocol, but are not canonical routing keys. [ADR](ADR_D01A_SYNTHETIC_REGIONS.md).
-- **Tests:** deterministic round-trip, malformed geolocation/coordinate rejection, coverage signing/verifying, stable domain-separated routing keys; full GitHub CI pending.
+- **Tests:** deterministic round-trip, malformed geolocation/coordinate rejection, coverage signing/verifying, stable domain-separated routing keys; full [GitHub Actions run 42413051412](https://github.com/vedantd/palantinty-network/actions/runs/42413051412) **passed 226/226 tests**, including P02c/M10 private Docker integration. [PR #89](https://github.com/vedantd/palantinty-network/pull/89) merged as `3b4b8451220c6b518c7afc91dc7b7a9aff974dfe`.
 - **Residual:** only fictional region keys and non-secret digests; real coarse-grain geography, signed libp2p identity binding, DHT provider semantics, independent indexer participation and all launch gates remain unsolved. D01a **partial**, public synthetic 0/6 and real 0/7.
 
 ## 2026-11-07 — H02b private old-ID tombstone and candidate-only rotation (verified PR #88)

@@ -1,6 +1,6 @@
-## D01a fictional-only canonical region routing (PR #89; CI pending)
+## D01a fictional-only canonical region routing (verified PR #89; 2026-11-07)
 
-A new strict helper generates `syn:<scenario>-cXX` canonical **fictional** regional keys, sorted coverage lists, and a domain-separated digest suitable as input to a future private DHT adapter. New tests exercise signed coverage with these generated keys. This is not a geographic coordinate mapping, proof of actual indexer location, CID/provider advertisement, real BLE model, or public network. See [D01a ADR](ADR_D01A_SYNTHETIC_REGIONS.md). D01a is **partial**; all six synthetic and seven real-sensor gates remain blocked.
+[PR #89](https://github.com/vedantd/palantinty-network/pull/89) merged after full [CI run 42413051412](https://github.com/vedantd/palantinty-network/actions/runs/42413051412) passed **226/226 tests** including both private Docker suites. A new strict helper generates `syn:<scenario>-cXX` canonical **fictional** regional keys, sorted coverage lists, and a domain-separated digest suitable as input to a future private DHT adapter. New tests exercise signed coverage with these generated keys. This is not a geographic coordinate mapping, proof of actual indexer location, CID/provider advertisement, real BLE model, or public network. See [D01a ADR](ADR_D01A_SYNTHETIC_REGIONS.md). D01a is **partial**; all six synthetic and seven real-sensor gates remain blocked.
 
 ## H02b private peer identity rotation (verified PR #88; 2026-11-07)
 
