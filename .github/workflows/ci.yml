@@ -20,6 +20,7 @@ jobs:
       - run: npm run network:demo
       - run: npm run network:durable
       - run: npm run network:gossip
+      - run: timeout 35s npm run network:synthetic
       - run: npm run network:reconnect
       - run: npm run network:replay
       - run: timeout 35s npm run network:dht
