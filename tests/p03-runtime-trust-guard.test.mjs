@@ -10,6 +10,7 @@ import {openPersistentPeerIdentity} from '../src/operator-identity.mjs';
 import {initializePeerLedger,proposePrivatePeer,approvePrivatePeer,
  revokePrivatePeer} from '../src/p03-private-peer-ledger.mjs';
 import {assertApprovedPrivatePilot,watchApprovedPrivatePilot} from '../src/p03-runtime-trust-guard.mjs';
+import {runPrivatePilotOperation} from '../src/p03-private-operation-gate.mjs';
 
 async function port(){
  const server=net.createServer();
@@ -169,5 +170,76 @@ test('watchdog permanently trips on approved peer config drift even after rollba
    assert.throws(()=>guard.check(),/trust revoked/);
    assert.equal(trips,1);
   }finally{guard.close();}
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+
+test('private asynchronous dial refuses success when approval is revoked during await',async()=>{
+ const f=await setup();let trips=0,started=0;
+ try{
+  enroll(f);
+  const guard=watchApprovedPrivatePilot(f.configPath,{
+   onTrip:()=>trips++,intervalMs:5000
+  });
+  try{
+   await assert.rejects(
+    runPrivatePilotOperation(()=>guard.check(),async()=>{
+     started++;
+     // Emulates a network dial already in flight when the operator revokes.
+     await Promise.resolve();
+     revokePrivatePeer(f.state,f.config.pilotId,f.remote.peerId);
+     return {connected:true};
+    }),
+    /not approved|changed|revoked/i
+   );
+   assert.equal(started,1,'network operation really started');
+   assert.equal(guard.tripped(),true);
+   assert.equal(trips,1);
+   assert.throws(()=>guard.check(),/trust revoked/);
+  }finally{guard.close();}
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+test('private asynchronous publish cannot claim success after a pinned seed changes',async()=>{
+ const f=await setup();let trips=0;
+ try{
+  enroll(f);
+  const guard=watchApprovedPrivatePilot(f.configPath,{
+   onTrip:()=>trips++,intervalMs:5000
+  });
+  try{
+   await assert.rejects(runPrivatePilotOperation(()=>guard.check(),async()=>{
+    const changed={...f.config,remoteSeed:
+      '/ip4/127.0.0.1/tcp/40197/p2p/'+f.remote.peerId};
+    writeFileSync(f.configPath,JSON.stringify(changed));
+    await Promise.resolve();
+    return {reportId:'synthetic-only'};
+   }),/not approved|changed|revoked/i);
+   writeFileSync(f.configPath,JSON.stringify(f.config));
+   assert.throws(()=>guard.check(),/trust revoked/);
+   assert.equal(trips,1);
+  }finally{guard.close();}
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+test('precheck denies an unauthorized operation; postcheck also runs on transport failure',async()=>{
+ const f=await setup();let trips=0,calls=0;
+ try{
+  enroll(f);
+  const ok=watchApprovedPrivatePilot(f.configPath,{
+   onTrip:()=>trips++,intervalMs:5000
+  });
+  try{
+   const transportError=new Error('expected network timeout');
+   await assert.rejects(runPrivatePilotOperation(()=>ok.check(),async()=>{
+    calls++;
+    throw transportError;
+   }),error=>error===transportError);
+   assert.equal(calls,1);
+   assert.equal(ok.tripped(),false);
+   revokePrivatePeer(f.state,f.config.pilotId,f.remote.peerId);
+   await assert.rejects(runPrivatePilotOperation(()=>ok.check(),async()=>{
+    calls++;
+   }),/not approved|changed|revoked/i);
+   assert.equal(calls,1,'no new network action while revoked');
+   assert.equal(trips,1);
+  }finally{ok.close();}
  }finally{rmSync(f.root,{recursive:true,force:true});}
 });
