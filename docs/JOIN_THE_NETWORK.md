@@ -2,7 +2,7 @@
 
 **Palantiny** by [Narasimha (@narasim-teja)](https://github.com/narasim-teja/palantiny) is an independent local-first BLE sensing application. **Palantiny-Network** is a separate open-source research extension that aims to connect *independently operated Palantiny installations* through locally aggregated, delayed, signed regional observations. It is **not** an upstream fork, partnership, or endorsement.
 
-> **Current reality:** You cannot join a public Palantiny network yet. There is no public relay, automatic node registration, verified location enrollment, real sensor-to-network integration, or privacy-reviewed real-data deployment. The multi-process private network and regional dashboard are **synthetic-only, loopback-local demonstrations**.
+> **Current reality:** You cannot join a public Palantiny network yet. There is no public relay, automatic node registration, verified location enrollment, real sensor-to-network integration, or privacy-reviewed real-data deployment. The multi-process private network and regional dashboard are **synthetic-only demonstrations**, including an isolated, permissioned Docker bridge network. **They are not publicly joinable.**
 
 ![Proposed many-to-one regional flow](../assets/palantiny-network-overview.svg)
 
@@ -37,6 +37,6 @@
 
 One Palantiny helps someone understand *their local environment*. Connecting many independent Palantinies **could** help a community study how places change over time while minimizing tracking. That is the experiment—not an operational claim.
 
-[Editable Excalidraw architecture](../assets/palantiny-network-overview.excalidraw) · [Editable participant flow](../assets/palantiny-network-participation.excalidraw) · [Project status](PROJECT_STATUS.md) · [Evidence-gated roadmap](ROADMAP_2026.md)
+[Editable Excalidraw architecture](../assets/palantiny-network-overview.excalidraw) · [Editable participant flow](../assets/palantiny-network-participation.excalidraw) · [Project status](PROJECT_STATUS.md) · [Evidence-gated roadmap](ROADMAP_2026.md) · [Public participation phases](PUBLIC_PARTICIPATION_ROADMAP.md)
 
 **Wire compatibility:** existing `pulsemesh.*` schema and protocol strings are retained internally to avoid breaking signed reports and persisted databases. This is separate from user-facing naming.

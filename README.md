@@ -178,6 +178,19 @@ The CI private-network pilot now runs twice while retaining **both operators' id
 
 [Restart-drill evidence and physical-host checklist](docs/M10B_RESTART_DRILL.md).
 
+### Public participation roadmap: **not yet an open network**
+
+The source is public. An untrusted volunteer **cannot yet join a production network**, and real BLE observations must not be shared. We plan a public synthetic testnet first, followed separately by an evidence-gated sensing pilot.
+
+[Public participation roadmap](docs/PUBLIC_PARTICIPATION_ROADMAP.md) · [Threat model](docs/PUBLIC_THREAT_MODEL.md) · [Release evidence ledger](config/public-release-gates.json)
+
+```bash
+npm run release:check -- open-synthetic-testnet
+npm run release:check -- public-real-sensing
+```
+
+A blocked check exits nonzero deliberately.
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.

@@ -12,6 +12,10 @@ jobs:
           node-version: '22'
       - run: npm install --no-audit --no-fund
       - run: npm test
+      - name: Confirm both public release profiles remain gated
+        run: |
+          npm run release:check -- open-synthetic-testnet --assert-blocked
+          npm run release:check -- public-real-sensing --assert-blocked
       - run: npm run demo
       - run: npm run network:demo
       - run: npm run network:durable
