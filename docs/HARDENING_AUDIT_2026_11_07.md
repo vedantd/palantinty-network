@@ -28,3 +28,11 @@ The standalone operator-run **P02c private synthetic pilot** must have a valid P
 For every future slice, include explicit risk hypothesis, small patch, positive/negative tests, GitHub CI run ID, ADR in engineering log, issue or decision for uncovered gaps, manual multi-host evidence if required, and precise release-gate status. New code merged into `main` is not automatically a passed release gate.
 
 Evidence status remains **0/6 synthetic public-release gates** and **0/7 real-sensing gates**. Review the machine-readable [release ledger](../config/public-release-gates.json) before any launch announcement.
+
+### Tracked remediation work
+
+- [#65 — H1 reproducible dependency and release supply chain](https://github.com/vedantd/palantinty-network/issues/65)
+- [#66 — H2 transactional revocation and concurrency/fault testing](https://github.com/vedantd/palantinty-network/issues/66)
+- [#67 — P02c independently administered two-host pilot evidence](https://github.com/vedantd/palantinty-network/issues/67)
+
+GitHub Actions now runs with an explicitly **read-only repository token** and a bounded job timeout. These controls do **not** replace a lockfile, SBOM, attested release artifact, vulnerability triage, or independent security review.
