@@ -101,6 +101,16 @@ npm run network:gossip
 
 See [M07 scope, threat boundaries and decisions](docs/M07_GOSSIPSUB.md).
 
+### M08a: Controlled reconnect and observed offline message loss
+
+A real three-peer GossipSub demonstration shows one indexer missing a signed synthetic report while disconnected. Restoring its connection does **not** reconstruct that history—M09 needs anti-entropy.
+
+```bash
+npm run network:reconnect
+```
+
+See [M08 reconnect design and limitations](docs/M08_RECONNECT.md).
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.
