@@ -37,8 +37,12 @@ try{
  b.services.pubsub.subscribe(syntheticTopic(area));
  await a.peerStore.patch(c.peerId,{multiaddrs:c.getMultiaddrs()});
  await a.dial(c.peerId);
- await until(()=>a.services.pubsub.getSubscribers(observer.topic).length>0,
-  'synthetic topic subscription');
+ await until(()=>a.services.pubsub.getSubscribers(observer.topic)
+  .some(peer=>peer.toString()===c.peerId.toString()),
+  'actual observer synthetic topic subscription');
+// A subscribed relay is not proof that the intended observing peer has joined.
+// Allow a GossipSub heartbeat before emitting the first test report.
+await sleep(1_200);
  for(const [i,key]of keys.entries()){
   const envelope=signReport({schema:'pulsemesh.activity.v1',
     area,bucketStart:now-20*60_000,bucketSeconds:60,
