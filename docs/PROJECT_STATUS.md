@@ -1,4 +1,6 @@
-# PulseMesh — engineering and product checkpoint
+# Palantiny-Network — engineering and product checkpoint
+
+**Provenance and purpose:** Palantiny is Narasimha's independent local BLE sensor project. Palantiny-Network adds a separate privacy-preserving signed reporting and regional network experiment on top of compatible local sensor output. The network does **not** change Palantiny's code or imply upstream endorsement. The planned participant journey is in [JOIN_THE_NETWORK.md](JOIN_THE_NETWORK.md). Editable topology diagram: [Excalidraw](../assets/palantiny-network-overview.excalidraw).
 
 **As of 2026-11-06.** This is a research prototype, not a live distributed
 sensor network. This document is the current decision record for maintainers
