@@ -1,6 +1,6 @@
-# PulseMesh
+# Palantiny-Network
 
-**A community-operated, privacy-first sensor network for understanding how places change over time.**
+**Connecting independent Palantiny sensors into a community-operated, privacy-conscious network of delayed, regional activity signals.**
 
 [![CI](https://github.com/vedantd/pulsemesh/actions/workflows/ci.yml/badge.svg)](https://github.com/vedantd/pulsemesh/actions/workflows/ci.yml) ![Status](https://img.shields.io/badge/status-experimental-orange) ![Runtime](https://img.shields.io/badge/runtime-Node.js%2022%2B-blue)
 
@@ -8,11 +8,23 @@
 
 ![Where the idea came from: recreated excerpt of a discussion with the Palantiny author](assets/origin-conversation.svg)
 
-*Origin: [Palantiny](https://github.com/narasim-teja/palantiny) by [@narasim-teja](https://github.com/narasim-teja) inspired a discussion about independently run sensors publishing **anonymous counts rather than device identities**. The image above is a recreated text excerpt, **not the original screenshot**. PulseMesh is an independent experiment; no author partnership is implied.*
+*Origin: [Palantiny](https://github.com/narasim-teja/palantiny) by [Narasimha (@narasim-teja)](https://github.com/narasim-teja) inspired a discussion about independently run sensors exploring **aggregate activity rather than device identities**. The image above is a recreated text excerpt, **not the original screenshot**. Palantiny-Network is an independent experiment; no author partnership is implied.*
 
 **Evidence-gated roadmap:** [Phase A research and field calibration → Phase B trusted multi-node pilot → Phase C product experience](docs/ROADMAP_2026.md). **Tweet demo is synthetic-only** and does not represent deployed sensors.
 
 **Current project checkpoint (read before starting new work):** [Implemented scope, unvalidated assumptions, technical debt and next product decisions](docs/PROJECT_STATUS.md). Coding agents should also read [CODEX.md](CODEX.md).
+
+## One Palantiny is a local sensor. Many Palantinies could become a network.
+
+[Palantiny](https://github.com/narasim-teja/palantiny) is Narasimha's independent, open-source, local-first BLE sensing application. **Palantiny-Network is our separate extension:** a local privacy adapter, signed aggregate queue, private peer-to-peer transport, and regional aggregation/query prototype. We do not fork, redistribute or control Palantiny, and upstream has not endorsed this work.
+
+![Many Palantiny installations flowing through local privacy gates into a regional activity view](assets/palantiny-network-overview.svg)
+
+[Edit the Excalidraw network diagram](assets/palantiny-network-overview.excalidraw) · [How participation would work](docs/JOIN_THE_NETWORK.md) · [Editable participation diagram](assets/palantiny-network-participation.excalidraw)
+
+**Prototype status:** A macOS scan integration has been exercised and a **synthetic, loopback-only** multi-node network has been demonstrated. **There is no live mesh of Palantiny installations to join yet.** Volunteer enrollment and consented real-data exchange belong to the planned permissioned pilot. The drawing is a *proposed connection model*, not deployed topology.
+
+**Naming:** The project name is **Palantiny-Network** (repo/package slug: `palantiny-network`). Existing `pulsemesh.*` protocol/schema identifiers remain unchanged for backward compatibility; they are internal versioned wire formats, not user-facing branding. The GitHub repository URL currently retains its original `vedantd/pulsemesh` slug until repository settings are renamed.
 
 **Engineering audit:** [M01–M06 review, hardening decisions, and remaining risks](docs/ENGINEERING_REVIEW.md).
 
@@ -22,7 +34,7 @@
 
 ## Why build this?
 
-Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi, or other supported sensor:
+Imagine a future network that people can join by running Palantiny plus a separately opted-in network adapter on supported hardware:
 
 1. **Sense locally.** A node passively observes nearby Bluetooth Low Energy advertisements, subject to operating-system permissions.
 2. **Aggregate privately.** On-device software creates time-bucketed, coarse-location **activity signals** and discards identifying fields before any potential release.
@@ -34,24 +46,26 @@ Imagine a network anyone can join by installing an app on a laptop, Raspberry Pi
 ### Intended system
 
 ```text
-   Palantiny / Linux / future mobile sensors
-                       |
-                   local events
-                       v
-            +----------------------+
-            | PulseMesh node       |
-            | bounded BLE windows  |
-            | privacy export gate  |
-            | opt-in, coarse area  |
-            +----------------------+
-                       |
-               signed aggregates     (SYNTHETIC ONLY)
-                       v
-         private loopback libp2p    (EXPERIMENTAL)
-                       |
-           durable regional index   (SYNTHETIC ONLY)
-                       v
-           fictional zone dashboard (LOCAL DEMO)
+  Palantiny A       Palantiny B       Palantiny C
+  (independent installations / proposed contributors)
+       |                |                |
+       v                v                v
+  local privacy     local privacy     local privacy
+  + opt-in gate     + opt-in gate     + opt-in gate
+       |                |                |
+       +----------- signed coarse reports --------+
+                            |
+              private encrypted libp2p
+                  (synthetic local demo)
+                            |
+                durable regional index
+                  (synthetic local demo)
+                            |
+                 fictional zone insights
+                  (localhost only today)
+
+  NOT YET: live volunteer nodes, trusted locations,
+           real-sensor P2P publishing or public map
 ```
 
 **What does not leave a sensor:** raw Bluetooth identities, MAC addresses, manufacturer payloads, device names, Find My keys, Wi-Fi BSSIDs, or device-level location trails. Simple thresholding or coarse cells alone do not guarantee anonymity. Sensor locations and P2P metadata introduce additional privacy considerations.
@@ -193,9 +207,9 @@ The calibration export remains local: it is **not** a P2P publishable payload.
 
 ### Try the Palantiny integration on macOS
 
-The first real hardware validation uses a local Unix socket relay between Palantiny's native scanner and its Bun server. You also need macOS 14+, Bun, and Xcode Command Line Tools.
+The macOS integration uses a local Unix socket relay between Palantiny's native scanner and its Bun server. You also need macOS 14+, Bun, and Xcode Command Line Tools.
 
-**Follow [M01: macOS integration guide](docs/PALANTINY_INTEGRATION.md)** for the exact three-terminal setup and permission checks. This integration has been tested with simulated sockets, **not verified with a real Mac sensor yet**.
+**Follow [M01: macOS integration guide](docs/PALANTINY_INTEGRATION.md)** for the exact three-terminal setup and permission checks. The local relay itself was exercised with simulated sockets; the separate M01b CoreBluetooth scan workflow was also verified on macOS hardware. Neither experiment connects real sensor data to a remote network.
 
 ## Roadmap
 
@@ -209,9 +223,9 @@ The first real hardware validation uses a local Unix socket relay between Palant
 
 Track work in [GitHub Issues](https://github.com/vedantd/pulsemesh/issues) and read the [detailed roadmap](docs/ROADMAP.md) and [security notes](SECURITY.md).
 
-## Relationship to Palantiny
+## Relationship to upstream Palantiny
 
-[Palantiny](https://github.com/narasim-teja/palantiny) is an independent, **local-first** open-source application by Teja Reddy. PulseMesh currently uses its documented event format as an integration target, **without copying or distributing Palantiny's source code**. We plan to propose a narrow, optional upstream event hook if its maintainer is interested. No upstream PR or endorsement is assumed.
+[Palantiny](https://github.com/narasim-teja/palantiny) is an independent, **local-first** open-source application by Narasimha (@narasim-teja). Palantiny-Network currently uses its documented event format as an integration target, **without copying or distributing Palantiny's source code**. We plan to propose a narrow, optional upstream event hook if its maintainer is interested. No upstream PR or endorsement is assumed.
 
 ## Contributing
 

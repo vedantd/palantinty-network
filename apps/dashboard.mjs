@@ -6,7 +6,7 @@ if(!Number.isSafeInteger(port)||port<0||port>65535)throw Error('Invalid PORT');
 const model=createSyntheticDashboard();
 const server=createDashboardServer(model);
 server.listen(port,'127.0.0.1',()=>{
- console.log('PulseMesh synthetic dashboard: http://127.0.0.1:'+server.address().port);
+ console.log('Palantiny-Network synthetic dashboard: http://127.0.0.1:'+server.address().port);
  console.log('Synthetic only. No real sensor data, Internet listener, or telemetry.');
 });
 let closing=false;

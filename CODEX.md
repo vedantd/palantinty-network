@@ -1,10 +1,14 @@
-# Coding-agent context — PulseMesh
+# Coding-agent context — Palantiny-Network
 
 **Start here:** [Project checkpoint](docs/PROJECT_STATUS.md) (what is
 implemented, what is not, technical debt, validation gaps and pending product
 decisions). Also read [README](README.md), [security notes](SECURITY.md),
 [measurement quality](docs/MEASUREMENT_QUALITY.md), and
 [storage recovery policy](docs/STORAGE.md).
+
+## Naming and provenance
+
+Canonical project name: **Palantiny-Network**. It extends the independently maintained upstream **Palantiny** project by Narasimha (@narasim-teja). Explain that relationship prominently; never imply upstream endorsement, shared ownership, or an already-public node network. Keep historical `pulsemesh.*` wire/protocol identifiers unchanged unless a separate versioned migration is approved. The GitHub repository URL may still use the old slug until its repository settings are renamed. Source: [JOIN_THE_NETWORK.md](docs/JOIN_THE_NETWORK.md) and [Excalidraw diagrams](assets/palantiny-network-overview.excalidraw).
 
 ## Current operating rules
 

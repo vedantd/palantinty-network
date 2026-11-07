@@ -1,6 +1,6 @@
 # Privacy and security
 
-PulseMesh is an experimental research prototype with macOS BLE sensing
+Palantiny-Network is an experimental research prototype with macOS BLE sensing
 and **local-only** activity aggregation. M03–M06 include a synthetic-only encrypted libp2p loopback sender, a
 SQLite regional indexer, and a localhost-only fictional dashboard.
 **No live sensor data is wired to network transport.**

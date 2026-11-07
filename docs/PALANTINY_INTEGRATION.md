@@ -13,7 +13,7 @@ To reuse it without modifying the original project:
 Palantiny macOS sensor (.app)
        |
        v
-PulseMesh local Unix socket (0600 permissions)
+Palantiny-Network local Unix socket (0600 permissions)
        |                         |
        | same original bytes     +--> private BLE-only event parser
        v                                 |
@@ -34,7 +34,7 @@ In Palantiny's checkout, first run `bun install && bun run sensor:build`.
    PALANTINY_SENSOR=external bun run server
    ```
 
-2. In PulseMesh's checkout, start the local bridge in another terminal.
+2. In Palantiny-Network's checkout, start the local bridge in another terminal.
 Use the actual absolute path to Palantiny's socket:
 
    ```bash
@@ -63,7 +63,7 @@ The first incomplete time window after starting or reconnecting is excluded.
 
 - The relay does not listen on TCP and does not publish to the internet.
 - It forwards original bytes unchanged to Palantiny's existing local server.
-- Only minimized local BLE events feed PulseMesh's aggregator.
+- Only minimized local BLE events feed Palantiny-Network's aggregator.
 - Neither the relay nor aggregation layer should log personal device IDs.
 - Publishing requires a separate opt-in privacy boundary (not enabled by this app).
 - A missing or disconnected upstream terminates the sensor-facing connection.
