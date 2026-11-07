@@ -19,3 +19,4 @@ jobs:
       - run: npm run network:reconnect
       - run: npm run network:replay
       - run: timeout 35s npm run network:dht
+      - run: timeout 35s npm run network:indexer-sync
