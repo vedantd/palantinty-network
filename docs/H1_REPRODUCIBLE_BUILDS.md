@@ -1,6 +1,6 @@
 # H1a — reproducible and integrity-checked Node dependency installation
 
-**Status:** implementation candidate; merge requires GitHub Actions CI. **Scope:** reproducible CI and private synthetic container installs, not a tagged public release or security certification. Public synthetic and real-sensing release gates remain blocked.
+**Status:** merged as [PR #70](https://github.com/vedantd/palantinty-network/pull/70), squash commit `94fbddc0243831c4cc14174f7f5da0f0d37da689`; full [GitHub Actions run 42373905601](https://github.com/vedantd/palantinty-network/actions/runs/42373905601) passed **182/182 tests** and both Docker integration scenarios. **Scope:** reproducible CI and private synthetic container installs, not a tagged public release or security certification. Public synthetic and real-sensing release gates remain blocked.
 
 ## Why this matters
 
