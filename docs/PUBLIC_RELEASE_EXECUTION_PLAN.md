@@ -1,3 +1,9 @@
+## D03b audited private resilience checkpoint · 2026-11-07
+
+[PR #96](https://github.com/vedantd/palantinty-network/pull/96) merged with full green [CI 42425997251](https://github.com/vedantd/palantinty-network/actions/runs/42425997251) and [CI 42426000888](https://github.com/vedantd/palantinty-network/actions/runs/42426000888). DHT-discovered private indexers can now return a synthetic, thresholded, cryptographically signed regional aggregate even when one out of three indexer instances stops, **provided two authenticated responders agree**. Every available reply is checked for split-brain; invalid or unauthorized data cannot be silently excluded to manufacture agreement. This is private same-host outage tolerance, **not** cross-host independent quorum security, public release, or actual regional sensing validity.
+
+The formal tracker still reports **3 done, 11 partial, 7 planned, 7 externally blocked**. D03b remains partial, with an additional reviewed code-and-CI evidence link. D02b NAT/churn resilience and H03 actual physical hosts remain incomplete; the open synthetic gate ledger remains **0/6 verified**, real sensing **0/7 verified**.
+
 ## D03a audited private query checkpoint · 2026-11-07
 
 The synthetic-only [D03a PR #94](https://github.com/vedantd/palantinty-network/pull/94) merged after two complete green workflows ([run 42423722670](https://github.com/vedantd/palantinty-network/actions/runs/42423722670), [run 42423706799](https://github.com/vedantd/palantinty-network/actions/runs/42423706799)). A four-peer localhost harness now discovers two separately keyed indexers by fictional regional CID, obtains signed, bounded, 2+-signer-thresholded SQLite aggregates from each, and suppresses disagreement and empty history rather than treating missing observations as zero. Formal D03a and D03b have **partial** implementation evidence; neither is completed or deployed on distinct physical hosts.
