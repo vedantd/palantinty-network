@@ -2,6 +2,18 @@
 
 **Plan created:** 2026-11-07. **Scope:** finish a trustworthy, open-source, decentralized network for independent regional activity signals, with an **open synthetic testnet first** and **real BLE-derived observations only after a separate science/privacy/rights review**. This is a dependency-ordered *backlog and release contract*, not a promise of public launch on 2026-11-07.
 
+## Latest audited engineering checkpoint · 2026-11-07
+
+![Evidence-gated project progress](../assets/roadmap-progress.svg)
+
+**Formal tracker:** **3 done**, **5 partial**, **13 planned**, **7 externally blocked** (28 total). These are *slice states*, not percentage completion or an ETA. Current public release gate evidence is **0/6 verified** for the synthetic testnet and **0/7 verified** for real-sensing. A green GitHub Actions run never substitutes for independent operators, field tests, or privacy/security approval.
+
+**Verified recent merges:** [#70 reproducible Node 22 dependencies](https://github.com/vedantd/palantinty-network/pull/70), [#72 immutable CI Actions and CycloneDX SBOM](https://github.com/vedantd/palantinty-network/pull/72), [#76 security regression tests](https://github.com/vedantd/palantinty-network/pull/76), [#77 two-host evidence-manifest validation](https://github.com/vedantd/palantinty-network/pull/77). Last inspected pre-landing-page CI [run 42393874179](https://github.com/vedantd/palantinty-network/actions/runs/42393874179) passed 196 tests and both private Docker suites. **PRs [#74](https://github.com/vedantd/palantinty-network/pull/74) and [#75](https://github.com/vedantd/palantinty-network/pull/75) are not merged**; both need conflict resolution, and #75 previously failed a coverage test.
+
+**Near-term manual engineering order:** resolve #74/#75 with green CI → H02 transactional peer revocation → I01 indexer backup/restore → D01 canonical coarse-region/coverage and key binding → D02 regional provider discovery using existing libp2p Kademlia → D03 authenticated bounded query/comparison → H03 independent-host validation → N01/N02/N03 public synthetic operation hardening. In parallel, finish H01b tagged signed build and vulnerability response. **Do not advance a launch gate from a mock or localhost run.**
+
+**Progress graphic maintenance:** `npm run roadmap:render` regenerates the SVG from the execution tracker and public evidence ledger. `npm test` rejects stale graphics.
+
 ## Architecture contract (preserve throughout)
 
 - Each node owns a persistent cryptographic identity; connections are Noise-encrypted libp2p. A participant is **not automatically an indexer**.
@@ -26,10 +38,10 @@ A completed slice has (1) documented threat/problem statement and ADR, (2) narro
 | F01 | Local synthetic P2P + private indexer replication | F00 | Signed fictional reports, GossipSub and recoverable authorized indexer archives | **partial** (private tested; durability and remote evidence incomplete) |
 | H00 | Local approved peer enforcement | F01 | Unapproved peer refuses startup, revocation interrupts active synthetic node | **done**, PR #64 |
 | H01a | Reproducible Node build | H00 | Audited `package-lock.json`, `npm ci` for CI and Docker, clean repeat installs, Node version policy | **done**, PR #70 / 182 tests |
-| H01b | Release supply chain integrity | H01a | Immutable CI dependencies, SBOM, dependency audit policy, SHA256 and reproducible signed/tagged artifacts, recovery drill | **partial**, pinned CI actions/SBOM merged #72; signed release still blocked |
-| H02a | Crash-safe operator trust storage | H00 | Explicit permission checks, secure atomic state transitions, expected-revision CAS, symlink/partial-write/fault tests | **partial**, #66 |
+| H01b | Release supply chain integrity | H01a | Immutable CI dependencies, SBOM, dependency audit policy, SHA256 and reproducible signed/tagged artifacts, recovery drill | **partial**, pinned CI/SBOM #72 and CI policy regression tests #76 merged; signed release still blocked |
+| H02a | Crash-safe operator trust storage | H00 | Explicit permission checks, secure atomic state transitions, expected-revision CAS, symlink/partial-write/fault tests | **partial**, #66; #74 additional regression tests still open |
 | H02b | Live revocation/identity replacement | H02a | Kill connection under in-flight Noise/publish, no stale pin reuse, tested restart/rotation and manual exit | **partial**, #66 |
-| H03 | Independent two-admin physical-host pilot | H01a,H02b | Two independently controlled machines; VPN/firewall and peer-ID audit; outage, identity, resource and incident evidence | **blocked-external**, #67 |
+| H03 | Independent two-admin physical-host pilot | H01a,H02b | Two independently controlled machines; VPN/firewall and peer-ID audit; outage, identity, resource and incident evidence | **blocked-external**, #67; offline evidence preflight #77 merged, physical-host test not performed |
 | I01 | Indexer backup/restore integrity | H01a,F01 | Snapshot + recovery of SQLite and signed archives, checksum chain and recovery point tests | **planned** |
 | I02 | Indexer archive convergence/failover | I01 | Partitions, conflict/replay, duplicate/expiry, restart, migration, dual-indexer reconciliation | **partial** |
 | I03 | Monitoring and incident operations | H03,I02 | Metrics, rate budgets, runbook, controlled kill, backups, incident contacts, ownership and alert drills | **planned** |
