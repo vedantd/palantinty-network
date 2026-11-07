@@ -12,7 +12,7 @@ import {readP02cHostConfig} from '../src/p02c-host-config.mjs';
 import {openPersistentPeerIdentity} from '../src/operator-identity.mjs';
 import {openLocalIdentity} from '../src/identity.mjs';
 import {signReport} from '../src/protocol.mjs';
-import {assertPilotEnabled,watchPilotStop} from '../src/p02c-pilot-operations.mjs';
+import {assertPilotEnabled,isPilotDisabled,watchPilotStop} from '../src/p02c-pilot-operations.mjs';
 import {assertApprovedPrivatePilot,watchApprovedPrivatePilot} from '../src/p03-runtime-trust-guard.mjs';
 import {createPinnedSyntheticGossipNode} from '../src/pinned-synthetic-node.mjs';
 import {observeSyntheticTopic,publishSynthetic,syntheticTopic} from '../src/synthetic-testnet.mjs';
@@ -69,7 +69,8 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
     onTrip:()=>requestShutdown('local-emergency-stop')
    });
    trustWatch=watchApprovedPrivatePilot(filename,{
-    onTrip:()=>requestShutdown('peer-approval-lost')
+    onTrip:()=>requestShutdown(isPilotDisabled(config.stateDir)?
+      'local-emergency-stop':'peer-approval-lost')
    });
    const checkTrust=()=>{watchdog.check();trustWatch.check();};
    checkTrust();
