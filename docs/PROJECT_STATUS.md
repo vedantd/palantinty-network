@@ -1,3 +1,7 @@
+## P02b-2 global synthetic observer budgets (pre-public)
+
+An application-level per-window global message and byte quota now bounds synthetic observer work across rotated forwarding peer IDs. Replay IDs are remembered in a capped window, and duplicate verified reports never trigger a second observer callback. This does not cap upstream libp2p bandwidth or authenticate sensor provenance. See [P02B_INGRESS_BUDGET.md](P02B_INGRESS_BUDGET.md). Public gates remain blocked.
+
 ## P02b-1 pinned synthetic peer admission (pre-public)
 
 An opt-in loopback-only GossipSub node factory now requires explicit, independently provisioned private keys and authorized PeerIds, with basic connection, stream and dial caps. This is distinct from the existing unrestricted local demo helper. Security and protocol tests exist but **no hostile Internet workload, independently administered host, or public participant admission is validated**. See [P02B_PEER_ADMISSION.md](P02B_PEER_ADMISSION.md). Public release gates remain blocked.
