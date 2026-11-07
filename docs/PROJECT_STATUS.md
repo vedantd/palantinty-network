@@ -1,3 +1,7 @@
+## H1a reproducible synthetic pilot dependency installs (CI pending)
+
+Commits Node 22 npm lockfile v3, exact integrity-pinned resolution for 131 packages, and switches GitHub Actions and both private synthetic Dockerfiles to `npm ci --ignore-scripts`. Includes offline lockfile provenance validator and negative tests, with trusted CI artifact SHA documented. This is **not** a complete supply-chain release process: immutable action/image digests, SBOM, vulnerability triage and signed release artifacts remain H1b. See [H1_REPRODUCIBLE_BUILDS.md](H1_REPRODUCIBLE_BUILDS.md). Public release gates stay blocked.
+
 ## Public-release dependency plan (2026-11-07)
 
 A complete **28-slice** dependency-ordered plan and machine-checked tracker now span build/identity/indexer/discovery/query milestones, an independently gated **open synthetic testnet**, and a separately gated **real-sensor public launch**. Both releases are blocked; an engineering implementation is not an independent operational/rights signoff. See [PUBLIC_RELEASE_EXECUTION_PLAN.md](PUBLIC_RELEASE_EXECUTION_PLAN.md) and `config/release-execution-tracker.json`. The scheduled 2026-11-07 sprint is incremental, not a public-release deadline.
