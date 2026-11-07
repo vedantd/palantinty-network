@@ -13,7 +13,8 @@ test('reject nonlocal or unqualified seed addresses before dialing',()=>{
 test('retries failed seed dial with bounded exponential backoff',async()=>{
  const peer=await createGossipNode();
  try{
-  const address=peer.getMultiaddrs()[0].toString()+'/p2p/'+peer.peerId.toString();
+  const base=peer.getMultiaddrs()[0].toString();
+  const address=base.includes('/p2p/')?base:base+'/p2p/'+peer.peerId.toString();
   const waits=[];
   let attempts=0;
   const remote={dial:async()=>{if(++attempts<3)throw Error('offline');return {ok:true};}};
@@ -30,7 +31,8 @@ test('retries failed seed dial with bounded exponential backoff',async()=>{
 test('reconnect policy rejects invalid parameters',async()=>{
  const peer=await createGossipNode();
  try{
-  const address=peer.getMultiaddrs()[0].toString()+'/p2p/'+peer.peerId.toString();
+  const base=peer.getMultiaddrs()[0].toString();
+  const address=base.includes('/p2p/')?base:base+'/p2p/'+peer.peerId.toString();
   await assert.rejects(()=>connectLocalSeed({dial:()=>{}},address,{attempts:0}),RangeError);
   await assert.rejects(()=>connectLocalSeed({dial:()=>{}},address,{attempts:11}),RangeError);
   await assert.rejects(()=>connectLocalSeed({},address),TypeError);
