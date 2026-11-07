@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="454" viewBox="0 0 960 454" role="img" aria-labelledby="title desc">
 <title id="title">Palantiny-Network public-release roadmap progress</title>
-<desc id="desc">28 tracked slices: 3 done, 8 partial, 10 planned, 7 externally blocked. Synthetic gates 0 of 6 verified; real-sensor gates 0 of 7 verified. Slice statuses are not completion percentages.</desc>
+<desc id="desc">28 tracked slices: 3 done, 9 partial, 9 planned, 7 externally blocked. Synthetic gates 0 of 6 verified; real-sensor gates 0 of 7 verified. Slice statuses are not completion percentages.</desc>
 <rect width="960" height="454" rx="20" fill="#0c172a"/>
 <rect x="1" y="1" width="958" height="452" rx="19" fill="none" stroke="#2b4262"/>
 <text x="42" y="53" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif" font-size="25" font-weight="750" fill="#f1f6ff">Engineering progress</text>
@@ -10,10 +10,10 @@
 <text x="60" y="193" font-size="47" font-weight="750" fill="#34d399">3</text>
 <rect x="262" y="109" width="207" height="111" rx="14" fill="#15253c" stroke="#273e5f"/>
 <text x="280" y="143" font-size="12" font-weight="650" fill="#b4c1d7" letter-spacing=".8">IN PROGRESS</text>
-<text x="280" y="193" font-size="47" font-weight="750" fill="#fbbf24">8</text>
+<text x="280" y="193" font-size="47" font-weight="750" fill="#fbbf24">9</text>
 <rect x="482" y="109" width="207" height="111" rx="14" fill="#15253c" stroke="#273e5f"/>
 <text x="500" y="143" font-size="12" font-weight="650" fill="#b4c1d7" letter-spacing=".8">NOT STARTED</text>
-<text x="500" y="193" font-size="47" font-weight="750" fill="#72809c">10</text>
+<text x="500" y="193" font-size="47" font-weight="750" fill="#72809c">9</text>
 <rect x="702" y="109" width="207" height="111" rx="14" fill="#15253c" stroke="#273e5f"/>
 <text x="720" y="143" font-size="12" font-weight="650" fill="#b4c1d7" letter-spacing=".8">EXTERNAL BLOCKERS</text>
 <text x="720" y="193" font-size="47" font-weight="750" fill="#fb7185">7</text>
@@ -31,7 +31,7 @@
 <rect x="356.64" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>I03: planned</title></rect>
 <rect x="388.11" y="266" width="26.46" height="28" rx="5" fill="#fbbf24"><title>D01a: partial</title></rect>
 <rect x="419.57" y="266" width="26.46" height="28" rx="5" fill="#fbbf24"><title>D01b: partial</title></rect>
-<rect x="451.04" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>D02a: planned</title></rect>
+<rect x="451.04" y="266" width="26.46" height="28" rx="5" fill="#fbbf24"><title>D02a: partial</title></rect>
 <rect x="482.50" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>D02b: planned</title></rect>
 <rect x="513.96" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>D03a: planned</title></rect>
 <rect x="545.43" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>D03b: planned</title></rect>
