@@ -19,7 +19,7 @@ SQLite regional indexer, and a localhost-only fictional dashboard.
   A confidential/threshold aggregation design must be reviewed first.
 - Signatures prove key possession and report integrity, not true measurements,
   unique physical sensors, geolocation, quality, or Sybil resistance.
-- Revoking consent clears **queued** observations; it cannot recall data
+- Revoking consent clears **queued and acknowledged local outbox history**; it cannot recall data
   that has already been delivered or retained by other systems.
 - Do not enable a public map or people-count functionality without field
   calibration and an independent privacy/security review.
@@ -36,3 +36,7 @@ anonymity guarantees.
 
 See [the pre-M07 engineering review](docs/ENGINEERING_REVIEW.md) for
 remaining risks and required field/privacy gates.
+
+## Open-public-network launch gates
+
+Public source code is **not** a public participation network. The untrusted synthetic testnet and subsequent real-data sensor participation are separate release profiles. Both are blocked by default; see [release readiness](config/public-release-gates.json), [public roadmap](docs/PUBLIC_PARTICIPATION_ROADMAP.md), and [public threat model](docs/PUBLIC_THREAT_MODEL.md). The M10 private container network, manual peer-ID provisioning and synthetic dashboards are **not** an authorization to open listeners or publish signed sensor observations. Vulnerability reports should avoid raw Bluetooth logs, MAC addresses, or private sensor coordinates.
