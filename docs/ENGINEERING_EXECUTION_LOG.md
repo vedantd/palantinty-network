@@ -1,3 +1,12 @@
+## 2026-11-07 — H02b private async-operation trust rechecks (PR pending)
+
+- **Starting point:** #83 H02a optional expected-revision CAS and durable directory rename merged with 209/209 CI. Still open #66 for live revocation, rotation and handshake/publish races.
+- **Risk:** an approved publisher could dial/publish after local revocation changed while the operation was awaiting a network response. An observer could report a received report after trust drift.
+- **Change:** add a pre/post-await trust gate for outbound private dial and GossipSub publish; recheck on libp2p connection-open and before synthetic receipt evidence; preserve one-way shutdown after an observed trust failure.
+- **Tests:** in-flight revocation and seed change with real private ledger/watchdog state; precheck refuses unauthorized network action; transport errors remain clear when trust stays valid. See [ADR-H02b-003](ADR_H02B_ASYNC_TRUST_BOUNDARIES.md).
+- **Limits:** postchecking cannot undo a message already sent or make revocation atomic; the watchdog and host firewall remain necessary. No public listeners, public enrollment, real BLE or launch gate updates.
+- **CI/merge:** Pending GitHub Actions. Do not mark H02b done.
+
 ## 2026-11-07 — H02a ledger compare-and-swap and durable rename (verified PR #83)
 
 - **Starting point:** merged H2 watcher regression [#80](https://github.com/vedantd/palantinty-network/pull/80) and offline coverage [#81](https://github.com/vedantd/palantinty-network/pull/81). H02a/H02b remain partial.
