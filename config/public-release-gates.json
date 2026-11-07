@@ -1,0 +1,96 @@
+{
+  "schema": "palantiny.public-release-gates.v1",
+  "updatedOn": "2026-11-06",
+  "disclaimer": "Evidence ledger only; not a runtime authorization system or independent security certification.",
+  "profiles": {
+    "open-synthetic-testnet": {
+      "description": "Allow volunteers to run synthetic-only peers; no real sensing or untrusted measured data accepted.",
+      "gates": [
+        {
+          "id": "independent-host-runtime",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "Current operator service is Docker harness; no independently deployed, provisioned host run."
+        },
+        {
+          "id": "network-abuse-controls",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "Public connection, message and stream resource policies are not validated."
+        },
+        {
+          "id": "untrusted-peer-fault-tests",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "Internet-facing hostile peers, flood tests and disconnect recovery not tested."
+        },
+        {
+          "id": "public-enrollment-exit",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "No documented/revocable public node enrollment and safe opt-out protocol."
+        },
+        {
+          "id": "incident-operations",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "No 24/7 ownership, monitoring, emergency shutdown, backup or abuse-response procedure."
+        },
+        {
+          "id": "release-supply-chain",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "No tagged artifact integrity, reproducible release or vulnerability response drill."
+        }
+      ]
+    },
+    "public-real-sensing": {
+      "description": "Real BLE-derived regional observations may be shared beyond a controlled, consented pilot.",
+      "prerequisite": "open-synthetic-testnet",
+      "gates": [
+        {
+          "id": "field-calibration",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "No independently held-out multi-site field calibration evidence."
+        },
+        {
+          "id": "privacy-independent-review",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "No independent privacy review covering stable signer metadata, sparse observations and inference."
+        },
+        {
+          "id": "participant-informed-consent",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "No real-data opt-in UX, versioned consent receipt or withdrawal tests."
+        },
+        {
+          "id": "retention-and-deletion",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "Replicated signed archives cannot currently be remotely retracted with guaranteed semantics."
+        },
+        {
+          "id": "anti-sybil-location-and-independence",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "Valid signatures do not prove unique sensor, independent operator or physical location."
+        },
+        {
+          "id": "legal-venue-approval",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "No site permissions and jurisdiction-specific privacy/legal review."
+        },
+        {
+          "id": "safe-regional-publication",
+          "status": "blocked",
+          "evidence": [],
+          "reason": "No independently reviewed sparse-cell suppression/coverage confidence release policy."
+        }
+      ]
+    }
+  }
+}
