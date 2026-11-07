@@ -1,3 +1,4 @@
+import { initializeStore } from './sqlite-schema.mjs';
 import { DatabaseSync } from 'node:sqlite';
 import { existsSync, mkdirSync, lstatSync, chmodSync } from 'node:fs';
 import path from 'node:path';
@@ -25,7 +26,7 @@ export class SignedOutbox {
     this.db = new DatabaseSync(dbFile);
     chmodSync(dbFile,0o600);
     this.db.exec('PRAGMA journal_mode=DELETE; PRAGMA synchronous=FULL; PRAGMA busy_timeout=5000;');
-    this.db.exec(`CREATE TABLE IF NOT EXISTS config (
+    initializeStore(this.db,{kind:'outbox',requiredTables:['config','outgoing'],createSchema:`CREATE TABLE IF NOT EXISTS config (
       id INTEGER PRIMARY KEY CHECK(id=1), enabled INTEGER NOT NULL DEFAULT 0,
       next_sequence INTEGER NOT NULL DEFAULT 1
     );
@@ -40,7 +41,7 @@ export class SignedOutbox {
       json_extract(payload,'$.body.report.area'),
       json_extract(payload,'$.body.report.bucketStart'),
       json_extract(payload,'$.body.report.bucketSeconds')
-    );`);
+    );`});
   }
   get enabled() { return this.db.prepare('SELECT enabled FROM config WHERE id=1').get().enabled === 1; }
   setConsent(enabled) {

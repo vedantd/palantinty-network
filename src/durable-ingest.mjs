@@ -1,3 +1,4 @@
+import { initializeStore } from './sqlite-schema.mjs';
 import { DatabaseSync } from 'node:sqlite';
 import { existsSync, mkdirSync, lstatSync, chmodSync } from 'node:fs';
 import path from 'node:path';
@@ -46,7 +47,7 @@ export class DurableRegionalIngest {
     this.db = new DatabaseSync(file);
     chmodSync(file,0o600);
     this.db.exec('PRAGMA journal_mode=DELETE; PRAGMA synchronous=FULL; PRAGMA busy_timeout=5000; PRAGMA foreign_keys=ON;');
-    this.db.exec(`
+    initializeStore(this.db,{kind:'regional',requiredTables:['contributor_sequences','accepted_reports'],createSchema:`
       CREATE TABLE IF NOT EXISTS contributor_sequences (
         key_id TEXT PRIMARY KEY,
         highest_sequence INTEGER NOT NULL CHECK(highest_sequence >= 1)
@@ -65,7 +66,7 @@ export class DurableRegionalIngest {
       );
       CREATE INDEX IF NOT EXISTS regional_series
         ON accepted_reports(area,bucket_start,bucket_seconds);
-    `);
+    `});
   }
 
   ingest(envelope) {
