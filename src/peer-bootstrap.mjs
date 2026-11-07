@@ -12,7 +12,6 @@ export function parseLocalSeed(address) {
  const addr=multiaddr(address);
  const port=Number(address.split('/')[4]);
  if(port>65535)throw new Error('Seed port out of range');
- if(!addr.getPeerId())throw new Error('Seed peer ID required');
  return addr;
 }
 
@@ -32,7 +31,7 @@ export async function connectLocalSeed(node,address,{
  for(let i=0;i<attempts;i++){
   try{
    const connection=await node.dial(addr);
-   return Object.freeze({connected:true,attempts:i+1,remotePeer:addr.getPeerId()});
+   return Object.freeze({connected:true,attempts:i+1,remotePeer:address.split('/').at(-1)});
   }catch(e){
    error=e;
    if(i<attempts-1)await sleep(Math.min(10_000,baseDelayMs*2**i));
