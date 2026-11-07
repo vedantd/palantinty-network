@@ -67,7 +67,10 @@
       "gateIds": [
         "release-supply-chain"
       ],
-      "evidence": []
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/72",
+        "https://github.com/vedantd/palantinty-network/pull/76"
+      ]
     },
     {
       "id": "H02a",
@@ -94,7 +97,8 @@
         "public-enrollment-exit"
       ],
       "evidence": [
-        "https://github.com/vedantd/palantinty-network/pull/64"
+        "https://github.com/vedantd/palantinty-network/pull/64",
+        "https://github.com/vedantd/palantinty-network/pull/80"
       ]
     },
     {
@@ -163,13 +167,15 @@
     {
       "id": "D01b",
       "title": "Signed short-lived indexer coverage records",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "D01a",
         "H02b"
       ],
       "gateIds": [],
-      "evidence": []
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/81"
+      ]
     },
     {
       "id": "D02a",
