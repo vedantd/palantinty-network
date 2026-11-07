@@ -29,7 +29,7 @@ Use actual independently checked addresses and Peer IDs, not the placeholders. T
 
 - Exact schema and pilot ID, maximum 128 records and 16 approved peers; duplicate or revoked Peer IDs cannot be reintroduced.
 - Static, explicit RFC1918 or loopback addresses; no DNS, public IP, wildcard, relays or general Internet listeners.
-- Exclusive local writer lock; bounded input file; atomic rename into a 0600 file; refuse symlinks and permissive state directory.
+- Exclusive local writer lock; bounded input file; 0600 atomic rename with parent directory fsync; refuse symlinks and permissive state directory. API callers can pass an optional expectedRevision to propose/approve/revoke, checked while locked. Existing operator CLI does not require CAS. This is not anti-rollback or distributed revocation.
 - Revisions advance only on valid transitions, including revocation. A corrupted ledger is not reset or silently repaired.
 - A crashed writer may leave a lock that requires manual inspection; automatic lock stealing is deliberately out of scope. Atomic rename does not replace a durable, independently audited database.
 - **No runtime integration yet:** The pinned synthetic pilot still uses its existing private config. Exporting this ledger is not authorization by the transport. P03b should safely reconcile reviewed approved pins into an offline, operator-controlled configuration change with restart and rollback tests.
