@@ -33,7 +33,8 @@
     "pilot:observe": "node apps/p02c-host-pilot.mjs observe",
     "pilot:publish": "node apps/p02c-host-pilot.mjs publish",
     "pilot:review": "node apps/p02c-evidence-review.mjs",
-    "pilot:control": "node apps/p02c-pilot-control.mjs"
+    "pilot:control": "node apps/p02c-pilot-control.mjs",
+    "pilot:incident-review": "node apps/p02c-incident-review.mjs"
   },
   "license": "MIT",
   "dependencies": {
