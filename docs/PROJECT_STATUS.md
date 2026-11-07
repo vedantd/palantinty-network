@@ -1,3 +1,7 @@
+## P02c-1 pinned private-overlay synthetic GossipSub
+
+The synthetic GossipSub factory now offers **explicit RFC1918 private-overlay opt-in** requiring both independently pinned Noise Peer IDs and exact private source IPs. A separate two-container internal-bridge demo exercises encrypted GossipSub and sanitized synthetic delivery. This is **not** a public listener or proof of independently administered physical-host operation. See [P02C_PRIVATE_OVERLAY.md](P02C_PRIVATE_OVERLAY.md). Both public release profiles remain blocked.
+
 ## P02b-3 live transport abuse tests (pre-public)
 
 Live localhost libp2p tests now exercise unauthorized Noise handshakes, stalled raw TCP connections, and a deliberately constrained test stream handler, followed by recovery to a pinned peer. These are **bounded small-scale tests, not Internet flood safety or a production security audit**. See [P02B_RUNTIME_ABUSE.md](P02B_RUNTIME_ABUSE.md); both public release profiles remain blocked.
