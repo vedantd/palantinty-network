@@ -1,4 +1,4 @@
-# PulseMesh — evidence-gated A → B → C roadmap
+# Palantiny-Network — evidence-gated A → B → C roadmap
 
 **Decision draft · 2026-11-06.** This document supersedes the old short phase list. See [PROJECT_STATUS.md](PROJECT_STATUS.md) for the implementation inventory. All public activity data in the current network/dashboard demonstrations is **synthetic**.
 
@@ -9,12 +9,12 @@ A consented community of passive sensors can publish coarse, delayed **relative 
 ### What the literature does—and does not—establish
 
 1. Schauer, Werner & Marcus (2014), *Estimating Crowd Densities and Pedestrian Flows Using Wi-Fi and Bluetooth*: airport ground truth. Naive Bluetooth address counts correlated at **Pearson r=0.53**; extended approaches achieved **up to 0.75**. This is an older Bluetooth/Wi-Fi study, **not transferable accuracy for our passive BLE alias method**. https://eudl.eu/doi/10.4108/icst.mobiquitous.2014.257870
-2. Gong & Abdel-Aty (2022), *Using Machine Learning to Estimate Pedestrian and Bicyclist Count of Intersection by Bluetooth Low Energy*: BLE plus ML and video ground truth; study reported **6.35% average absolute percentage error** under its setup. It uses a distinct model, target and protocol and is **not a PulseMesh performance prediction**. https://doi.org/10.1061/JTEPBS.0000619
+2. Gong & Abdel-Aty (2022), *Using Machine Learning to Estimate Pedestrian and Bicyclist Count of Intersection by Bluetooth Low Energy*: BLE plus ML and video ground truth; study reported **6.35% average absolute percentage error** under its setup. It uses a distinct model, target and protocol and is **not a Palantiny-Network performance prediction**. https://doi.org/10.1061/JTEPBS.0000619
 3. *Estimating pedestrian traffic with Bluetooth sensor technology* (2023): a 65-detector urban study reports **89% pedestrian-detection accuracy** under calibration/classification assumptions. That number describes **pedestrian classification**, not crowd-count accuracy. https://doi.org/10.1080/10095020.2023.2247446
 4. Bluetooth SIG (2025), *Randomized RPA Updates*: address rotation exists to improve privacy and reduce tracking/linkability, a reason to avoid treating discovered aliases as stable persons. https://www.bluetooth.com/blog/enhancing-device-privacy-and-energy-efficiency-with-bluetooth-randomized-rpa-updates/
 5. Stanciu et al. (2023), *Privacy-friendly statistical counting for pedestrian dynamics*: cryptographic aggregation research illustrates that statistical counts and strong privacy require more than simple identifier removal/thresholds. https://doi.org/10.1016/j.comcom.2023.09.009
 
-Research should inform **study design, confounders and baselines**, not substitute for PulseMesh field evidence. Do not claim accuracy by copying percentages from studies.
+Research should inform **study design, confounders and baselines**, not substitute for Palantiny-Network field evidence. Do not claim accuracy by copying percentages from studies.
 
 ## Phase A — validate the sensing hypothesis (next, gate before real network)
 
