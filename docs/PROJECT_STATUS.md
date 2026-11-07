@@ -1,3 +1,7 @@
+## D01 offline signed synthetic coverage schema (PR pending)
+
+A fixed-field Ed25519-signed, short-lived advertisement permits **only fictional synthetic coarse-region IDs** and verifies against a locally approved Peer ID/public-key map. This is an offline primitive, not DHT discovery, validated operator key binding or geographic attestation. See [D01_PRIVATE_COVERAGE_ADVERTISEMENTS.md](D01_PRIVATE_COVERAGE_ADVERTISEMENTS.md). No public or real-data release gate changed.
+
 ## H1b-1 immutable CI and CycloneDX SBOM (merged PR #72, 184/184 CI)
 
 GitHub Actions now reference reviewed immutable action commits, with a read-only token, and generate a short-retention CycloneDX SBOM from the H1a lockfile. This is **not** a signed release and does not make the `release-supply-chain` gate verified. Docker image digests, vulnerability reviews, reproducible signed artifacts and incident drill remain. See [H1B_CI_PROVENANCE.md](H1B_CI_PROVENANCE.md).
