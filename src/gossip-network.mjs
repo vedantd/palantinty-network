@@ -29,10 +29,11 @@ export async function createGossipNode({listen='/ip4/127.0.0.1/tcp/0',enableDht=
     ]);
   const services={identify:identify(),pubsub:gossipsub({emitSelf:false})};
   if(enableDht){
-    const [{kadDHT},{ping}]=await Promise.all([import('@libp2p/kad-dht'),import('@libp2p/ping')]);
+    const [{kadDHT,removePublicAddressesMapper},{ping}]=await Promise.all([import('@libp2p/kad-dht'),import('@libp2p/ping')]);
     services.ping=ping();
     services.dht=kadDHT({protocol:'/palantiny-network/kad/1.0.0',
-      clientMode:false,maxInboundStreams:8,maxOutboundStreams:8});
+      clientMode:false,peerInfoMapper:removePublicAddressesMapper,
+      maxInboundStreams:8,maxOutboundStreams:8});
   }
   const node=await createLibp2p({
     addresses:{listen:[listen]},transports:[tcp()],
