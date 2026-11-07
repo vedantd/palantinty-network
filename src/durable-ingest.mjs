@@ -48,7 +48,9 @@ export class DurableRegionalIngest {
     this.db = new DatabaseSync(file);
     chmodSync(file,0o600);
     this.db.exec('PRAGMA journal_mode=DELETE; PRAGMA synchronous=FULL; PRAGMA busy_timeout=5000; PRAGMA foreign_keys=ON;');
-    initializeStore(this.db,{kind:'regional',requiredTables:['contributor_sequences','accepted_reports'],createSchema:`
+    initializeStore(this.db,{kind:'regional',latestVersion:2,
+      legacyTables:['contributor_sequences','accepted_reports'],
+      requiredTables:['contributor_sequences','accepted_reports','signed_archive'],createSchema:`
       CREATE TABLE IF NOT EXISTS contributor_sequences (
         key_id TEXT PRIMARY KEY,
         highest_sequence INTEGER NOT NULL CHECK(highest_sequence >= 1)
@@ -67,6 +69,13 @@ export class DurableRegionalIngest {
       );
       CREATE INDEX IF NOT EXISTS regional_series
         ON accepted_reports(area,bucket_start,bucket_seconds);
+      CREATE TABLE IF NOT EXISTS signed_archive (
+        report_id TEXT PRIMARY KEY REFERENCES accepted_reports(report_id) ON DELETE RESTRICT,
+        area TEXT NOT NULL,
+        envelope TEXT NOT NULL CHECK(length(envelope) BETWEEN 1 AND 16384)
+      );
+      CREATE INDEX IF NOT EXISTS signed_archive_area
+        ON signed_archive(area,report_id);
     `});
   }
 
@@ -120,6 +129,10 @@ export class DurableRegionalIngest {
         (report_id,key_id,sequence,area,bucket_start,bucket_seconds,activity_index,received_at)
         VALUES(?,?,?,?,?,?,?,?)`).run(body.reportId,body.keyId,body.sequence,
         r.area,r.bucketStart,r.bucketSeconds,r.activityIndex,clock);
+      // Persist the exact verified signed envelope atomically with the report.
+      // Existing v1 aggregate rows have no recoverable original signatures.
+      this.db.prepare('INSERT INTO signed_archive(report_id,area,envelope) VALUES(?,?,?)')
+        .run(body.reportId,r.area,JSON.stringify(envelope));
       this.db.prepare(`INSERT INTO contributor_sequences(key_id,highest_sequence)
         VALUES(?,?) ON CONFLICT(key_id) DO UPDATE SET highest_sequence=MAX(contributor_sequences.highest_sequence,excluded.highest_sequence)`)
         .run(body.keyId,body.sequence);
@@ -154,6 +167,32 @@ export class DurableRegionalIngest {
       sources:r.sources,relativeBleActivity:Math.round(r.activity),
       status:'experimental_synthetic_only'
     }));
+  }
+
+  /**
+   * Bounded, deterministic archive page for explicitly authorized indexers.
+   * Never expose this method through public routes or regional read models.
+   * Pre-migration v1 rows cannot be reconstructed into signed envelopes.
+   */
+  signedArchivePage({area,after='',limit=10}={}) {
+    if(typeof area!=='string' || !/^[a-z0-9][a-z0-9._-]{2,63}$/.test(area) ||
+       typeof after!=='string' || (after!=='' && !/^[a-f0-9]{64}$/.test(after)) ||
+       !Number.isSafeInteger(limit) || limit<1 || limit>10)
+      throw new Error('Invalid private archive page request');
+    const rows=this.db.prepare(`SELECT report_id,envelope FROM signed_archive
+      WHERE area=? AND report_id>? ORDER BY report_id ASC LIMIT ?`)
+      .all(area,after,limit+1);
+    const data=rows.slice(0,limit);
+    const envelopes=data.map(row=>{
+      const envelope=JSON.parse(row.envelope);
+      const body=verifyEnvelope(envelope);
+      if(body.reportId!==row.report_id || body.report.area!==area ||
+         !this.authorizedKeys.has(body.keyId))
+        throw new Error('Stored signed archive is invalid');
+      return envelope;
+    });
+    return Object.freeze({envelopes,hasMore:rows.length>limit,
+      next:data.length?data.at(-1).report_id:after});
   }
 
   stats() {

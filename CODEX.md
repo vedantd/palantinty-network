@@ -42,3 +42,7 @@ Synthetic-only localhost GossipSub with independent durable regional recipients 
 ## M09a reconciliation boundary
 
 [Read M09 replay ADR](docs/M09_REPLAY.md). An indexer may accept a signed, unseen older sequence inside the bounded backfill gap without regressing the high-water mark. A local contributor outbox retains exact signed envelopes after ACK for encrypted, explicitly loopback sender-assisted replay. This is **not** automatic distributed anti-entropy: no raw signer's signed-history endpoint may be made public, and the publisher must retain history. Keep tests for duplicate replay, window expiry, consent revocation and transaction atomicity.
+
+## M09b authenticated indexer synchronization
+
+[Read M09b ADR](docs/M09_INDEXER_SYNC.md). Regional SQLite schema v2 atomically archives **exact already-accepted signed envelopes**. A trusted peer may fetch bounded pages only after an authenticated Noise Peer ID allowlist check and localhost address check. The requesting indexer independently verifies and ingests. Never expose the archive to dashboards, untrusted DHT/GossipSub peers or real sensors. V1 accepted reports without signed envelopes cannot be replicated cryptographically. This is a manually initiated local test, not automatic convergence or data-deletion support.

@@ -131,6 +131,16 @@ npm run network:dht
 
 [Sandbox DHT decisions and security limits](docs/M08_DHT.md).
 
+### M09b: independent indexers reconcile after a missed report (synthetic only)
+
+Two independent indexers exchange **previously committed signed reports** over mutually authorized, Noise-encrypted libp2p links. The original contributor need not be online. Regional SQLite schema v2 retains signed archives atomically with accepted reports; legacy v1 accepted reports remain, but cannot be reconstructed into signed envelopes.
+
+```bash
+npm run network:indexer-sync
+```
+
+This is a **trusted, manually initiated, localhost-only** indexer sync, not a public archive or proof of eventual network-wide convergence. [Read the M09b protocol and security decisions](docs/M09_INDEXER_SYNC.md).
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.

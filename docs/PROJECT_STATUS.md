@@ -35,6 +35,10 @@ occupancy, unique-device, pedestrian-count, safety or surveillance claims.
 
 The first decentralized-message slice is being exercised: synthetic GossipSub report publication over loopback among five libp2p peers and two independently persisted indexers. It removes the single common receiver from **the test message topology**, but does not yet include discovery, offline anti-entropy, remote deployment or real Palantiny data. See [M07_GOSSIPSUB.md](M07_GOSSIPSUB.md). Earlier limitations below describe the pre-M07 topology and still apply to live-data/production readiness.
 
+## M09b checkpoint — independent trusted-indexer signed archive sync
+
+Regional schema v2 retains accepted signed envelopes atomically and offers bounded private pages only to allowlisted Noise-authenticated localhost indexer peers. Manual source-to-target reconciliation now works **without the original contributor staying online**, and duplicates remain idempotent. Legacy v1 accepted reports are not reconstructable as signed history. This remains synthetic, manually started, loopback-only, and insufficient for automatic or public decentralized participation. See [M09_INDEXER_SYNC.md](M09_INDEXER_SYNC.md).
+
 ## Recent engineering milestones
 
 - PR #18: transport receiver interface decoupling and pipeline loss diagnostics.

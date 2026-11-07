@@ -24,7 +24,7 @@ for(const kind of ['outbox','regional']){
   const create=factories[kind];
   let store=create();store.close();
   let db=new DatabaseSync(dbPath);
-  assert.equal(db.prepare('PRAGMA user_version').get().user_version,1);
+  assert.equal(db.prepare('PRAGMA user_version').get().user_version,kind==='regional'?2:1);
   db.close();
   store=create();store.close();
  }));
