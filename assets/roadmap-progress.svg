@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="454" viewBox="0 0 960 454" role="img" aria-labelledby="title desc">
+<title id="title">Palantiny-Network public-release roadmap progress</title>
+<desc id="desc">28 tracked slices: 3 done, 5 partial, 13 planned, 7 externally blocked. Synthetic gates 0 of 6 verified; real-sensor gates 0 of 7 verified. Slice statuses are not completion percentages.</desc>
+<rect width="960" height="454" rx="20" fill="#0c172a"/>
+<rect x="1" y="1" width="958" height="452" rx="19" fill="none" stroke="#2b4262"/>
+<text x="42" y="53" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif" font-size="25" font-weight="750" fill="#f1f6ff">Engineering progress</text>
+<text x="42" y="81" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif" font-size="14" fill="#aebed6">Evidence-gated roadmap · 28 tracked slices · 2026-11-07</text>
+<g font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif"><rect x="42" y="109" width="207" height="111" rx="14" fill="#15253c" stroke="#273e5f"/>
+<text x="60" y="143" font-size="12" font-weight="650" fill="#b4c1d7" letter-spacing=".8">VERIFIED SLICES</text>
+<text x="60" y="193" font-size="47" font-weight="750" fill="#34d399">3</text>
+<rect x="262" y="109" width="207" height="111" rx="14" fill="#15253c" stroke="#273e5f"/>
+<text x="280" y="143" font-size="12" font-weight="650" fill="#b4c1d7" letter-spacing=".8">IN PROGRESS</text>
+<text x="280" y="193" font-size="47" font-weight="750" fill="#fbbf24">5</text>
+<rect x="482" y="109" width="207" height="111" rx="14" fill="#15253c" stroke="#273e5f"/>
+<text x="500" y="143" font-size="12" font-weight="650" fill="#b4c1d7" letter-spacing=".8">NOT STARTED</text>
+<text x="500" y="193" font-size="47" font-weight="750" fill="#72809c">13</text>
+<rect x="702" y="109" width="207" height="111" rx="14" fill="#15253c" stroke="#273e5f"/>
+<text x="720" y="143" font-size="12" font-weight="650" fill="#b4c1d7" letter-spacing=".8">EXTERNAL BLOCKERS</text>
+<text x="720" y="193" font-size="47" font-weight="750" fill="#fb7185">7</text>
+<text x="42" y="250" font-size="14" font-weight="650" fill="#d3e1f5">Slice-by-slice status</text>
+<rect x="42.00" y="266" width="26.46" height="28" rx="5" fill="#34d399"><title>F00: done</title></rect>
+<rect x="73.46" y="266" width="26.46" height="28" rx="5" fill="#fbbf24"><title>F01: partial</title></rect>
+<rect x="104.93" y="266" width="26.46" height="28" rx="5" fill="#34d399"><title>H00: done</title></rect>
+<rect x="136.39" y="266" width="26.46" height="28" rx="5" fill="#34d399"><title>H01a: done</title></rect>
+<rect x="167.86" y="266" width="26.46" height="28" rx="5" fill="#fbbf24"><title>H01b: partial</title></rect>
+<rect x="199.32" y="266" width="26.46" height="28" rx="5" fill="#fbbf24"><title>H02a: partial</title></rect>
+<rect x="230.79" y="266" width="26.46" height="28" rx="5" fill="#fbbf24"><title>H02b: partial</title></rect>
+<rect x="262.25" y="266" width="26.46" height="28" rx="5" fill="#fb7185"><title>H03: blocked-external</title></rect>
+<rect x="293.71" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>I01: planned</title></rect>
+<rect x="325.18" y="266" width="26.46" height="28" rx="5" fill="#fbbf24"><title>I02: partial</title></rect>
+<rect x="356.64" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>I03: planned</title></rect>
+<rect x="388.11" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>D01a: planned</title></rect>
+<rect x="419.57" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>D01b: planned</title></rect>
+<rect x="451.04" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>D02a: planned</title></rect>
+<rect x="482.50" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>D02b: planned</title></rect>
+<rect x="513.96" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>D03a: planned</title></rect>
+<rect x="545.43" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>D03b: planned</title></rect>
+<rect x="576.89" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>N01: planned</title></rect>
+<rect x="608.36" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>N02: planned</title></rect>
+<rect x="639.82" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>N03: planned</title></rect>
+<rect x="671.29" y="266" width="26.46" height="28" rx="5" fill="#fb7185"><title>R-SYN: blocked-external</title></rect>
+<rect x="702.75" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>S01: planned</title></rect>
+<rect x="734.21" y="266" width="26.46" height="28" rx="5" fill="#fb7185"><title>S02: blocked-external</title></rect>
+<rect x="765.68" y="266" width="26.46" height="28" rx="5" fill="#fb7185"><title>S03: blocked-external</title></rect>
+<rect x="797.14" y="266" width="26.46" height="28" rx="5" fill="#fb7185"><title>S04: blocked-external</title></rect>
+<rect x="828.61" y="266" width="26.46" height="28" rx="5" fill="#fb7185"><title>S05: blocked-external</title></rect>
+<rect x="860.07" y="266" width="26.46" height="28" rx="5" fill="#72809c"><title>S06: planned</title></rect>
+<rect x="891.54" y="266" width="26.46" height="28" rx="5" fill="#fb7185"><title>R-REAL: blocked-external</title></rect>
+<text x="42" y="330" font-size="14" font-weight="650" fill="#e3ecfa">OPEN SYNTHETIC TESTNET</text>
+<text x="918" y="330" text-anchor="end" font-size="14" font-weight="700" fill="#e3ecfa">0 / 6 verified</text>
+<rect x="42" y="341" width="876" height="12" rx="6" fill="#293a56"/>
+
+<text x="42" y="387" font-size="14" font-weight="650" fill="#e3ecfa">PUBLIC REAL SENSING</text>
+<text x="918" y="387" text-anchor="end" font-size="14" font-weight="700" fill="#e3ecfa">0 / 7 verified</text>
+<rect x="42" y="398" width="876" height="12" rx="6" fill="#293a56"/>
+
+<text x="42" y="437" font-size="12" fill="#98abc8">A green CI run does not clear public-release gates. This is a status snapshot, not an ETA.</text></g>
+</svg>
