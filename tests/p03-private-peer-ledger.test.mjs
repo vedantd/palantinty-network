@@ -96,3 +96,80 @@ test('exclusive writer lock refuses simultaneous or abandoned writers',async()=>
   assert.equal(readPrivatePeerLedger(f.dir,f.pilot).revision,0);
  }finally{rmSync(f.root,{recursive:true,force:true});}
 });
+
+test('revision-checked mutations deny stale operator snapshots without changing ledger',async()=>{
+ const f=await fixture();
+ try{
+  const initial=initializePeerLedger(f.dir,f.pilot);
+  assert.equal(initial.revision,0);
+  for(const expectedRevision of [-1,1.5,NaN,null,'0',Number.MAX_SAFE_INTEGER+1]){
+   assert.throws(()=>proposePrivatePeer(f.dir,f.pilot,{
+    peerId:f.id,remoteIp:'10.80.1.2',seedAddress:f.seed,expectedRevision
+   }),/Expected revision/);
+  }
+  const candidate=proposePrivatePeer(f.dir,f.pilot,{
+   peerId:f.id,remoteIp:'10.80.1.2',seedAddress:f.seed,expectedRevision:0
+  });
+  assert.equal(candidate.revision,1);
+  assert.throws(()=>proposePrivatePeer(f.dir,f.pilot,{
+   peerId:f.id,remoteIp:'10.80.1.2',seedAddress:f.seed,expectedRevision:0
+  }),/Stale peer enrollment revision/);
+  assert.throws(()=>approvePrivatePeer(f.dir,f.pilot,f.id,{
+   verifiedOutOfBand:true,expectedRevision:0
+  }),/Stale peer enrollment revision/);
+  assert.equal(readPrivatePeerLedger(f.dir,f.pilot).entries[0].state,'candidate');
+  const approved=approvePrivatePeer(f.dir,f.pilot,f.id,{
+   verifiedOutOfBand:true,expectedRevision:1
+  });
+  assert.equal(approved.revision,2);
+  assert.throws(()=>revokePrivatePeer(f.dir,f.pilot,f.id,{
+   expectedRevision:1
+  }),/Stale peer enrollment revision/);
+  assert.equal(approvedPrivatePeers(f.dir,f.pilot).peers.length,1);
+  const revoked=revokePrivatePeer(f.dir,f.pilot,f.id,{
+   expectedRevision:2
+  });
+  assert.equal(revoked.revision,3);
+  assert.equal(revoked.entries[0].state,'revoked');
+  assert.equal(approvedPrivatePeers(f.dir,f.pilot).peers.length,0);
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+test('abandoned temp snapshots are never recovered as active trust state',async()=>{
+ const f=await fixture();
+ try{
+  const current=initializePeerLedger(f.dir,f.pilot);
+  // A crash before rename can leave a complete but uncommitted temp file.
+  const orphan=path.join(f.dir,'.p03-orphaned-write.tmp');
+  const forged={...current,revision:17,entries:[{
+   peerId:f.id,remoteIp:'10.80.1.2',seedAddress:f.seed,
+   state:'approved',proposedAt:new Date().toISOString(),
+   approvedAt:new Date().toISOString(),revokedAt:null
+  }]};
+  writeFileSync(orphan,JSON.stringify(forged),{mode:0o600,flag:'wx'});
+  assert.equal(readPrivatePeerLedger(f.dir,f.pilot).revision,0);
+  assert.equal(approvedPrivatePeers(f.dir,f.pilot).peers.length,0);
+  const committed=proposePrivatePeer(f.dir,f.pilot,{
+   peerId:f.id,remoteIp:'10.80.1.2',seedAddress:f.seed,expectedRevision:0
+  });
+  assert.equal(committed.revision,1);
+  assert.equal(committed.entries[0].state,'candidate');
+  assert.equal(readPrivatePeerLedger(f.dir,f.pilot).revision,1);
+  assert.equal((lstatSync(path.join(f.dir,'P03_PRIVATE_PEERS.json')).mode&0o077),0);
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+test('ledger revisions cannot overflow and wrap to a fresh-looking value',async()=>{
+ const f=await fixture();
+ try{
+  initializePeerLedger(f.dir,f.pilot);
+  const dest=path.join(f.dir,'P03_PRIVATE_PEERS.json');
+  const data=readPrivatePeerLedger(f.dir,f.pilot);
+  data.revision=Number.MAX_SAFE_INTEGER;
+  writeFileSync(dest,JSON.stringify(data));
+  assert.throws(()=>proposePrivatePeer(f.dir,f.pilot,{
+   peerId:f.id,remoteIp:'10.80.1.2',seedAddress:f.seed,
+   expectedRevision:Number.MAX_SAFE_INTEGER
+  }),/revision exhausted/);
+  assert.equal(readPrivatePeerLedger(f.dir,f.pilot).revision,Number.MAX_SAFE_INTEGER);
+  assert.equal(readPrivatePeerLedger(f.dir,f.pilot).entries.length,0);
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
