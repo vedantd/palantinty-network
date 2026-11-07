@@ -20,7 +20,7 @@ test('private transport opt-in rejects public, wildcard, unlisted, DNS and inval
  {allowPrivateLan:true,allowedRemoteIps:ips}),true);
  assert.equal(isAllowedSyntheticTcpAddress('/ip4/127.0.0.1/tcp/4001'),true);
 });
-test('invalid remote-IP configurations fail closed before binding',()=>{
+test('invalid remote-IP configurations fail closed before binding',async()=>{
  const peer=peerIdFromPrivateKey(await generateKeyPair('Ed25519')).toString();
  const base={allowedPeerIds:[peer],allowPrivateLan:true};
  for(const allowedRemoteIps of [[],['8.8.8.8'],['0.0.0.0'],['127.0.0.1'],
