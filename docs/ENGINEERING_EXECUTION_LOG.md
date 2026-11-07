@@ -1,3 +1,11 @@
+## 2026-11-07 — D03b verified three-indexer degraded quorum and disagreement refusal
+
+- **Previous gap:** D03a queried only the first two private signed region providers; one offline peer would fail even when another vetted indexer could respond, while ignoring an extra conflicting reply could yield false consensus.
+- **Design:** D02a must have already authenticated up to four approved indexer Peer IDs. Query all selected candidates through private Noise, recognize only explicit transport unavailability as recoverable if two or more **different** valid Peer IDs still answer, compare all signed rows, and report `degraded/unavailableCount`. Treat malicious/invalid reply, stale coverage or unauthorized Peer ID as hard failure, not an acceptable omission.
+- **Live synthetic harness:** five colocated libp2p instances (bootstrap, client, three signed indexers), separate SQLite archives and synthetic contributor keys. Test all-three agreement, empty/nonzero semantics, real stopped libp2p instance, 2-of-3 agreed degraded response, and a conflicting signed third contributor in only one surviving archive. Run `npm run network:region-resilience`; no new public listener.
+- **Verification:** [PR #96](https://github.com/vedantd/palantinty-network/pull/96), squash merged as `8f1e59ccd09ecb0d36cb1065cd5edacfb7f4aff8`; full green [CI 42425997251](https://github.com/vedantd/palantinty-network/actions/runs/42425997251) and [CI 42426000888](https://github.com/vedantd/palantinty-network/actions/runs/42426000888), both private-container suites included. [ADR](ADR_D03B_PRIVATE_QUORUM_OUTAGES.md).
+- **Open:** No independent hosts, churn/reannouncement, realistic partition/recovery or load/abuse, operator trust collapse, privacy/sensing review. D03b remains **partial**, D02b planned, H03 blocked external, both public release profiles remain **0/6** synthetic and **0/7** real.
+
 ## 2026-11-07 — D03a authenticated synthetic aggregate quorum (verified PR #94)
 
 - **Design:** Extend D02a fictional CID provider discovery into a private read-only, Noise-authenticated D03 protocol. Require two distinct approved Peer IDs and current peer-bound coverage. The indexer signs the response's request nonce, region, bounds, expiry and aggregate rows with its **own** libp2p Ed25519 key.
