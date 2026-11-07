@@ -49,13 +49,13 @@ flowchart LR
 | :-- | :-- | :-- |
 | **Local sensing** | macOS diagnostic, bounded aggregation, opt-in export rules | Calibrated activity signal and field consent |
 | **P2P transport** | Signed reports, libp2p/Noise/GossipSub, pinned private peers | Untrusted Internet transport, NAT and public bootstrap |
-| **Discovery** | Kademlia discovers *peers* in a localhost sandbox | Discover indexers *by coarse geographic region* |
+| **Discovery** | Localhost Kademlia discovers two indexers by a **fictional region CID**, verifies Peer ID-bound signed coverage (#92) | Independent physical hosts, churn/NAT, and privacy-reviewed real geographic mapping |
 | **Regional storage** | Durable SQLite, signed archive sync, replay protection | Independent physical-host recovery and backups |
 | **Trust** | Private peer approval and revocation watcher; locked CI/SBOM | Race-safe revocation, signed releases, independent review |
 
-**Next architectural milestone:** region key → Kademlia candidate indexers → validated signed coverage → direct authenticated queries to two independent indexers. A DHT provides **discovery, not location truth, identity attestation or a database**.
+**Verified local synthetic milestone (#92):** fictional region key → Kademlia content-provider lookup → two separate indexer Peer IDs → direct Noise-encrypted, signed coverage verification. **Next:** D03 bounded read-only aggregate queries and comparison between indexers. This was a one-machine test, **not** independent physical operators. A DHT provides **discovery, not location truth, data availability, or a database**.
 
-[Design contract](docs/PUBLIC_RELEASE_EXECUTION_PLAN.md) · [Kademlia demo](docs/M08_DHT.md) · [Indexer sync](docs/M09_INDEXER_SYNC.md)
+[Design contract](docs/PUBLIC_RELEASE_EXECUTION_PLAN.md) · [Regional DHT proof](docs/ADR_D02A_PRIVATE_REGION_PROVIDERS.md) · [Indexer sync](docs/M09_INDEXER_SYNC.md)
 
 ## Engineering progress
 
@@ -81,7 +81,8 @@ npm ci --ignore-scripts --no-audit --no-fund
 npm test
 
 npm run network:gossip      # signed synthetic mesh and two local indexers
-npm run network:dht         # local-only Kademlia peer discovery
+npm run network:dht         # local-only known-Peer-ID routing
+npm run network:region-dht  # find and verify two indexers for a fictional region
 npm run network:auto-sync   # authenticated, private indexer recovery
 npm run dashboard           # local fictional region history
 ~~~
@@ -93,7 +94,7 @@ See the [prototype demo catalog](docs/PROTOTYPE_DEMOS.md) for more commands, pri
 | Phase | Deliverable | Current state |
 | :-- | :-- | :-- |
 | **01 — Private foundation** | Encrypted synthetic P2P, independent archives, approved peers | **Working demo; hardening ongoing** |
-| **02 — Geographic discovery** | Signed regional indexer coverage, private DHT lookup and direct query | **Next development milestone** |
+| **02 — Geographic discovery** | Signed fictional region coverage and private Kademlia lookup; next, bounded aggregate queries | **Two-indexer localhost discovery verified; D03 still planned** |
 | **03 — Operational independence** | Two actual separately administered hosts, recovery, backups and revocation safety | **Not independently verified** |
 | **04 — Open synthetic testnet** | Untrusted enrollment, abuse resistance, live operations and all six release gates | **Blocked** |
 | **05 — Real sensing** | Calibration, consent, retention/deletion, anti-Sybil, legal and privacy reviews | **Blocked; separate seven gates** |

@@ -1,18 +1,18 @@
-## 2026-11-07 — D02a real private Kademlia region-to-two-indexer demonstration (CI pending)
+## 2026-11-07 — D02a real private Kademlia region-to-two-indexer demonstration (verified PR #92)
 
 - **Actual goal:** replace known-peer-ID `findPeer` routing with `contentRouting.provide/findProviders` for a canonical fictional region CID. Four separately keyed localhost peers: client, bootstrap, indexer A and B; client knows only bootstrap address and a separately approved set of indexer Peer IDs.
 - **Direct query:** require two unique provider records, Noise-encrypted direct coverage protocol, both signed with *the provider's own* libp2p Ed25519 key. Reject candidates outside local allowlist, private-network violations, mismatched signer/Peer ID/region/TTL.
 - **Acceptance:** `npm run network:region-dht` fails if either signed/indexer stream fails; also rejects trying to satisfy 2-indexer confidence with a single approved key. Script added to CI, in addition to CID/policy unit tests. [ADR](ADR_D02A_PRIVATE_REGION_PROVIDERS.md).
 - **Boundaries:** only loopback, fictional regions and private operators; distinct generated keys do not prove distinct people/machines. No activity-query D03 yet, no public participation or BLE publishing.
-- **CI/merge:** pending GitHub Actions. D02a remains planned until verified, then *partial* only; H03 + synthetic/real launch gates unchanged.
+- **CI/merge:** [PR #92](https://github.com/vedantd/palantinty-network/pull/92) merged as `f3409f369fa577747d6896e753782e6494a657f6` after full green [run 42422928287](https://github.com/vedantd/palantinty-network/actions/runs/42422928287): **232/232 tests passed**, including the `network:region-dht` four-node two-indexer verification and both private Docker suites. Formal D02a is **partial**, H03 external proof and both launch profiles unchanged.
 
-## 2026-11-07 — D01b libp2p Peer ID-bound fictional coverage signatures (CI pending)
+## 2026-11-07 — D01b libp2p Peer ID-bound fictional coverage signatures (verified PR #91)
 
 - Replaces *separate-key trust assertion* in future private DHT discovery with signatures from the indexer's own libp2p Ed25519 identity. A verifier derives the signer Peer ID from the advertised public key and cross-checks it against both the Noise-authenticated stream peer and a local operator-reviewed allowlist.
 - Canonical versioned D01 synthetic coverage payload, domain-separated signature, bounded base64 fields, 15-minute lifetime, strict fake-region validation; no real location semantics.
 - Tests reject wrong signer, replaced public key/signature, unauthorized peer ID, wrong region, legacy fictional routing key, invalid fields and expired advert. [ADR](ADR_D01B_PEER_ID_BOUND_COVERAGE.md).
-- Does not yet register region providers in Kademlia; H03 independent hosts, public launch and BLE data remain blocked. D01b remains **partial**.
-- **CI/merge:** pending.
+- At the time of this slice, the peer-bound signer did not perform Kademlia registration; that has now been implemented in #92. Independent hosts, public launch, and BLE data remain blocked. D01b stays **partial**.
+- **CI/merge:** [PR #91](https://github.com/vedantd/palantinty-network/pull/91) merged as `77998350b3c46570030699c433c67af4c86b81d4`, [run 42422478688](https://github.com/vedantd/palantinty-network/actions/runs/42422478688) passed **229/229 tests**, private Docker green.
 
 ## 2026-11-07 — D01a canonical fictional region routing keys (verified PR #89)
 

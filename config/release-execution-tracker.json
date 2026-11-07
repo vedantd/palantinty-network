@@ -181,18 +181,21 @@
       ],
       "gateIds": [],
       "evidence": [
-        "https://github.com/vedantd/palantinty-network/pull/81"
+        "https://github.com/vedantd/palantinty-network/pull/81",
+        "https://github.com/vedantd/palantinty-network/pull/91"
       ]
     },
     {
       "id": "D02a",
       "title": "Private Kademlia indexer discovery",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "D01b"
       ],
       "gateIds": [],
-      "evidence": []
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/92"
+      ]
     },
     {
       "id": "D02b",
