@@ -10,6 +10,8 @@
 
 *Origin: [Palantiny](https://github.com/narasim-teja/palantiny) by [@narasim-teja](https://github.com/narasim-teja) inspired a discussion about independently run sensors publishing **anonymous counts rather than device identities**. The image above is a recreated text excerpt, **not the original screenshot**. PulseMesh is an independent experiment; no author partnership is implied.*
 
+**Evidence-gated roadmap:** [Phase A research and field calibration → Phase B trusted multi-node pilot → Phase C product experience](docs/ROADMAP_2026.md). **Tweet demo is synthetic-only** and does not represent deployed sensors.
+
 **Current project checkpoint (read before starting new work):** [Implemented scope, unvalidated assumptions, technical debt and next product decisions](docs/PROJECT_STATUS.md). Coding agents should also read [CODEX.md](CODEX.md).
 
 **Engineering audit:** [M01–M06 review, hardening decisions, and remaining risks](docs/ENGINEERING_REVIEW.md).
