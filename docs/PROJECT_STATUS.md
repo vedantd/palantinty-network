@@ -1,3 +1,7 @@
+## Public launch P00 checkpoint
+
+The open-source repository is public, but both the public synthetic testnet and real-sensing network remain **blocked** pending safety and operational gates in [the public participation plan](PUBLIC_PARTICIPATION_ROADMAP.md), [threat model](PUBLIC_THREAT_MODEL.md), and [evidence ledger](../config/public-release-gates.json). A verified release gate requires evidence and independent review; this static ledger is not a runtime authorization system.
+
 # Palantiny-Network — engineering and product checkpoint
 
 **Provenance and purpose:** Palantiny is Narasimha's independent local BLE sensor project. Palantiny-Network adds a separate privacy-preserving signed reporting and regional network experiment on top of compatible local sensor output. The network does **not** change Palantiny's code or imply upstream endorsement. The planned participant journey is in [JOIN_THE_NETWORK.md](JOIN_THE_NETWORK.md). Editable topology diagram: [Excalidraw](../assets/palantiny-network-overview.excalidraw).
