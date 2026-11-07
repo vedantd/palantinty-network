@@ -102,7 +102,14 @@ test('running pinned observer terminates after local control stop and refuses re
    await new Promise(resolve=>setTimeout(resolve,35));
   }
   assert.ok(events.some(e=>e.event==='started'),stderr);
-  assert.ok(events.some(e=>e.event==='connection-health'));
+  // The producer writes 'started' and health in adjacent stdout calls.
+  // Stream events are asynchronous; wait for the health record explicitly.
+  const healthDeadline=Date.now()+3000;
+  while(!events.some(e=>e.event==='connection-health')&&Date.now()<healthDeadline){
+   if(processRun.exitCode!==null)break;
+   await new Promise(resolve=>setTimeout(resolve,25));
+  }
+  assert.ok(events.some(e=>e.event==='connection-health'),stderr);
   disablePilot(fixture.state,{reason:'peer-revoked',revokedPeerId:fixture.other.peerId});
   const code=await completion;
   assert.notEqual(code,0);
