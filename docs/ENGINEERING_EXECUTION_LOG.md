@@ -11,7 +11,7 @@
 - **Scope:** Port PR #74's two safety tests onto current merged main without overwriting the completed README/roadmap changes; no runtime logic changed.
 - **Checks:** An observed invalid config or drifted pinned remote must permanently trip the current running guard, exactly once, even if a restored config passes a fresh standalone approval check. Uses separately provisioned ephemeral operator identities and local approval state.
 - **Decision:** [ADR-H2-001](ADR_H2_WATCHDOG_ONE_WAY_TRIP.md). This does **not** prove atomic revocation, remote disconnect, instantaneous observation of transient mutations, or Internet admission safety. H02a/H02b and #66 remain partial; all public release gates blocked.
-- **CI/merge:** Pending full GitHub Actions.
+- **CI/merge:** Rebuilt test-only [PR #80](https://github.com/vedantd/palantinty-network/pull/80) merged as `12d35620d5add69b7417bf57f8d6b4bda8cfe72d` after passing [run 42401338305](https://github.com/vedantd/palantinty-network/actions/runs/42401338305): **200 tests passed / 0 failed** and private Docker integration green. Original conflicted #74 closed as superseded. H02a/H02b remain partial.
 
 ## 2026-11-07 — Public-facing README and evidence-based progress visualization (verified PR #78)
 
