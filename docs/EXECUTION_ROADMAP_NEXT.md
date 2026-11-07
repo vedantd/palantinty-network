@@ -1,3 +1,7 @@
+## D01 incremental checkpoint (2026-11-07, CI pending)
+
+Offline signed fictional-region coverage advertisement validation and negative tests are proposed in a separate feature branch; no DHT integration, listener, real geography or operator enrollment is enabled. Next: independently reviewed peer-ID/key binding, then private DHT candidates and direct authenticated queries. See [D01_PRIVATE_COVERAGE_ADVERTISEMENTS.md](D01_PRIVATE_COVERAGE_ADVERTISEMENTS.md).
+
 # Palantiny-network — execution roadmap after hardening
 
 **Canonical complete slice plan:** [PUBLIC_RELEASE_EXECUTION_PLAN.md](PUBLIC_RELEASE_EXECUTION_PLAN.md), [machine-tracked dependencies and states](../config/release-execution-tracker.json), `npm run release:plan-check`. This file is the near-term priority summary.
