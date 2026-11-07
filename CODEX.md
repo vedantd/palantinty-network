@@ -62,3 +62,7 @@ Synthetic-only localhost GossipSub with independent durable regional recipients 
 ## M10b-2 restart drill
 
 [Read the restart validation and physical-host checklist](docs/M10B_RESTART_DRILL.md). The two-container CI pilot now runs in two generations without deleting private volumes, checks stable **distinct** Peer IDs, rejects stale coordination success markers, and verifies repeated authenticated signed-archive convergence. Do not present it as actual independent machine testing; a physically deployed operator application and real host test are still required.
+
+## P01a independent operator runtime
+
+See [P01a operator design](docs/P01_STANDALONE_OPERATOR.md). `apps/operator-indexer.mjs` requires strict 0600 per-operator config, existing persistent key, pre-approved authorized report signers and Noise-authenticated indexer Peer ID pins. Synthetic-only config must remain mandatory. Never feed this source from real BLE data, silently enable public IP interfaces or infer trust from a downloaded manifest. The source and target processes share no bootstrap filesystem.
