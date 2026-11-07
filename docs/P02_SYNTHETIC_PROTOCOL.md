@@ -34,3 +34,8 @@ The demonstration starts three independent localhost libp2p peers and propagates
 ## Remaining release gates
 
 P02b: enforce bounded libp2p connection/stream resources, peer admission policy, and malicious-input network exercises. P02c: controlled public connectivity behind testnet-only isolation and a verified incident-disable plan. P03: human-friendly join/leave/revoke experience. P05–P07: physical sensor trust, privacy, calibration, retention and reviewed real-data releases.
+
+
+## P02b-1 next security slice
+
+A separate pinned localhost-only synthetic-node factory has been added, using a Noise PeerId allowlist and bounded libp2p connection/stream settings. See [P02B_PEER_ADMISSION.md](P02B_PEER_ADMISSION.md). This is **not** public admission, public transport, real sensing, or a validated hostile-network defense.
