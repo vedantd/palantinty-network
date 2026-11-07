@@ -7,6 +7,7 @@ import net from 'node:net';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
 import {openPersistentPeerIdentity} from '../src/operator-identity.mjs';
+import {initializePeerLedger,proposePrivatePeer,approvePrivatePeer} from '../src/p03-private-peer-ledger.mjs';
 import {disablePilot,resumePilot} from '../src/p02c-pilot-operations.mjs';
 import {reviewP02cIncidentDrill} from '../src/p02c-incident-review.mjs';
 
@@ -108,6 +109,18 @@ test('real process drill: baseline, outage, restart, revocation and wrong peer',
    writeFileSync(p,JSON.stringify(data),{mode:0o600});
    return p;
   });
+  // Manually pinned P02c participants also need reviewed local P03 approval.
+  for(const file of files){
+   const config=JSON.parse((await import('node:fs')).readFileSync(file,'utf8'));
+   initializePeerLedger(config.stateDir,config.pilotId);
+   proposePrivatePeer(config.stateDir,config.pilotId,{
+    peerId:config.remotePeerId,remoteIp:config.remoteIp,
+    seedAddress:config.remoteSeed
+   });
+   approvePrivatePeer(config.stateDir,config.pilotId,config.remotePeerId,{
+    verifiedOutOfBand:true
+   });
+  }
   async function successfulRound(n){
    const observer=launch('observe',files[0]);jobs.push(observer);
    await waitForEvent(observer,'started');
