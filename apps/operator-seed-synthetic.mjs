@@ -31,7 +31,7 @@ if(!stateDir||!region){
     for(const [i,key] of signers.entries()){
      const env=signReport({schema:'pulsemesh.activity.v1',area:region,
       bucketStart:base+window*60_000,bucketSeconds:60,
-      activityIndex:20+10*i+window*2,metric:'ble_alias_activity'
+      activityIndex:20+10*i+window*5,metric:'ble_alias_activity'
      },key,window+1);
      if(index.ingest(env).accepted!==true)throw Error('Synthetic fixture ingest failed');
     }
