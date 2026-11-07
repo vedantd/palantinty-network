@@ -18,7 +18,8 @@
     "dashboard": "node apps/dashboard.mjs",
     "network:gossip": "node apps/gossip-network-demo.mjs",
     "network:reconnect": "node apps/reconnect-network-demo.mjs",
-    "network:replay": "node apps/history-replay-demo.mjs"
+    "network:replay": "node apps/history-replay-demo.mjs",
+    "network:dht": "node apps/dht-discovery-demo.mjs"
   },
   "license": "MIT",
   "dependencies": {
@@ -28,6 +29,8 @@
     "libp2p": "^3.0.2",
     "@multiformats/multiaddr": "^13.0.3",
     "@libp2p/gossipsub": "^17.2.1",
-    "@libp2p/identify": "^4.1.18"
+    "@libp2p/identify": "^4.1.18",
+    "@libp2p/kad-dht": "^16.4.9",
+    "@libp2p/ping": "^3.1.17"
   }
 }

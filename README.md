@@ -121,6 +121,16 @@ npm run network:replay
 
 [Reconciliation design and limitations](docs/M09_REPLAY.md).
 
+### M08b: Discover peers using sandbox Kademlia
+
+Three independent localhost peers: A knows B, B knows C, and A discovers C through Kademlia without a centrally managed peer directory. Signed synthetic reports flow over encrypted GossipSub after discovery. This is an isolated local experiment, **not** public peer discovery.
+
+```bash
+npm run network:dht
+```
+
+[Sandbox DHT decisions and security limits](docs/M08_DHT.md).
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.
