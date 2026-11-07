@@ -1,3 +1,4 @@
+import {summarizeHourlyCoverage,hourlyCoverageSeries} from './coverage.mjs';
 import {REGIONS} from './dashboard-regions.mjs';
 const HOUR=3600000;
 /** Read-only dashboard projection over a regional aggregate query interface. */
@@ -11,10 +12,12 @@ export function createDashboardModel({query,now=Date.now(),regions=REGIONS}) {
    const points=rows(r.id,start,current),latest=points.at(-1);
    const fresh=latest&&latest.timestamp>=current-HOUR;
    const previous=latest&&points.find(p=>p.timestamp===latest.timestamp-24*HOUR);
+   const coverage=summarizeHourlyCoverage(points,{start:current-24*HOUR,end:current});
    return {...r,index:fresh?latest.index:null,latestAt:latest?.timestamp??null,
+    coverage,
     sources:latest?.sources??0,quality:!fresh?'insufficient_coverage':
     latest.sources<3?'limited_coverage':'experimental',
-    changePct:fresh&&previous&&previous.index?Math.round((latest.index-previous.index)/previous.index*100):null};
+    changePct:fresh&&previous&&previous.index&&coverage.status==='complete'?Math.round((latest.index-previous.index)/previous.index*100):null};
   });
   return {overview(){
    const active=projectedRegions.filter(r=>r.index!==null);
@@ -28,7 +31,8 @@ export function createDashboardModel({query,now=Date.now(),regions=REGIONS}) {
    const points=rows(id,current-hours*HOUR,current);
    const baseline=hours===24?rows(id,current-48*HOUR,current-24*HOUR)
     .map(p=>({...p,timestamp:p.timestamp+24*HOUR})):[];
-   return {schema:'pulsemesh.history.v1',simulation:true,regionId:id,hours,points,baseline};
+   const {coverage,buckets}=hourlyCoverageSeries(points,{start:current-hours*HOUR,end:current});
+   return {schema:'pulsemesh.history.v1',simulation:true,regionId:id,hours,points,baseline,coverage,buckets};
   }
  };
 }
