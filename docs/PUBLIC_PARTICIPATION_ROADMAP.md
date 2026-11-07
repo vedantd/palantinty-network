@@ -61,3 +61,8 @@ Operator-specific persistent identity and private configuration CLI, synthetic-o
 ## P02c-3 private-pilot operational safety
 
 Local stop/revoke/resume and connection-health telemetry have been added for the pre-public pinned synthetic host pilot; no public listener, open enrollment or real BLE publishing is enabled. This does not satisfy independently administered physical-host, incident ownership, hostile Internet fault testing or public supply-chain gates. See [P02C_OPERATOR_CONTROLS.md](P02C_OPERATOR_CONTROLS.md).
+
+
+## P02c-4 synthetic outage and incident review checkpoint
+
+Adds an automated two-process localhost baseline → outage → recovery test, local peer revocation check, and a bounded offline incident transcript reviewer. This does not validate independently operated physical hosts or private-overlay firewall partition, and does not close any release gate. See [P02C_INCIDENT_DRILL.md](P02C_INCIDENT_DRILL.md).
