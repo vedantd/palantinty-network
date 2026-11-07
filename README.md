@@ -50,10 +50,11 @@ flowchart LR
 | **Local sensing** | macOS diagnostic, bounded aggregation, opt-in export rules | Calibrated activity signal and field consent |
 | **P2P transport** | Signed reports, libp2p/Noise/GossipSub, pinned private peers | Untrusted Internet transport, NAT and public bootstrap |
 | **Discovery** | Localhost Kademlia discovers two indexers by a **fictional region CID**, verifies Peer ID-bound signed coverage (#92) | Independent physical hosts, churn/NAT, and privacy-reviewed real geographic mapping |
+| **Regional query** | Two DHT-discovered indexers return peer-ID-signed thresholded synthetic aggregates; disagreement and missing-data checks (#94) | Host independence, partitions, freshness/churn, real geo/privacy validation |
 | **Regional storage** | Durable SQLite, signed archive sync, replay protection | Independent physical-host recovery and backups |
 | **Trust** | Private peer approval and revocation watcher; locked CI/SBOM | Race-safe revocation, signed releases, independent review |
 
-**Verified local synthetic milestone (#92):** fictional region key → Kademlia content-provider lookup → two separate indexer Peer IDs → direct Noise-encrypted, signed coverage verification. **Next:** D03 bounded read-only aggregate queries and comparison between indexers. This was a one-machine test, **not** independent physical operators. A DHT provides **discovery, not location truth, data availability, or a database**.
+**Verified localhost synthetic milestones (#92 and #94):** fictional region key → Kademlia content-provider lookup → two signed and approved indexer identities → Noise-encrypted regional aggregate reads from separate SQLite stores → explicit consistent / no-data / disagreement results. **Next:** harden D03 quorum through partitions and churn, and validate H03 on two actually independent hosts. These were **one-machine tests**, not independent physical operators. A DHT provides **discovery, not location truth, data availability, or a database**.
 
 [Design contract](docs/PUBLIC_RELEASE_EXECUTION_PLAN.md) · [Regional DHT proof](docs/ADR_D02A_PRIVATE_REGION_PROVIDERS.md) · [Indexer sync](docs/M09_INDEXER_SYNC.md)
 
@@ -63,7 +64,7 @@ flowchart LR
 
 The chart is generated from the [28-slice execution tracker](config/release-execution-tracker.json) and [release evidence ledger](config/public-release-gates.json). **Slice counts are not completion percentages**; CI passing does not count as external release approval.
 
-**Verified on `main`:** release policy and threat model, private approved-peer enforcement, and reproducible locked dependencies. Several working prototypes remain *partial* until their full acceptance tests and deployment evidence are available. The [landing-page PR #78](https://github.com/vedantd/palantinty-network/pull/78) passed **198 automated tests** and private Docker integration in [CI run 42399271410](https://github.com/vedantd/palantinty-network/actions/runs/42399271410). The live CI badge reflects subsequent changes.
+**Verified on `main`:** release policy and threat model, private approved-peer enforcement, reproducible locked dependencies, and [#94 signed two-indexer regional aggregate comparisons](https://github.com/vedantd/palantinty-network/pull/94) with [full CI evidence](https://github.com/vedantd/palantinty-network/actions/runs/42423722670). Several working prototypes remain *partial* until their full acceptance tests and deployment evidence are available. The [landing-page PR #78](https://github.com/vedantd/palantinty-network/pull/78) passed **198 automated tests** and private Docker integration in [CI run 42399271410](https://github.com/vedantd/palantinty-network/actions/runs/42399271410). The live CI badge reflects subsequent changes.
 
 > [!NOTE]
 > **No public release gates have passed:** open synthetic testnet **0/6**, real-sensor public release **0/7** additional gates. This is a deliberately blocked-by-default status.
@@ -83,6 +84,7 @@ npm test
 npm run network:gossip      # signed synthetic mesh and two local indexers
 npm run network:dht         # local-only known-Peer-ID routing
 npm run network:region-dht  # find and verify two indexers for a fictional region
+npm run network:region-query # read two signed regional aggregates; reject disagreement
 npm run network:auto-sync   # authenticated, private indexer recovery
 npm run dashboard           # local fictional region history
 ~~~
@@ -94,7 +96,7 @@ See the [prototype demo catalog](docs/PROTOTYPE_DEMOS.md) for more commands, pri
 | Phase | Deliverable | Current state |
 | :-- | :-- | :-- |
 | **01 — Private foundation** | Encrypted synthetic P2P, independent archives, approved peers | **Working demo; hardening ongoing** |
-| **02 — Geographic discovery** | Signed fictional region coverage and private Kademlia lookup; next, bounded aggregate queries | **Two-indexer localhost discovery verified; D03 still planned** |
+| **02 — Geographic discovery** | Signed fictional region coverage, private Kademlia lookup and bounded regional aggregate comparison | **Two-indexer synthetic query demonstrated on localhost; D03a/D03b partial** |
 | **03 — Operational independence** | Two actual separately administered hosts, recovery, backups and revocation safety | **Not independently verified** |
 | **04 — Open synthetic testnet** | Untrusted enrollment, abuse resistance, live operations and all six release gates | **Blocked** |
 | **05 — Real sensing** | Calibration, consent, retention/deletion, anti-Sybil, legal and privacy reviews | **Blocked; separate seven gates** |
