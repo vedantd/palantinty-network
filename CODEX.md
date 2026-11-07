@@ -38,3 +38,7 @@ before further infrastructure.
 ## M07 current slice
 
 Synthetic-only localhost GossipSub with independent durable regional recipients is implemented in `src/gossip-network.mjs` and `apps/gossip-network-demo.mjs`; see [M07 decision record](docs/M07_GOSSIPSUB.md). Do not treat GossipSub publish success as durable delivery or real-data onboarding. Continue M08 discovery and restart hardening only after passing the five-node CI integration test.
+
+## M09a reconciliation boundary
+
+[Read M09 replay ADR](docs/M09_REPLAY.md). An indexer may accept a signed, unseen older sequence inside the bounded backfill gap without regressing the high-water mark. A local contributor outbox retains exact signed envelopes after ACK for encrypted, explicitly loopback sender-assisted replay. This is **not** automatic distributed anti-entropy: no raw signer's signed-history endpoint may be made public, and the publisher must retain history. Keep tests for duplicate replay, window expiry, consent revocation and transaction atomicity.
