@@ -1,9 +1,17 @@
+## 2026-11-07 — D01 offline signed fictional-region coverage validation (PR pending)
+
+- **Starting point:** #74's watchdog tests successfully rebuilt/merged as [#80](https://github.com/vedantd/palantinty-network/pull/80) with [200/200 passing tests](https://github.com/vedantd/palantinty-network/actions/runs/42401338305). Reconstruct D01 coverage from conflicting/failed PR #75 on the new main.
+- **Bug root cause:** Node.js rejects `createPublicKey` on an already-public Ed25519 KeyObject; the earlier verifier consequently returned false on valid signed advertisements. Use reviewed local public Ed25519 KeyObjects directly or explicitly public PEM trust anchors.
+- **Deliverable:** Fixed-field fictional `syn:` region coverage payload, canonical bytes, Ed25519 signature, short-lived TTL, strict region matching, local peer/public-key allowlist, negative/adversarial key substitution tests and [ADR](D01_PRIVATE_COVERAGE_ADVERTISEMENTS.md).
+- **Still missing:** Canonical real coarse-region privacy contract, cryptographic binding of libp2p Peer ID to signing key, network advertisements and provider lookup, independent operators, public admission. This is **not D01b complete** and changes no launch gates.
+- **CI/merge:** Pending review and full GitHub Actions.
+
 ## 2026-11-07 — H2 one-way private watchdog rollback regression (rebased from #74)
 
 - **Scope:** Port PR #74's two safety tests onto current merged main without overwriting the completed README/roadmap changes; no runtime logic changed.
 - **Checks:** An observed invalid config or drifted pinned remote must permanently trip the current running guard, exactly once, even if a restored config passes a fresh standalone approval check. Uses separately provisioned ephemeral operator identities and local approval state.
 - **Decision:** [ADR-H2-001](ADR_H2_WATCHDOG_ONE_WAY_TRIP.md). This does **not** prove atomic revocation, remote disconnect, instantaneous observation of transient mutations, or Internet admission safety. H02a/H02b and #66 remain partial; all public release gates blocked.
-- **CI/merge:** Pending full GitHub Actions.
+- **CI/merge:** Rebuilt test-only [PR #80](https://github.com/vedantd/palantinty-network/pull/80) merged as `12d35620d5add69b7417bf57f8d6b4bda8cfe72d` after passing [run 42401338305](https://github.com/vedantd/palantinty-network/actions/runs/42401338305): **200 tests passed / 0 failed** and private Docker integration green. Original conflicted #74 closed as superseded. H02a/H02b remain partial.
 
 ## 2026-11-07 — Public-facing README and evidence-based progress visualization (verified PR #78)
 
