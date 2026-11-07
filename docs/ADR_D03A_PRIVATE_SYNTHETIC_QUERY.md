@@ -1,6 +1,6 @@
 # ADR-D03a-001 — Bounded authenticated synthetic regional reads
 
-**Date:** 2026-11-07 · **Status:** proposed private synthetic-only implementation (CI and review pending).
+**Date:** 2026-11-07 · **Status:** private synthetic-only software demonstration verified and merged in PR #94; formal D03a/D03b acceptance remains partial.
 
 ## Goal and trust boundary
 
@@ -27,4 +27,4 @@ Rollback by reverting the D03 branch/commit and removing the new CI/demo command
 
 This first D03a private read does **not** establish independently administered hosts (H03), regional accuracy, sensor independence or quality, anonymity, robust churn/refresh, partition recovery, scaling, availability SLAs, authenticated cross-host revocation, or six public synthetic release gates. A regional indexer can sign a false aggregate; independent trust and field science remain unresolved.
 
-**Promotion policy:** only after green full CI, code review and merge may D03 be marked **partial**, not complete. Do not advance any public testnet/real-sensing gate.
+**Evidence:** [PR #94](https://github.com/vedantd/palantinty-network/pull/94) merged as b44caa910d1116596e9c102f2f9b7aac75eab2a1; [CI 42423722670](https://github.com/vedantd/palantinty-network/actions/runs/42423722670) and [CI 42423706799](https://github.com/vedantd/palantinty-network/actions/runs/42423706799) passed. Formal D03a/D03b are **partial**, not completed. No public testnet or real-sensing gate advanced.
