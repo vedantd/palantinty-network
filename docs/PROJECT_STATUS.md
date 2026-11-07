@@ -248,3 +248,5 @@ substitute for field testing. See README and docs for individual workflows.
 **Working agreement:** small modular PRs; meaningful failure/negative tests;
 CI green before merge; update documentation when behavior or limitations
 change; do not silently expand scope to public data or incentives.
+
+H1c CI policy regression tests proposed on a separate branch; no release gate status changed. H1/#65, H2/#66, P02c/#67 remain open. Full CI required before merge.

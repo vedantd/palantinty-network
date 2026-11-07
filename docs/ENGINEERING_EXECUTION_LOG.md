@@ -1,3 +1,10 @@
+## 2026-11-07 — H1c least-privilege CI policy regression guard (PR pending)
+
+- **Starting point:** inspected current main CI, H1a/#70 and H1b/#72 logged merges, open H1/#65, H2/#66 and independent-host/#67, and open H2 PR #74. Avoided overlapping H2.
+- **ADR-H1c-001:** protect reviewed CI invariants with a narrow source-text policy test rather than introducing a new YAML dependency; reject privileged PR triggers, write token permissions, mutable action revisions, unlocked install, missing lock verification, or missing public release-block assertions. Test does not replace GitHub branch protection or human workflow review.
+- **Implementation:** `src/ci-policy-check.mjs` and `tests/ci-policy-check.test.mjs`, with positive checked-in workflow and six negative mutation scenarios. Existing `npm test` includes tests automatically. No listener or real-data changes.
+- **Verification:** full GitHub CI pending at time of commit. Do not merge until the entire workflow passes. CI policy regex is intentionally conservative and may reject legitimate future workflow changes until reviewed. Both release profiles remain blocked.
+
 ## 2026-11-07 — H1b-1 immutable CI and CycloneDX evidence merged
 
 - **PR:** [#72](https://github.com/vedantd/palantinty-network/pull/72), merge commit `f6f76491ff65031230315d0ea094d67b62f26b85`.

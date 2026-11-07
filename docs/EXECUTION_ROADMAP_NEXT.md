@@ -62,3 +62,7 @@ Release gate states are maintained in [config/public-release-gates.json](../conf
 - [P02c independent physical-host evidence (#67)](https://github.com/vedantd/palantinty-network/issues/67)
 
 Prioritize these independently verified hardening items **before** inviting untrusted synthetic participants. They do not block normal open-source code contributions.
+
+### H1c CI policy regression guard (PR pending)
+
+A small test-only H1 follow-up guards against accidental `pull_request_target`, writable tokens, floating Actions, `npm install`, and removal of release assertions. This is not a YAML security analyzer, a signed build, or a verified release gate. H1b supply-chain work and #65 remain open.
