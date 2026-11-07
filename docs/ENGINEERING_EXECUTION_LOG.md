@@ -1,3 +1,11 @@
+## 2026-11-07 — P03c offline pinned peer trust audit (PR pending CI)
+
+- **Starting point:** main included merged P03b PR #59; no open PRs at inspection. Reviewed P03a ledger, P03b staging, P02c host-config validator, existing tests, status and execution ledger.
+- **Decision ADR-P03c-001:** Implement read-only comparison of the active manually pinned config against the local approval ledger before any runtime trust automation. See [P03C_PRIVATE_TRUST_AUDIT.md](P03C_PRIVATE_TRUST_AUDIT.md).
+- **Implementation:** `auditPrivatePilotPeer` reports unknown, candidate, revoked, IP drift and seed drift without modifying files or live peers.
+- **Tests:** Positive approved-pin and negative unknown/candidate/revoked/seed drift/unsafe config cases added in `tests/p03-peer-audit.test.mjs`. CI outcome must be checked before merge.
+- **Blockers:** A clean audit is a staleable local snapshot, not a startup authorization or independent peer verification. No independently operated physical-host evidence; all public release gates remain blocked.
+
 ## 2026-11-07 — P03b explicitly staged approved peer configuration
 
 - **Starting point:** P03a (#58) green and merged. Ledger validates explicit candidate/approval/revocation but does not change running transport.
