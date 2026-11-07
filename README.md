@@ -15,8 +15,10 @@
 
 </div>
 
+# Palantiny-Network
+
 > [!IMPORTANT]
-> **Source code is public; the participant network is not.** This is a private/local **synthetic prototype**, not a live community mesh, calibrated people counter, real-world map or open sensor network. Please **do not publish real BLE observations or invite untrusted peers**. Open synthetic and real-sensing releases have separate safety gates.
+> **Source code is public; the participant network is not.** This is a private/local **synthetic prototype**, not a calibrated people counter, real-world map or open sensor network. **There is no live mesh of Palantiny installations to join yet.** Please **do not publish real BLE observations or invite untrusted peers**. Open synthetic and real-sensing releases have separate safety gates.
 
 ## The idea
 
