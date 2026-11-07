@@ -1,3 +1,4 @@
+import {createHash} from 'node:crypto';
 import {readP02cHostConfig} from './p02c-host-config.mjs';
 import {auditPrivatePilotPeer} from './p03-peer-audit.mjs';
 import {assertPilotEnabled} from './p02c-pilot-operations.mjs';
@@ -25,6 +26,7 @@ export function assertApprovedPrivatePilot(configPath) {
  return Object.freeze({
   schema:'palantiny.p03-runtime-trust.v1',
   pilotId:config.pilotId,peerId:config.remotePeerId,
+  configDigest:createHash('sha256').update(JSON.stringify(config)).digest('hex'),
   remoteIp:config.remoteIp,remoteSeed:config.remoteSeed,
   ledgerRevision:audit.ledgerRevision,approved:true,
   syntheticOnly:true,publicTestnetReady:false
@@ -50,7 +52,8 @@ export function watchApprovedPrivatePilot(configPath,{onTrip,intervalMs=100}={})
   if(tripped)throw Error('Private pilot trust revoked');
   try{
    const now=assertApprovedPrivatePilot(configPath);
-   if(now.ledgerRevision!==baseline.ledgerRevision||
+   if(now.configDigest!==baseline.configDigest||
+      now.ledgerRevision!==baseline.ledgerRevision||
       now.peerId!==baseline.peerId||
       now.remoteIp!==baseline.remoteIp||
       now.remoteSeed!==baseline.remoteSeed)
