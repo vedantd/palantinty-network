@@ -34,7 +34,8 @@
     "pilot:publish": "node apps/p02c-host-pilot.mjs publish",
     "pilot:review": "node apps/p02c-evidence-review.mjs",
     "pilot:control": "node apps/p02c-pilot-control.mjs",
-    "pilot:incident-review": "node apps/p02c-incident-review.mjs"
+    "pilot:incident-review": "node apps/p02c-incident-review.mjs",
+    "peer:enrollment": "node apps/p03-peer-enrollment.mjs"
   },
   "license": "MIT",
   "dependencies": {

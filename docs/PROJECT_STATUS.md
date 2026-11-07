@@ -1,3 +1,7 @@
+## P03a operator-local private peer enrollment (pre-public)
+
+A standalone, strict private on-disk enrollment ledger now models candidate → approved → revoked Peer IDs with explicit out-of-band operator approval, bounded file permissions and exclusive writes. It exports only approved pinned peer data, but **does not yet change the running libp2p node's trust policy**. No public registration or geographic DHT lookup is enabled. See [P03_PRIVATE_ENROLLMENT.md](P03_PRIVATE_ENROLLMENT.md) and [ENGINEERING_EXECUTION_LOG.md](ENGINEERING_EXECUTION_LOG.md). Release gates remain blocked.
+
 ## P02c-4 synthetic outage/recovery incident drill
 
 A bounded transcript reviewer and a multi-process localhost drill cover baseline signed synthetic receipt, publisher outage failure, fresh receipt after restart with persistent Peer IDs, revocation restart refusal, and mis-pinned publisher refusal. This is **not independently administered physical-host or firewall partition evidence**; P02c release acceptance remains blocked. See [P02C_INCIDENT_DRILL.md](P02C_INCIDENT_DRILL.md).
