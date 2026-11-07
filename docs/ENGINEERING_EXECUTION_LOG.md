@@ -1,3 +1,11 @@
+## 2026-11-07 — D01 offline signed fictional-region coverage validation (PR pending)
+
+- **Starting point:** #74's watchdog tests successfully rebuilt/merged as [#80](https://github.com/vedantd/palantinty-network/pull/80) with [200/200 passing tests](https://github.com/vedantd/palantinty-network/actions/runs/42401338305). Reconstruct D01 coverage from conflicting/failed PR #75 on the new main.
+- **Bug root cause:** Node.js rejects `createPublicKey` on an already-public Ed25519 KeyObject; the earlier verifier consequently returned false on valid signed advertisements. Use reviewed local public Ed25519 KeyObjects directly or explicitly public PEM trust anchors.
+- **Deliverable:** Fixed-field fictional `syn:` region coverage payload, canonical bytes, Ed25519 signature, short-lived TTL, strict region matching, local peer/public-key allowlist, negative/adversarial key substitution tests and [ADR](D01_PRIVATE_COVERAGE_ADVERTISEMENTS.md).
+- **Still missing:** Canonical real coarse-region privacy contract, cryptographic binding of libp2p Peer ID to signing key, network advertisements and provider lookup, independent operators, public admission. This is **not D01b complete** and changes no launch gates.
+- **CI/merge:** Pending review and full GitHub Actions.
+
 ## 2026-11-07 — H2 one-way private watchdog rollback regression (rebased from #74)
 
 - **Scope:** Port PR #74's two safety tests onto current merged main without overwriting the completed README/roadmap changes; no runtime logic changed.
