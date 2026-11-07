@@ -19,10 +19,15 @@ test('dashboard model queries injected aggregate source without keys, signing or
  assert.equal(overview.summary.regions,1);
  assert.equal(overview.summary.reporting,1);
  assert.equal(overview.regions[0].index,30);
- assert.equal(overview.regions[0].changePct,50);
+ assert.equal(overview.regions[0].changePct,null);
+ assert.equal(overview.regions[0].coverage.missingBuckets,23);
  const history=model.history('mock-zone',24);
  assert.deepEqual(history.points,[{timestamp:current-hour,index:30,sources:3}]);
  assert.deepEqual(history.baseline,[{timestamp:current-hour,index:20,sources:2}]);
+ assert.equal(history.coverage.expectedBuckets,24);
+ assert.equal(history.coverage.observedBuckets,1);
+ assert.equal(history.buckets.filter(b=>b.status==='missing').length,23);
+ assert.equal(history.buckets[0].index,null);
  assert.ok(calls.every(c=>c.area==='mock-zone'&&c.limit===500));
  assert.throws(()=>model.history('missing'),/unknown_region/);
  assert.throws(()=>model.history('mock-zone',12),/unsupported_range/);
