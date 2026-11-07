@@ -15,3 +15,4 @@ jobs:
       - run: npm run demo
       - run: npm run network:demo
       - run: npm run network:durable
+      - run: npm run network:gossip
