@@ -1,3 +1,7 @@
+## P02b-3 live transport abuse tests (pre-public)
+
+Live localhost libp2p tests now exercise unauthorized Noise handshakes, stalled raw TCP connections, and a deliberately constrained test stream handler, followed by recovery to a pinned peer. These are **bounded small-scale tests, not Internet flood safety or a production security audit**. See [P02B_RUNTIME_ABUSE.md](P02B_RUNTIME_ABUSE.md); both public release profiles remain blocked.
+
 ## P02b-2 global synthetic observer budgets (pre-public)
 
 An application-level per-window global message and byte quota now bounds synthetic observer work across rotated forwarding peer IDs. Replay IDs are remembered in a capped window, and duplicate verified reports never trigger a second observer callback. This does not cap upstream libp2p bandwidth or authenticate sensor provenance. See [P02B_INGRESS_BUDGET.md](P02B_INGRESS_BUDGET.md). Public gates remain blocked.
