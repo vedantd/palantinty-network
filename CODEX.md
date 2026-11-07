@@ -50,3 +50,7 @@ Synthetic-only localhost GossipSub with independent durable regional recipients 
 ## M09c — automatic trusted-indexer reconciliation
 
 [Read the M09c ADR](docs/M09_AUTOMATIC_RECONCILIATION.md). Trusted localhost indexers may automatically pull bounded pages of signed archives without duplicate ingestion and check private archive fingerprints. Cursor state is **not persisted**; retries after crashes rescan from zero. Status can be `partial`, `failed`, `consistent` or `divergent`; never equate a successful connection or archive fingerprint with validated BLE signal, independent sensor coverage or public-network safety.
+
+## M10a — private-network sandbox only
+
+[Read M10 private-network ADR](docs/M10_PRIVATE_NETWORK.md). Explicit `allowPrivateLan:true` allows concrete RFC1918 IPv4 interfaces for **synthetic** direct indexer sync only. The default remains loopback. Both incoming and outgoing indexer sync require a pinned Noise-authenticated Peer ID. Docker Compose runs two separate network namespaces and state volumes. A shared metadata volume in the demo is **not a secure trust bootstrap**. Public, wildcard, DNS, and real sensor publishing remain disabled; don't claim cross-physical-machine validation.
