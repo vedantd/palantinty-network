@@ -47,3 +47,7 @@ A nonzero exit status means not ready. Changing a gate to verified requires an a
 ## Release management
 
 Keep PRs small and anchored in explicit acceptance tests. Each slice updates this plan, [PROJECT_STATUS.md](PROJECT_STATUS.md), security notes and CI. Do not silently open public network interfaces or activate real sensor publishing. Publish accepted issues/PRs for community software participation, but do **not** invite real-world volunteers to share observations until P07's gates are satisfied.
+
+## P02c-1 restricted-private transport checkpoint
+
+An opt-in pinned RFC1918 synthetic GossipSub transport and isolated two-container demo are now available. This does not complete P02: actual independently administered host evidence, hostile remote-load testing, emergency disable procedures, public Internet NAT/bootstrap policy, onboarding and operational signoff are outstanding. All release gates remain blocked. See [P02C_PRIVATE_OVERLAY.md](P02C_PRIVATE_OVERLAY.md).
