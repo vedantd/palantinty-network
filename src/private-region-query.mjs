@@ -10,6 +10,13 @@ import {parseSyntheticRegionKey} from './private-synthetic-region.mjs';
  * Refuse public transport, raw signed reports and unbounded queries.
  */
 export const PRIVATE_SYNTHETIC_QUERY_PROTOCOL='/palantiny-network/private-synthetic-query/0.1.0';
+/** Only genuine transport failure may be tolerated when other indexers meet quorum. */
+export class PrivateIndexerUnavailable extends Error {
+ constructor(message='D03 private indexer unavailable'){
+  super(message);this.name='PrivateIndexerUnavailable';
+  this.code='PRIVATE_INDEXER_UNAVAILABLE';
+ }
+}
 const QUERY='palantiny.private-synthetic-query.request.v1';
 const REPLY='palantiny.private-synthetic-query.reply.v1';
 const PREFIX=new TextEncoder().encode('palantiny.private-synthetic-query.signed.v1\0');
@@ -122,16 +129,16 @@ export async function verifyPrivateSyntheticReply(reply,{
 /** A missing or disputed record must never be represented as a zero reading. */
 export function comparePrivateSyntheticRows(results,request,now=Date.now()){
  validRequest(request,now);
- if(!Array.isArray(results)||results.length!==2||
-    results[0]?.peerId===results[1]?.peerId||
+ if(!Array.isArray(results)||results.length<2||results.length>4||
+    new Set(results.map(r=>r?.peerId)).size!==results.length||
     results.some(r=>typeof r?.peerId!=='string'||
-      !Array.isArray(r.rows)))throw Error('Two distinct authenticated indexers required');
+      !Array.isArray(r.rows)))throw Error('Two to four distinct authenticated indexers required');
  for(const r of results)validateSyntheticRows(r.rows,request,now);
- const equal=JSON.stringify(results[0].rows)===JSON.stringify(results[1].rows);
+ const equal=results.every(r=>JSON.stringify(r.rows)===JSON.stringify(results[0].rows));
  return Object.freeze({status:equal?
   (results[0].rows.length?'consistent':'no-data'):'disagreement',
   rows:equal&&results[0].rows.length?results[0].rows:[],
-  indexerPeerIds:results.map(r=>r.peerId),sources:2,
+  indexerPeerIds:results.map(r=>r.peerId),sources:results.length,
   independentlyOperatedHostsVerified:false});
 }
 
@@ -193,12 +200,19 @@ async function readPeer(node,discovered,req,approvedIndexerPeerIds,timeoutMs,clo
   throw Error('D03 requires current verified approved coverage');
  const id=peerIdFromString(peerId);
  const connections=node.getConnections(id);
- if(!connections.length||connections.some(c=>
+ if(!connections.length)
+  throw new PrivateIndexerUnavailable('D03 disconnected approved indexer');
+ if(connections.some(c=>
     c.remotePeer.toString()!==peerId||!isLoopback(c.remoteAddr.toString())))
   throw Error('D03 refuses non-loopback or unauthenticated peer connection');
- const stream=await node.dialProtocol(id,PRIVATE_SYNTHETIC_QUERY_PROTOCOL,{
-  signal:AbortSignal.timeout(timeoutMs)
- });
+ let stream;
+ try{
+  stream=await node.dialProtocol(id,PRIVATE_SYNTHETIC_QUERY_PROTOCOL,{
+   signal:AbortSignal.timeout(timeoutMs)
+  });
+ }catch{
+  throw new PrivateIndexerUnavailable('D03 approved indexer dial unavailable');
+ }
  return new Promise((resolve,reject)=>{
   let done=false;
   const settle=(err,rows)=>{
@@ -206,7 +220,7 @@ async function readPeer(node,discovered,req,approvedIndexerPeerIds,timeoutMs,clo
    void stream.close().catch(()=>{});
    if(err)reject(err);else resolve(Object.freeze({peerId,rows}));
   };
-  const timer=setTimeout(()=>settle(Error('D03 timed out')),timeoutMs);
+  const timer=setTimeout(()=>settle(new PrivateIndexerUnavailable('D03 approved indexer query timed out')),timeoutMs);
   const decoder=new JsonLineDecoder({maxLineBytes:MAX_FRAME,
    onDropped:()=>settle(Error('D03 oversized response')),
    onLine:line=>{
@@ -224,15 +238,37 @@ async function readPeer(node,discovered,req,approvedIndexerPeerIds,timeoutMs,clo
   stream.addEventListener('message',event=>{
    if(!done)decoder.push(event.data.subarray());
   });
-  stream.addEventListener('error',event=>
-   settle(event.error??Error('D03 private stream error')));
+  stream.addEventListener('error',()=>
+   settle(new PrivateIndexerUnavailable('D03 approved indexer stream lost')));
   try{stream.send(encode(req));}catch(e){settle(e);}
  });
 }
 /**
- * D02a provides the actual region→provider candidates and signed coverage.
- * D03 fetches bounded, thresholded aggregates from two of those candidates;
- * it never treats an empty or disagreeing archive as a real zero.
+ * D03b: tolerate only explicit transport unavailability. Invalid signed
+ * replies, unauthorized peers, stale coverage and malformed rows are hard
+ * failures even if other responders agree. A single reply is never enough.
+ * All available distinct indexers must agree; no majority vote on BLE truth.
+ */
+export function settlePrivateSyntheticQuorum(outcomes,request,now=Date.now()){
+ if(!Array.isArray(outcomes)||outcomes.length<2||outcomes.length>4)
+  throw Error('D03 requires two to four bounded candidate outcomes');
+ const accepted=[];let unavailableCount=0;
+ for(const outcome of outcomes){
+  if(outcome?.status==='fulfilled')accepted.push(outcome.value);
+  else if(outcome?.status==='rejected'&&
+     outcome.reason?.code==='PRIVATE_INDEXER_UNAVAILABLE')unavailableCount++;
+  else throw Error('D03 refused invalid or unauthenticated indexer response');
+ }
+ if(accepted.length<2)
+  throw Error('D03 insufficient authenticated indexer responses: '+accepted.length+'/2');
+ return Object.freeze({...comparePrivateSyntheticRows(accepted,request,now),
+  unavailableCount,degraded:unavailableCount>0});
+}
+
+/**
+ * D02a provides actual region→provider candidates and signed coverage.
+ * D03b reads all 2..4 approved candidates and only tolerates their
+ * transport failure while 2+ **agreeing** signed responders remain.
  */
 export async function queryDiscoveredPrivateRegion(node,{
  region,discovery,approvedIndexerPeerIds,start,end,limit=16,
@@ -242,16 +278,17 @@ export async function queryDiscoveredPrivateRegion(node,{
  if(!(approvedIndexerPeerIds instanceof Set)||
     !Number.isSafeInteger(timeoutMs)||timeoutMs<250||timeoutMs>60_000||
     typeof clock!=='function'||discovery?.region!==region||
-    !Array.isArray(discovery.results)||discovery.results.length<2)
-  throw Error('D03 requires two D02a discovered private indexers');
+    !Array.isArray(discovery.results)||discovery.results.length<2||
+    discovery.results.length>4)
+  throw Error('D03 requires two to four D02a discovered private indexers');
  const req=validRequest({schema:QUERY,region,start,end,limit,
   nonce:randomBytes(16).toString('base64url')},clock());
- const candidates=discovery.results.slice(0,2);
- if(new Set(candidates.map(x=>x.peerId)).size!==2)
+ const candidates=discovery.results;
+ if(new Set(candidates.map(x=>x.peerId)).size!==candidates.length)
   throw Error('D03 duplicate indexer Peer IDs');
- const rows=await Promise.all(candidates.map(p=>
+ const outcomes=await Promise.allSettled(candidates.map(p=>
   readPeer(node,p,req,approvedIndexerPeerIds,timeoutMs,clock)));
  return Object.freeze({schema:'palantiny.private-synthetic-query.result.v1',
-  region,query:{start,end,limit},...comparePrivateSyntheticRows(rows,req,clock()),
+  region,query:{start,end,limit},...settlePrivateSyntheticQuorum(outcomes,req,clock()),
   privateTransport:true,publicNetwork:false,realSensing:false});
 }

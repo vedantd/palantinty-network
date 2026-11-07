@@ -5,7 +5,8 @@ import {peerIdFromPrivateKey} from '@libp2p/peer-id';
 import {
  syntheticAreaForRegion,validateSyntheticRows,
  signPrivateSyntheticReply,verifyPrivateSyntheticReply,
- comparePrivateSyntheticRows,queryDiscoveredPrivateRegion,
+ comparePrivateSyntheticRows,settlePrivateSyntheticQuorum,
+ PrivateIndexerUnavailable,queryDiscoveredPrivateRegion,
  registerPrivateSyntheticQuery
 } from '../src/private-region-query.mjs';
 
@@ -102,7 +103,7 @@ test('D03 never dials unvalidated, duplicate or unapproved D02a providers',async
   start:NOW-60*60_000,end:NOW-16*60_000,clock:()=>NOW};
  await assert.rejects(queryDiscoveredPrivateRegion(node,{
   ...options,discovery:{region:REGION,results:[{peerId:'a',verified:true,region:REGION,
-   expiresAt:NOW+1000}]} }),/two D02a/);
+   expiresAt:NOW+1000}]} }),/two to four D02a/);
  await assert.rejects(queryDiscoveredPrivateRegion(node,{
   ...options,discovery:{region:REGION,results:[
    {peerId:'a',verified:true,region:REGION,expiresAt:NOW+1000},
@@ -122,4 +123,86 @@ test('D03 query handler refuses public or nonthresholded private servers',async(
  assert.throws(()=>registerPrivateSyntheticQuery(mkNode('/ip4/127.0.0.1/tcp/1234'),{
   ...arg,ingest:{minOperators:1,query:()=>[]}
  }),/thresholded/);
+});
+
+test('D03b 2-of-3 private replies tolerate one transport outage only',()=>{
+ const a={peerId:'index-a',rows:[row]},b={peerId:'index-b',rows:[row]};
+ const outage={status:'rejected',reason:new PrivateIndexerUnavailable('offline')};
+ const q=settlePrivateSyntheticQuorum([
+  {status:'fulfilled',value:a},outage,{status:'fulfilled',value:b}
+ ],request,NOW);
+ assert.equal(q.status,'consistent');
+ assert.equal(q.sources,2);
+ assert.equal(q.unavailableCount,1);
+ assert.equal(q.degraded,true);
+ assert.deepEqual(q.rows,[row]);
+ const missing=settlePrivateSyntheticQuorum([
+  {status:'fulfilled',value:{...a,rows:[]}},
+  outage,
+  {status:'fulfilled',value:{...b,rows:[]}}
+ ],request,NOW);
+ assert.equal(missing.status,'no-data');
+ assert.deepEqual(missing.rows,[]);
+ assert.throws(()=>settlePrivateSyntheticQuorum([
+  {status:'fulfilled',value:a},outage,outage
+ ],request,NOW),/insufficient authenticated/);
+});
+test('D03b checks every responding indexer, not only a convenient matching pair',()=>{
+ const r=settlePrivateSyntheticQuorum([
+  {status:'fulfilled',value:{peerId:'a',rows:[row]}},
+  {status:'fulfilled',value:{peerId:'b',rows:[row]}},
+  {status:'fulfilled',value:{peerId:'c',rows:[{...row,relativeBleActivity:55}]}}
+ ],request,NOW);
+ assert.equal(r.status,'disagreement');
+ assert.deepEqual(r.rows,[]);
+ assert.equal(r.sources,3);
+ assert.equal(r.degraded,false);
+ assert.throws(()=>settlePrivateSyntheticQuorum([
+  {status:'fulfilled',value:{peerId:'a',rows:[row]}},
+  {status:'fulfilled',value:{peerId:'a',rows:[row]}}
+ ],request,NOW),/distinct/);
+});
+test('D03b malformed/stale/auth failures cannot be hidden by two valid peers',()=>{
+ const good={status:'fulfilled',value:{peerId:'a',rows:[row]}};
+ const goodB={status:'fulfilled',value:{peerId:'b',rows:[row]}};
+ for(const rejected of [
+  {status:'rejected',reason:Error('invalid signed response')},
+  {status:'rejected',reason:Error('stale coverage')},
+  {status:'rejected',reason:Error('unapproved peer')}
+ ])assert.throws(()=>settlePrivateSyntheticQuorum([
+  good,goodB,rejected
+ ],request,NOW),/refused invalid/);
+ assert.throws(()=>settlePrivateSyntheticQuorum([
+  good,goodB,{status:'fulfilled',value:{peerId:'c',rows:[
+   {...row,rawMacAddress:'leak'}
+  ]}}
+ ],request,NOW),/malformed/);
+ assert.throws(()=>settlePrivateSyntheticQuorum([
+  good,goodB,{status:'fulfilled',value:{peerId:'c',rows:[
+   {...row,bucketStart:NOW-3*60_000}
+  ]}}
+ ],request,NOW),/Unreleased/);
+ assert.throws(()=>settlePrivateSyntheticQuorum([good,goodB,good,good,good],
+  request,NOW),/bounded/);
+});
+test('D03b disconnected approved indexers fail closed before any stream',async()=>{
+ const f=await keys();
+ let dials=0;
+ const node={handle:()=>{},getMultiaddrs:()=>[{
+  toString:()=>'/ip4/127.0.0.1/tcp/3000'
+ }],getConnections:()=>[],dialProtocol:async()=>{dials++;}};
+ const opts={region:REGION,start:request.start,end:request.end,
+  limit:request.limit,clock:()=>NOW,
+  approvedIndexerPeerIds:new Set([f.aId,f.bId]),
+  discovery:{region:REGION,results:[f.aId,f.bId].map(peerId=>({
+   peerId,region:REGION,verified:true,expiresAt:NOW+30_000
+  }))}};
+ await assert.rejects(queryDiscoveredPrivateRegion(node,opts),
+  /insufficient authenticated/);
+ assert.equal(dials,0);
+ await assert.rejects(queryDiscoveredPrivateRegion(node,{
+  ...opts,discovery:{region:REGION,results:[
+   ...opts.discovery.results,{...opts.discovery.results[0]}
+  ]}
+ }),/duplicate indexer/);
 });

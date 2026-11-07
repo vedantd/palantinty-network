@@ -49,6 +49,8 @@ jobs:
         run: timeout 80s npm run network:region-dht
       - name: Verify signed two-indexer synthetic regional quorum, missing and divergent data
         run: timeout 90s npm run network:region-query
+      - name: Exercise three-indexer DHT quorum and stopped-peer disagreement safety
+        run: timeout 90s npm run network:region-resilience
       - run: timeout 35s npm run network:indexer-sync
       - run: timeout 35s npm run network:auto-sync
       - name: P02c synthetic peers across isolated private bridge containers
