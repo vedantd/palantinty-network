@@ -197,6 +197,19 @@ A pre-provisioned indexer can run with its own private configuration, persistent
 
 [Standalone operator instructions](docs/P01_STANDALONE_OPERATOR.md).
 
+### P01b: operator preflight and private-host setup
+
+Preflight verifies an existing persistent identity and strict synthetic-only configuration. Generate a *public* manifest for manually pinned peers, and create synthetic signed fixtures in a fresh test database:
+
+```sh
+npm run operator:identity -- /absolute/operator/state/operator-identity
+npm run operator:seed -- /absolute/operator/state synthetic-community-test
+npm run operator:preflight -- /absolute/operator/config.json
+npm run operator:manifest -- /absolute/operator/config.json
+```
+
+Do not run this against public Internet listeners or publish real BLE observations. [Two-host private pilot runbook](docs/P01_PRIVATE_HOST_RUNBOOK.md).
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.
