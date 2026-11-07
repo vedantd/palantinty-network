@@ -100,7 +100,8 @@
       "evidence": [
         "https://github.com/vedantd/palantinty-network/pull/64",
         "https://github.com/vedantd/palantinty-network/pull/80",
-        "https://github.com/vedantd/palantinty-network/pull/85"
+        "https://github.com/vedantd/palantinty-network/pull/85",
+        "https://github.com/vedantd/palantinty-network/pull/88"
       ]
     },
     {
@@ -161,12 +162,14 @@
     {
       "id": "D01a",
       "title": "Coarse region namespace and privacy contract",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "F00"
       ],
       "gateIds": [],
-      "evidence": []
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/89"
+      ]
     },
     {
       "id": "D01b",
