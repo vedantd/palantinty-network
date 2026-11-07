@@ -70,3 +70,7 @@ See [P01a operator design](docs/P01_STANDALONE_OPERATOR.md). `apps/operator-inde
 ## P01b manual operator enrollment
 
 See [private host pilot runbook](docs/P01_PRIVATE_HOST_RUNBOOK.md). Config must be 0600 and syntheticOnly=true. CLI must refuse a missing/rotated private identity, wildcard/public listener, self-peering and unverified manifest. `operator:seed` is strictly synthetic and refuses an existing SQLite archive. Do not use manifests as proof of authenticity; verify Peer IDs through an authenticated second channel. No physical two-host validation yet.
+
+## P02a synthetic namespace safety
+
+[Read P02a security decisions](docs/P02_SYNTHETIC_PROTOCOL.md). All GossipSub synthetic-testnet traffic uses `/palantiny-network/testnet/synthetic/v1/<area>` and a strict `syntheticOnly:true` schema wrapper, never the real/archive publication namespace. The observer returns only sanitized event metadata and applies a bounded per-forwarding-peer rate limit. This does **not** prove synthetic provenance or prevent Sybil attacks; public listeners remain disabled.
