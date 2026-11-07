@@ -42,7 +42,8 @@
     "roadmap:render": "node apps/render-roadmap-progress.mjs",
     "roadmap:check": "node apps/render-roadmap-progress.mjs --check",
     "indexer:backup": "node apps/private-indexer-backup.mjs backup",
-    "indexer:restore": "node apps/private-indexer-backup.mjs restore"
+    "indexer:restore": "node apps/private-indexer-backup.mjs restore",
+    "network:region-dht": "node apps/private-region-discovery-demo.mjs"
   },
   "license": "MIT",
   "dependencies": {
@@ -56,6 +57,7 @@
     "@libp2p/kad-dht": "^16.4.9",
     "@libp2p/ping": "^3.1.17",
     "@libp2p/crypto": "^5.1.8",
-    "@libp2p/peer-id": "^6.0.0"
+    "@libp2p/peer-id": "^6.0.0",
+    "multiformats": "^14.0.5"
   }
 }

@@ -45,6 +45,8 @@ jobs:
       - run: npm run network:reconnect
       - run: npm run network:replay
       - run: timeout 35s npm run network:dht
+      - name: Verify two cryptographic region indexers via private Kademlia provider CID
+        run: timeout 80s npm run network:region-dht
       - run: timeout 35s npm run network:indexer-sync
       - run: timeout 35s npm run network:auto-sync
       - name: P02c synthetic peers across isolated private bridge containers
