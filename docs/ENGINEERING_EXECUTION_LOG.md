@@ -1,3 +1,11 @@
+## 2026-11-07 — H1a deterministic npm lockfile (draft PR #70, CI pending)
+
+- **Issue:** #65; previously CI/Docker used floating `npm install`.
+- **Provenance:** Generated lockfile using trusted Node 22 GitHub runner, artifact in run 42373300374. SHA-256 `1480492b81aeed9167a605b9c738392c384eb9cf8b7622b674deb516a8feed12`, npm lock v3, 131 sha512-integrity tarballs from `registry.npmjs.org`. One-time trusted branch-only bootstrap run 42373521028 committed identical SHA; temporary write-scoped workflow removed before merging.
+- **Decision ADR-H1a-001:** Require committed manifest-lock and `npm ci --ignore-scripts` in CI and both synthetic private containers; validate root dependency match, registry provenance and integrity. Ignore install-time package scripts unless a future security review explicitly authorizes them.
+- **Tests:** New positive/negative `dependency-lock-check.test.mjs`, `build:lock-check` CI step, full GitHub Actions and Docker pending. Do not merge if red.
+- **Limitations:** Mutable GitHub Actions/Docker tags, SBOM/signing/vulnerability triage remain H1b; 6+7 release gates blocked. No real sensor or public network activation.
+
 ## 2026-11-07 — Release-scope execution plan and safety-gated tracker (CI pending)
 
 - **Starting point:** H0 private operator trust PR #64 merged; public release profiles remain blocked, and H1/#65, H2/#66, independent hosts/#67 are open.

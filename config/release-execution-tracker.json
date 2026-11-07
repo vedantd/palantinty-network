@@ -46,14 +46,16 @@
     {
       "id": "H01a",
       "title": "Deterministic dependency lock and npm ci",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "H00"
       ],
       "gateIds": [
         "release-supply-chain"
       ],
-      "evidence": []
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/70"
+      ]
     },
     {
       "id": "H01b",

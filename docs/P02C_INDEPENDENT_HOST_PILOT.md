@@ -13,7 +13,7 @@ This standalone synthetic GossipSub pilot **does not use the P02c-1 Docker coord
 ```sh
 git clone https://github.com/vedantd/palantinty-network.git
 cd palantinty-network
-npm install --no-audit --no-fund
+npm ci --ignore-scripts --no-audit --no-fund
 mkdir -m 700 -p /srv/palatiny-pilot
 npm run operator:identity -- /srv/palatiny-pilot/operator-identity
 ```
