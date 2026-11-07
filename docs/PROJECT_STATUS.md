@@ -1,3 +1,7 @@
+## P02b-1 pinned synthetic peer admission (pre-public)
+
+An opt-in loopback-only GossipSub node factory now requires explicit, independently provisioned private keys and authorized PeerIds, with basic connection, stream and dial caps. This is distinct from the existing unrestricted local demo helper. Security and protocol tests exist but **no hostile Internet workload, independently administered host, or public participant admission is validated**. See [P02B_PEER_ADMISSION.md](P02B_PEER_ADMISSION.md). Public release gates remain blocked.
+
 ## P02a synthetic-testnet protocol boundary
 
 An isolated synthetic GossipSub topic and strict signed envelope wrapper, sanitized observer and bounded per-forwarding-peer limiter now have adversarial tests and a localhost three-peer demonstration. **No public admission, proven synthetic provenance, Sybil resistance or real BLE input.** See [P02_SYNTHETIC_PROTOCOL.md](P02_SYNTHETIC_PROTOCOL.md).
