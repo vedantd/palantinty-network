@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import net from 'node:net';
 import {once} from 'node:events';
-import {spawn} from 'node:child_process';
+import {spawn,spawnSync} from 'node:child_process';
 import {openPersistentPeerIdentity} from '../src/operator-identity.mjs';
 import {initializePeerLedger,proposePrivatePeer,approvePrivatePeer,
  revokePrivatePeer,rotatePrivatePeer,readPrivatePeerLedger} from '../src/p03-private-peer-ledger.mjs';
@@ -288,5 +288,31 @@ test('rotation trips an active guard; new candidate requires approval and separa
    const ledger=readPrivatePeerLedger(f.state,f.config.pilotId);
    assert.equal(ledger.entries.find(e=>e.peerId===f.remote.peerId).state,'revoked');
   }finally{guard.close();}
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+
+test('offline rotation CLI rejects wrong configured peer and stale revision',async()=>{
+ const f=await setup();
+ try{
+  enroll(f);
+  const replacement=await openPersistentPeerIdentity(path.join(f.root,'replacement-cli'));
+  const seed='/ip4/127.0.0.1/tcp/40188/p2p/'+replacement.peerId;
+  const script=path.resolve(import.meta.dirname,'../apps/p03-peer-enrollment.mjs');
+  const call=(old,revision)=>spawnSync(process.execPath,[script,'rotate',f.configPath,
+   old,replacement.peerId,'127.0.0.1',seed,String(revision)],{
+   cwd:path.resolve(import.meta.dirname,'..'),encoding:'utf8',timeout:5000
+  });
+  const wrong=call(replacement.peerId,2);
+  assert.notEqual(wrong.status,0);
+  assert.match(wrong.stderr,/currently configured/);
+  assert.equal(readPrivatePeerLedger(f.state,f.config.pilotId).revision,2);
+  const success=call(f.remote.peerId,2);
+  assert.equal(success.status,0,success.stderr);
+  const output=JSON.parse(success.stdout);
+  assert.equal(output.revision,3);
+  assert.equal(output.publicTestnetReady,false);
+  assert.equal(output.entries.find(e=>e.peerId===replacement.peerId).state,'candidate');
+  assert.notEqual(call(f.remote.peerId,2).status,0);
+  assert.equal(readPrivatePeerLedger(f.state,f.config.pilotId).revision,3);
  }finally{rmSync(f.root,{recursive:true,force:true});}
 });
