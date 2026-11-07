@@ -1,3 +1,9 @@
+## D03a audited private query checkpoint · 2026-11-07
+
+The synthetic-only [D03a PR #94](https://github.com/vedantd/palantinty-network/pull/94) merged after two complete green workflows ([run 42423722670](https://github.com/vedantd/palantinty-network/actions/runs/42423722670), [run 42423706799](https://github.com/vedantd/palantinty-network/actions/runs/42423706799)). A four-peer localhost harness now discovers two separately keyed indexers by fictional regional CID, obtains signed, bounded, 2+-signer-thresholded SQLite aggregates from each, and suppresses disagreement and empty history rather than treating missing observations as zero. Formal D03a and D03b have **partial** implementation evidence; neither is completed or deployed on distinct physical hosts.
+
+**Current formal tracker:** 3 done, 11 partial, 7 planned, 7 externally blocked (28 total). Public-release decisions remain **0/6 synthetic** and **0/7 real-sensor** gates verified. Near-term focus remains H03 independent two-machine evidence, D02b/D03b churn and partition fault tolerance, H02b revocation, N01/N02/N03 public abuse, and H01b supply chain. The read protocol does not activate untrusted Internet listeners or live sensor publishing.
+
 # Palantiny-network — engineering execution plan through public release
 
 **Plan created:** 2026-11-07. **Scope:** finish a trustworthy, open-source, decentralized network for independent regional activity signals, with an **open synthetic testnet first** and **real BLE-derived observations only after a separate science/privacy/rights review**. This is a dependency-ordered *backlog and release contract*, not a promise of public launch on 2026-11-07.
