@@ -43,6 +43,10 @@ Regional schema v2 retains accepted signed envelopes atomically and offers bound
 
 M09c introduces a process-local scheduler for small, authenticated indexer-to-indexer archive sync cycles, safe page-level retry, no overlapping passes, and private signed-archive count/digest consistency checks. It can repair synthetic missing history automatically after a source becomes available. **Not** crash-persistent cursor state, a public service, guaranteed convergence or real-data privacy validation. See [M09_AUTOMATIC_RECONCILIATION.md](M09_AUTOMATIC_RECONCILIATION.md).
 
+## M10a checkpoint — private container-network integration
+
+Private-LAN mode is opt-in, accepts only explicit RFC1918 IPv4 interfaces and pinned Noise-authenticated indexer peers, and is exercised across two isolated Docker containers with distinct storage. This validates non-loopback encrypted synthetic indexer-to-indexer reconciliation, **not** public Internet operation or independently administered physical machines. Test-only shared bootstrap metadata isn't secure real-world enrollment. See [M10_PRIVATE_NETWORK.md](M10_PRIVATE_NETWORK.md).
+
 ## Recent engineering milestones
 
 - PR #18: transport receiver interface decoupling and pipeline loss diagnostics.
