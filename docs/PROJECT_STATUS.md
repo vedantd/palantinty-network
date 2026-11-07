@@ -1,3 +1,7 @@
+## P02c-4 synthetic outage/recovery incident drill
+
+A bounded transcript reviewer and a multi-process localhost drill cover baseline signed synthetic receipt, publisher outage failure, fresh receipt after restart with persistent Peer IDs, revocation restart refusal, and mis-pinned publisher refusal. This is **not independently administered physical-host or firewall partition evidence**; P02c release acceptance remains blocked. See [P02C_INCIDENT_DRILL.md](P02C_INCIDENT_DRILL.md).
+
 ## P02c-3 private synthetic incident controls
 
 An operator-local persistent emergency-stop marker, per-peer revocation marker, manual fail-closed resume, process signal shutdown and periodic bounded connection-health events now cover the standalone synthetic pilot. These are **best-effort local controls** and cannot claim a remote ban, public network resilience or independently tested physical hosts. See [P02C_OPERATOR_CONTROLS.md](P02C_OPERATOR_CONTROLS.md). Public release gates remain blocked.
