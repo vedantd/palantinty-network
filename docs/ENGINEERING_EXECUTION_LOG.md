@@ -1,3 +1,11 @@
+## 2026-11-07 — H1b-1 immutable CI and CycloneDX evidence merged
+
+- **PR:** [#72](https://github.com/vedantd/palantinty-network/pull/72), merge commit `f6f76491ff65031230315d0ea094d67b62f26b85`.
+- **CI:** [run 42374563925](https://github.com/vedantd/palantinty-network/actions/runs/42374563925), job `128409400059`: **success**, **184 tests passed / 0 failed**, release gate checker and P02c/M10 private-container integration passed.
+- **Supply-chain artifact:** GitHub Actions artifact `h1b-node-locked-cyclonedx-sbom` (artifact ID `13575545881`), CycloneDX **1.5**, **131** dependency components, SHA-256 of raw JSON `81ac3524df6687b0d6bca21651a7b12aa0f1da0fa41e35af4d818c67d6abacab`. Artifact expires after 14 days; retention is not permanent immutable provenance.
+- **CI action pinning:** Official immutable checkout v7.0.1, setup-node v7.1.0 and upload-artifact v7.0.2 SHA references with read-only PR token.
+- **Status:** H01b remains **partial**. Docker base digest pinning, CVE and maintainer triage, signed release provenance/artifacts, rollback and external review remain outstanding. Official `release-supply-chain` gate is still blocked, as are all other public release gates. Follow [#65](https://github.com/vedantd/palantinty-network/issues/65).
+
 ## 2026-11-07 — H1b-1 immutable GitHub Actions and dependency SBOM (CI pending)
 
 - **Starting point:** H1a lockfile npm ci merged (#70), H01a tracker verified, H1b #65 still release-blocking.
