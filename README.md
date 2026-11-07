@@ -210,6 +210,16 @@ npm run operator:manifest -- /absolute/operator/config.json
 
 Do not run this against public Internet listeners or publish real BLE observations. [Two-host private pilot runbook](docs/P01_PRIVATE_HOST_RUNBOOK.md).
 
+### P02a: isolated synthetic-testnet GossipSub protocol
+
+The new local demo exchanges synthetic-only, strictly validated, signed test messages on a separate topic namespace. Observers receive only sanitized metadata, not signed archives or real BLE observations.
+
+```sh
+npm run network:synthetic
+```
+
+This does **not** admit public peers or prove an untrusted publisher's data is genuinely synthetic. See [P02 synthetic transport/security decisions](docs/P02_SYNTHETIC_PROTOCOL.md).
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.
