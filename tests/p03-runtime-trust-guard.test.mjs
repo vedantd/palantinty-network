@@ -130,3 +130,44 @@ test('an active private libp2p observer stops on ledger revocation and cannot re
   rmSync(f.root,{recursive:true,force:true});
  }
 });
+
+test('watchdog permanently trips on transient config corruption even after repair',async()=>{
+ const f=await setup();
+ let trips=0;let observed;
+ try{
+  enroll(f);
+  const guard=watchApprovedPrivatePilot(f.configPath,{
+   onTrip:error=>{trips++;observed=error;},intervalMs:5000
+  });
+  try{
+   guard.check();
+   writeFileSync(f.configPath,'{broken-json');
+   assert.throws(()=>guard.check());
+   assert.equal(guard.tripped(),true);
+   assert.equal(trips,1);
+   assert.ok(observed instanceof Error);
+   writeFileSync(f.configPath,JSON.stringify(f.config));
+   assert.doesNotThrow(()=>assertApprovedPrivatePilot(f.configPath));
+   assert.throws(()=>guard.check(),/trust revoked/);
+   assert.equal(trips,1,'must never issue a second trip callback');
+  }finally{guard.close();}
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
+test('watchdog permanently trips on approved peer config drift even after rollback',async()=>{
+ const f=await setup();let trips=0;
+ try{
+  enroll(f);
+  const guard=watchApprovedPrivatePilot(f.configPath,{
+   onTrip:()=>trips++,intervalMs:5000
+  });
+  try{
+   const drift={...f.config,remoteSeed:
+    '/ip4/127.0.0.1/tcp/40197/p2p/'+f.remote.peerId};
+   writeFileSync(f.configPath,JSON.stringify(drift));
+   assert.throws(()=>guard.check());
+   writeFileSync(f.configPath,JSON.stringify(f.config));
+   assert.throws(()=>guard.check(),/trust revoked/);
+   assert.equal(trips,1);
+  }finally{guard.close();}
+ }finally{rmSync(f.root,{recursive:true,force:true});}
+});
