@@ -1,0 +1,44 @@
+name: palantiny-m10-pilot
+services:
+  source:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.m10
+    image: palantiny-m10-local:latest
+    environment:
+      PALANTINY_M10_ROLE: source
+    volumes:
+      - coordination:/coord
+      - source-state:/state
+    networks: [private-pilot]
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+  replica:
+    image: palantiny-m10-local:latest
+    depends_on: [source]
+    environment:
+      PALANTINY_M10_ROLE: replica
+    volumes:
+      - coordination:/coord
+      - replica-state:/state
+    networks: [private-pilot]
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  private-pilot:
+    driver: bridge
+    internal: true
+
+volumes:
+  coordination:
+  source-state:
+  replica-state:

@@ -1,3 +1,4 @@
+import {parseTrustedIndexerSeed} from './private-lan-policy.mjs';
 import {synchronizeTrustedIndexer,fetchTrustedIndexerSummary} from './indexer-sync.mjs';
 
 /**
@@ -11,6 +12,7 @@ import {synchronizeTrustedIndexer,fetchTrustedIndexerSummary} from './indexer-sy
 export function createTrustedIndexerReconciler({
   node,index,peerAddress,allowedSourcePeerIds,area,
   intervalMs=5_000,pageSize=4,maxReportsPerRound=32,timeoutMs=3_000,
+  allowPrivateLan=false,
   synchronize=synchronizeTrustedIndexer,
   fetchSummary=fetchTrustedIndexerSummary,
   onError=()=>{}
@@ -33,13 +35,12 @@ export function createTrustedIndexerReconciler({
   // Enforce peer/area validation before scheduling. Actual endpoint
   // authentication is enforced again by each sync and summary invocation.
   if(typeof area!=='string'||!/^[a-z0-9][a-z0-9._-]{2,63}$/.test(area)||
-     typeof peerAddress!=='string'||
-     !/^\/ip4\/127\.0\.0\.1\/tcp\/[1-9]\d{0,4}\/p2p\/[A-Za-z0-9]+$/.test(peerAddress)||
-     !allowedSourcePeerIds.has(peerAddress.split('/').at(-1)))
-    throw new Error('Trusted loopback source address/area required');
+     !allowedSourcePeerIds.has(peerAddress?.split('/').at(-1)))
+    throw new Error('Trusted source address/area required');
+  parseTrustedIndexerSeed(peerAddress,{allowPrivateLan});
 
-  const common={node,index,peerAddress,allowedSourcePeerIds,area,timeoutMs};
-  const summaryArgs={node,peerAddress,allowedSourcePeerIds,area,timeoutMs};
+  const common={node,index,peerAddress,allowedSourcePeerIds,area,timeoutMs,allowPrivateLan};
+  const summaryArgs={node,peerAddress,allowedSourcePeerIds,area,timeoutMs,allowPrivateLan};
   let cursor='',running=null,timer=null;
   const counters={
     rounds:0,failures:0,accepted:0,duplicates:0,pages:0,
