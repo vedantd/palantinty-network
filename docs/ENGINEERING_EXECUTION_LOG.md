@@ -1,3 +1,12 @@
+## 2026-11-07 — H0 runtime trust hardening verified and merged
+
+- **PR:** [#64](https://github.com/vedantd/palantinty-network/pull/64) merged to `main` as `a42b9ab23406d2c34d34f70f3d445eb258f60ab9` from approved head `454c59ea014b507143826cad5deb819af2b2690e`.
+- **CI:** [GitHub Actions run 42371653555](https://github.com/vedantd/palantinty-network/actions/runs/42371653555), job `128400851018`, completed **success** with **175 tests passed / 0 failed**, both release-gate assertions, network demonstrations and isolated private-container integration. An earlier failed run exposed a test-output timing race, which was fixed before the verified merge.
+- **Behavior:** The standalone P02c operator pilot now refuses unknown, candidate, revoked and drifted private pins at preflight/start. A local watchdog detects enrollment revision/config changes and best-effort closes active libp2p connections. Tests cover live observer revocation.
+- **CI security hygiene:** Workflow token explicitly restricted to read-only `contents: read`; job timeout bounded. No public network listener or real-data pipeline enabled.
+- **Open blocking work:** [H1 supply chain #65](https://github.com/vedantd/palantinty-network/issues/65), [H2 revocation races #66](https://github.com/vedantd/palantinty-network/issues/66), [P02c physical hosts #67](https://github.com/vedantd/palantinty-network/issues/67). These are not resolved by this merge.
+- **Release safety:** Both public synthetic and public real-sensing gate profiles remain blocked; the private pilot is not evidence of community joinability.
+
 ## 2026-11-07 — H0 targeted hardening review and private runtime trust guard
 
 - **Audit:** Inspected P02c operator runtime, P03a approval ledger, P03b staging, P03c audit, P03d inspection, private file handling, CI build inputs, README/JOIN links and public release gates. Findings and severity are in [HARDENING_AUDIT_2026_11_07.md](HARDENING_AUDIT_2026_11_07.md).
