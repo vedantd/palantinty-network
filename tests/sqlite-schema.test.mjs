@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync,rmSync,mkdirSync} from 'node:fs';
+import {mkdtempSync,rmSync,mkdirSync,chmodSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
@@ -41,6 +41,7 @@ for(const kind of ['outbox','regional']){
  test(kind+' rejects incomplete unversioned database instead of repairing silently',()=>setup(({dbPath,...factories})=>{
   const db=new DatabaseSync(dbPath);
   db.exec('CREATE TABLE unrelated (id INTEGER)');db.close();
+  chmodSync(dbPath,0o600);
   assert.throws(factories[kind],/Incomplete legacy/);
  }));
  test(kind+' rejects corrupted database before reading tables',()=>setup(({dbPath,...factories})=>{
@@ -51,6 +52,7 @@ for(const kind of ['outbox','regional']){
   db.exec("UPDATE sqlite_master SET sql='not valid SQL' WHERE name='damaged'");
   db.exec('PRAGMA writable_schema=OFF');
   db.close();
+  chmodSync(dbPath,0o600);
   assert.throws(factories[kind]);
  }));
 }
