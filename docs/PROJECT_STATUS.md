@@ -1,3 +1,7 @@
+## Public-release dependency plan (2026-11-07)
+
+A complete **28-slice** dependency-ordered plan and machine-checked tracker now span build/identity/indexer/discovery/query milestones, an independently gated **open synthetic testnet**, and a separately gated **real-sensor public launch**. Both releases are blocked; an engineering implementation is not an independent operational/rights signoff. See [PUBLIC_RELEASE_EXECUTION_PLAN.md](PUBLIC_RELEASE_EXECUTION_PLAN.md) and `config/release-execution-tracker.json`. The scheduled 2026-11-07 sprint is incremental, not a public-release deadline.
+
 ## H0 private runtime trust enforcement and targeted hardening review (2026-11-07)
 
 The standalone P02c synthetic pilot now requires an exact **approved P03 private peer ledger entry** to pass preflight/start; active processes poll for revocation, revision/configuration drift and emergency shutdown, and close their private libp2p connections on failure. Tests cover startup refusal, ledger mutation and live process revocation. This remains operator-local best-effort enforcement, not atomic or network-wide revocation. See [HARDENING_AUDIT_2026_11_07.md](HARDENING_AUDIT_2026_11_07.md) and [EXECUTION_ROADMAP_NEXT.md](EXECUTION_ROADMAP_NEXT.md). The repository still lacks a committed dependency lockfile, independently administered host evidence, public enrollment and real-sensing review. All release gates stay blocked.
