@@ -1,4 +1,5 @@
 import {sandboxSyntheticTransportPolicy} from './synthetic-network-policy.mjs';
+import {parseTrustedListen} from './private-lan-policy.mjs';
 
 /**
  * P02b-1 isolated, pre-provisioned local testnet. The privateKey is an
@@ -6,15 +7,17 @@ import {sandboxSyntheticTransportPolicy} from './synthetic-network-policy.mjs';
  * No DHT, auto-discovery, relay, wildcard bind or real-sensing pipeline.
  */
 export async function createPinnedSyntheticGossipNode({
- privateKey,allowedPeerIds,listen='/ip4/127.0.0.1/tcp/0'
+ privateKey,allowedPeerIds,listen='/ip4/127.0.0.1/tcp/0',
+ allowPrivateLan=false,allowedRemoteIps=[]
 }={}){
  if(!privateKey||typeof privateKey!=='object')
   throw TypeError('Pre-provisioned libp2p privateKey required');
- if(typeof listen!=='string'||
-    !/^\/ip4\/127\.0\.0\.1\/tcp\/(?:0|[1-9][0-9]{0,4})$/.test(listen)||
-    Number(listen.split('/').at(-1))>65535)
-  throw Error('Synthetic node must listen only on explicit IPv4 loopback');
- const policy=sandboxSyntheticTransportPolicy({allowedPeerIds});
+ // Existing default remains strictly loopback. Private overlay is only
+ // allowed after explicit opt-in and independently pinned remote addresses.
+ parseTrustedListen(listen,{allowPrivateLan});
+ const policy=sandboxSyntheticTransportPolicy({
+  allowedPeerIds,allowPrivateLan,allowedRemoteIps
+ });
  const [{createLibp2p},{tcp},{noise},{yamux},{identify},{gossipsub}]=
   await Promise.all([
    import('libp2p'),import('@libp2p/tcp'),
