@@ -38,7 +38,9 @@
     "peer:enrollment": "node apps/p03-peer-enrollment.mjs",
     "peer:stage": "node apps/p03-peer-stage.mjs",
     "release:plan-check": "node apps/check-release-execution-tracker.mjs",
-    "build:lock-check": "node apps/check-dependency-lock.mjs"
+    "build:lock-check": "node apps/check-dependency-lock.mjs",
+    "roadmap:render": "node apps/render-roadmap-progress.mjs",
+    "roadmap:check": "node apps/render-roadmap-progress.mjs --check"
   },
   "license": "MIT",
   "dependencies": {

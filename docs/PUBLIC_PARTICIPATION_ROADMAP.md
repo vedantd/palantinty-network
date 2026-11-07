@@ -2,6 +2,14 @@
 
 **Date:** 2026-11-06. **Current state:** public source code with tested private synthetic libp2p demos; **not** an open participant network. This is a planned and evidence-gated sequence, not a promise of release dates.
 
+## Audited engineering update — 2026-11-07
+
+![Formal slice progress and launch gates](../assets/roadmap-progress.svg)
+
+The detailed [28-slice release execution plan](PUBLIC_RELEASE_EXECUTION_PLAN.md) and [machine tracker](../config/release-execution-tracker.json) supersede the coarse P00–P08 labels for execution. **Completed:** release gates/threat model (F00), private peer runtime approval (H00), reproducible dependency installs (H01a). **Partial:** private P2P/indexer convergence, supply-chain signatures, trust ledger/revocation and indexer recovery. In particular, P01 operator tooling, H1 policy regression tests and offline evidence-manifest tooling exist, but **two independent physical operators have not run the private pilot**. There is no public enrollment, public regional DHT lookup or real-sensor network.
+
+Formal release gate counts remain **synthetic 0/6** and **real-sensing 0/7**; the 28-slice chart represents engineering *status categories*, not readiness percentages. See the [README](../README.md) for a clear current architecture and [demo catalog](PROTOTYPE_DEMOS.md) for local experiments.
+
 ## Two distinct launch targets
 
 **A. Open synthetic testnet** — anyone can obtain the source and run a peer without sharing real Bluetooth observations. May admit untrusted test participants only after public network hardening. No independently supplied data is represented as verified sensing.
@@ -13,7 +21,7 @@
 | Slice | Outcome | Testing/exit criteria |
 | --- | --- | --- |
 | P00 | Release gates, threat model, backlog | CI validates complete blocked ledger and dependency of real-sensing on synthetic-testnet |
-| P01 | Standalone synthetic-only operator runtime, no shared Docker volume | **P01a:** standalone separate-process runtime merged; **P01b:** operator preflight/manifest and synthetic fixture/runbook in progress; actual multi-host and outage evidence still required |
+| P01 | Standalone synthetic-only operator runtime, no shared Docker volume | **P01a/P01b:** standalone runtime, operator preflight/manifest and synthetic fixture/runbook implemented; H0 runtime approval and #77 evidence-manifest preflight merged; actual two-admin physical-host evidence still required |
 | P02 | Secure public transport: non-wildcard remote listeners, resource limits, bootstrap policy | Unauthorized peers, malformed frames, traffic floods, slow peers, NAT/relay testing |
 | P03 | Open synthetic enrollment and node lifecycle | Join/leave/ban/revoke, pinned identity, downloadable packages, default-deny real sensing |
 | P04 | Replicated archive hardening, observability and incident playbooks | Fault tests, network partitions, database backup/restore and monitoring, no silent divergence |

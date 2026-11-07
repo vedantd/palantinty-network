@@ -1,3 +1,9 @@
+## Landing-page and progress checkpoint (2026-11-07)
+
+The [README](../README.md) is now a concise public-facing project overview with a visual synthetic architecture, reproducible quickstart and [generated release-progress chart](../assets/roadmap-progress.svg). The [demo catalog](PROTOTYPE_DEMOS.md) links to detailed private and local experiments. The chart is derived only from the 28-slice machine tracker and blocked-by-default release ledger, not from speculative percentages.
+
+The last verified pre-landing `main` CI run [42393874179](https://github.com/vedantd/palantinty-network/actions/runs/42393874179) passed **196 tests** plus private container suites. Recent merged changes include [#76 CI policy regression tests](https://github.com/vedantd/palantinty-network/pull/76) and [#77 offline physical-host evidence-manifest preflight](https://github.com/vedantd/palantinty-network/pull/77), neither of which certifies physical independence. **Still open:** [#74 H2 watchdog rollback tests](https://github.com/vedantd/palantinty-network/pull/74) (conflicted) and [#75 signed fictional-region coverage](https://github.com/vedantd/palantinty-network/pull/75) (previous test failure, conflicted). No new public release gate verified; private synthetic and real-sensing release tracks remain distinct.
+
 ## H1b-1 immutable CI and CycloneDX SBOM (merged PR #72, 184/184 CI)
 
 GitHub Actions now reference reviewed immutable action commits, with a read-only token, and generate a short-retention CycloneDX SBOM from the H1a lockfile. This is **not** a signed release and does not make the `release-supply-chain` gate verified. Docker image digests, vulnerability reviews, reproducible signed artifacts and incident drill remain. See [H1B_CI_PROVENANCE.md](H1B_CI_PROVENANCE.md).

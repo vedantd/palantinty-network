@@ -2,6 +2,8 @@
 
 **Decision draft · 2026-11-06.** This document supersedes the old short phase list. See [PROJECT_STATUS.md](PROJECT_STATUS.md) for the implementation inventory. All public activity data in the current network/dashboard demonstrations is **synthetic**.
 
+> **Current software execution tracker (2026-11-07):** [28-slice engineering plan](PUBLIC_RELEASE_EXECUTION_PLAN.md) · [visual progress](../assets/roadmap-progress.svg). This A → B → C document tracks the *scientific and product validation hypotheses*, not current software completion. The private synthetic network has advanced beyond the older M07 checkpoint, but none of the open synthetic (0/6) or real-sensing (0/7) public release gates is verified. A working P2P demo does not replace sensor field calibration.
+
 ## North-star hypothesis
 
 A consented community of passive sensors can publish coarse, delayed **relative BLE alias activity** changes that are informative at supported places and times, without reporting device identities. The signal must be validated before public location-specific claims. This is **not pedestrian counting, occupancy tracking or surveillance**.
@@ -34,7 +36,7 @@ Research should inform **study design, confounders and baselines**, not substitu
 
 M07 first demonstrates synthetic GossipSub delivery to multiple independent indexers without a required central recipient. It is explicitly local and best-effort. M08 must add controlled peer discovery and reconnect tests; M09 durable anti-entropy/index convergence; M10 multi-machine/private deployment. None authorize real-data publishing before Phase A and privacy gates.
 
-## Phase B — real multi-node prototype (conditional on A)
+## Phase B2 — consented real multi-node prototype (conditional on A)
 
 **B0 (trust design):** manual trusted onboarding for 2–3 volunteer nodes and a coarse site attestation procedure, threat modeling for Sybil/signing-key duplication, address spoofing and location fraud. Explicit retention and operator consent review.
 
