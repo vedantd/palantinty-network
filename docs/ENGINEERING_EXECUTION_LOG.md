@@ -1,20 +1,20 @@
-## 2026-11-07 — I01a private synthetic indexer backup/restore prototype (PR pending)
+## 2026-11-07 — I01a private synthetic indexer backup/restore prototype (verified PR #86)
 
 - **Starting point:** [#85](https://github.com/vedantd/palantinty-network/pull/85) merged to improve private dial/publish authorization rechecks; H02b remains partial. Start I01 offline snapshot/recovery without opening public networking.
 - **Failure model:** a raw copy of a changing SQLite file is not a verified consistent recovery point; restoration must not overwrite a running indexer and accidental snapshot corruption must be detected.
 - **Implementation:** Node 22.16+ SQLite backup API, private 0600 snapshot plus checksum/counters manifest, signature/SQL integrity verification, complete signed envelope to accepted-row checks, no-clobber hard-link restore to a fresh path.
 - **Tests:** signed synthetic report/aggregate replay recovery, corrupted snapshot and manifest refusal, existing target and dangling symlink denial, schema/permission refusal. [Runbook and residual risks](I01_PRIVATE_INDEXER_BACKUP.md).
 - **Residual:** backup not encrypted or cryptographically authenticated by operator, no periodic retention or cross-host restore, physical power-loss testing or monitored RPO/RTO. I01 will be **partial** if CI passes; both public launch profiles blocked.
-- **CI/merge:** Pending GitHub Actions full suite and container integrations.
+- **CI/merge:** [PR #86](https://github.com/vedantd/palantinty-network/pull/86) merged as `a3ce5d37c14e4ec739683cec729b83d53cc9de20` after complete green [CI run 42406425587](https://github.com/vedantd/palantinty-network/actions/runs/42406425587): **217/217 tests passed** and private Docker integrations green. I01 is **partial**; no real-host recovery or release gate approval.
 
-## 2026-11-07 — H02b private async-operation trust rechecks (PR pending)
+## 2026-11-07 — H02b private async-operation trust rechecks (verified PR #85)
 
 - **Starting point:** #83 H02a optional expected-revision CAS and durable directory rename merged with 209/209 CI. Still open #66 for live revocation, rotation and handshake/publish races.
 - **Risk:** an approved publisher could dial/publish after local revocation changed while the operation was awaiting a network response. An observer could report a received report after trust drift.
 - **Change:** add a pre/post-await trust gate for outbound private dial and GossipSub publish; recheck on libp2p connection-open and before synthetic receipt evidence; preserve one-way shutdown after an observed trust failure.
 - **Tests:** in-flight revocation and seed change with real private ledger/watchdog state; precheck refuses unauthorized network action; transport errors remain clear when trust stays valid. See [ADR-H02b-003](ADR_H02B_ASYNC_TRUST_BOUNDARIES.md).
 - **Limits:** postchecking cannot undo a message already sent or make revocation atomic; the watchdog and host firewall remain necessary. No public listeners, public enrollment, real BLE or launch gate updates.
-- **CI/merge:** Pending GitHub Actions. Do not mark H02b done.
+- **CI/merge:** [PR #85](https://github.com/vedantd/palantinty-network/pull/85) merged as `e494ad6764ffbd3327d6b38f692ea3198e14ea6c` after green [CI run 42405659510](https://github.com/vedantd/palantinty-network/actions/runs/42405659510): **212/212 tests passed** including P02c/M10 Docker. H02b remains **partial**; crypto key rotation and atomic remote revocation are not verified.
 
 ## 2026-11-07 — H02a ledger compare-and-swap and durable rename (verified PR #83)
 
