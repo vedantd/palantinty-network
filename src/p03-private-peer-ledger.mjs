@@ -167,6 +167,40 @@ export function revokePrivatePeer(directory,pilotId,peerId,{expectedRevision}={}
   return data;
  },{expectedRevision});
 }
+/**
+ * H02b: prepare one replacement in a single durable, revision-checked write.
+ *
+ * No implicit approval: the replacement is only a candidate, and must be
+ * independently verified, explicitly approved, then staged for a manual
+ * restart. The old Peer ID remains a terminal revoked tombstone.
+ */
+export function rotatePrivatePeer(directory,pilotId,{
+ oldPeerId,newPeerId,remoteIp,seedAddress,expectedRevision
+}={}){
+ if(!Number.isSafeInteger(expectedRevision)||expectedRevision<0)
+  throw Error('Rotation requires an explicitly reviewed ledger revision');
+ if(oldPeerId===newPeerId)
+  throw Error('Rotation requires a distinct replacement Peer ID');
+ return mutate(directory,pilotId,data=>{
+  const old=data.entries.find(e=>e.peerId===oldPeerId);
+  if(!old||old.state!=='approved')
+   throw Error('Only an approved existing peer can be rotated');
+  if(data.entries.some(e=>e.peerId===newPeerId))
+   throw Error('Replacement Peer ID already exists, including revoked tombstones');
+  if(data.entries.length>=128)
+   throw Error('Enrollment ledger is full; tombstones must be preserved');
+  const candidate={
+   peerId:newPeerId,remoteIp,seedAddress,state:'candidate',
+   proposedAt:new Date().toISOString(),approvedAt:null,revokedAt:null
+  };
+  validEntry(candidate);
+  old.state='revoked';
+  old.revokedAt=new Date().toISOString();
+  data.entries.push(candidate);
+  return data;
+ },{expectedRevision});
+}
+
 export function approvedPrivatePeers(directory,pilotId){
  const data=readPrivatePeerLedger(directory,pilotId);
  return Object.freeze({
