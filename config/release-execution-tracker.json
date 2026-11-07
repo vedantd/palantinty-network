@@ -99,7 +99,8 @@
       ],
       "evidence": [
         "https://github.com/vedantd/palantinty-network/pull/64",
-        "https://github.com/vedantd/palantinty-network/pull/80"
+        "https://github.com/vedantd/palantinty-network/pull/80",
+        "https://github.com/vedantd/palantinty-network/pull/85"
       ]
     },
     {
@@ -118,7 +119,7 @@
     {
       "id": "I01",
       "title": "Indexer backup/restore integrity",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "H01a",
         "F01"
@@ -126,7 +127,9 @@
       "gateIds": [
         "incident-operations"
       ],
-      "evidence": []
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/86"
+      ]
     },
     {
       "id": "I02",
