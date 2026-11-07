@@ -1,3 +1,7 @@
+## P01b manual private-host tooling
+
+An offline operator preflight, public manifest generator, and synthetic-only fresh database fixture seed are available, with a private-host runbook. They enable an independently provisioned private multi-machine test when hosts are supplied, but **there is no evidence of an actual two-physical-host run**. See [P01_PRIVATE_HOST_RUNBOOK.md](P01_PRIVATE_HOST_RUNBOOK.md).
+
 ## P01a implementation checkpoint
 
 Standalone synthetic-only indexer CLI has pre-provisioned per-operator private config, persistent libp2p identity, signed archive ACL and private Noise sync; separate-process integration tests do not use Docker coordination volumes. This is not open participation or two independently administered physical machines. See [P01_STANDALONE_OPERATOR.md](P01_STANDALONE_OPERATOR.md).
