@@ -40,7 +40,9 @@
     "release:plan-check": "node apps/check-release-execution-tracker.mjs",
     "build:lock-check": "node apps/check-dependency-lock.mjs",
     "roadmap:render": "node apps/render-roadmap-progress.mjs",
-    "roadmap:check": "node apps/render-roadmap-progress.mjs --check"
+    "roadmap:check": "node apps/render-roadmap-progress.mjs --check",
+    "indexer:backup": "node apps/private-indexer-backup.mjs backup",
+    "indexer:restore": "node apps/private-indexer-backup.mjs restore"
   },
   "license": "MIT",
   "dependencies": {
