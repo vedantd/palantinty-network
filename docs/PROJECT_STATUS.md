@@ -1,4 +1,4 @@
-## H1b-1 immutable CI action references and generated SBOM (PR pending)
+## H1b-1 immutable CI and CycloneDX SBOM (merged PR #72, 184/184 CI)
 
 GitHub Actions now reference reviewed immutable action commits, with a read-only token, and generate a short-retention CycloneDX SBOM from the H1a lockfile. This is **not** a signed release and does not make the `release-supply-chain` gate verified. Docker image digests, vulnerability reviews, reproducible signed artifacts and incident drill remain. See [H1B_CI_PROVENANCE.md](H1B_CI_PROVENANCE.md).
 

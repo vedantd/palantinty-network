@@ -1,6 +1,6 @@
 # H1b-1 — immutable CI actions and locked dependency SBOM
 
-**Status:** PR candidate, requires CI verification. This is a **first part** of the release supply-chain program, **not** completion of the public `release-supply-chain` gate.
+**Status:** [PR #72](https://github.com/vedantd/palantinty-network/pull/72) merged as `f6f76491ff65031230315d0ea094d67b62f26b85`. [CI run 42374563925](https://github.com/vedantd/palantinty-network/actions/runs/42374563925) passed **184/184 tests**, including private containers. Artifact `h1b-node-locked-cyclonedx-sbom` contains CycloneDX 1.5 with 131 components (SHA-256 `81ac3524df6687b0d6bca21651a7b12aa0f1da0fa41e35af4d818c67d6abacab`). H01b remains **partial**. This is a **first part** of the release supply-chain program, **not** completion of the public `release-supply-chain` gate.
 
 ## Decisions
 

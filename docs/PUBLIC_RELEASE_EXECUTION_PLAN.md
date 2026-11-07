@@ -26,7 +26,7 @@ A completed slice has (1) documented threat/problem statement and ADR, (2) narro
 | F01 | Local synthetic P2P + private indexer replication | F00 | Signed fictional reports, GossipSub and recoverable authorized indexer archives | **partial** (private tested; durability and remote evidence incomplete) |
 | H00 | Local approved peer enforcement | F01 | Unapproved peer refuses startup, revocation interrupts active synthetic node | **done**, PR #64 |
 | H01a | Reproducible Node build | H00 | Audited `package-lock.json`, `npm ci` for CI and Docker, clean repeat installs, Node version policy | **done**, PR #70 / 182 tests |
-| H01b | Release supply chain integrity | H01a | Immutable CI dependencies, SBOM, dependency audit policy, SHA256 and reproducible signed/tagged artifacts, recovery drill | **partial**, pinned CI actions/SBOM PR; other work blocked |
+| H01b | Release supply chain integrity | H01a | Immutable CI dependencies, SBOM, dependency audit policy, SHA256 and reproducible signed/tagged artifacts, recovery drill | **partial**, pinned CI actions/SBOM merged #72; signed release still blocked |
 | H02a | Crash-safe operator trust storage | H00 | Explicit permission checks, secure atomic state transitions, expected-revision CAS, symlink/partial-write/fault tests | **partial**, #66 |
 | H02b | Live revocation/identity replacement | H02a | Kill connection under in-flight Noise/publish, no stale pin reuse, tested restart/rotation and manual exit | **partial**, #66 |
 | H03 | Independent two-admin physical-host pilot | H01a,H02b | Two independently controlled machines; VPN/firewall and peer-ID audit; outage, identity, resource and incident evidence | **blocked-external**, #67 |
