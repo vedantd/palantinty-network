@@ -14,25 +14,35 @@ export class LocalActivityPipeline {
     this.connected = false;
     this.notBefore = Infinity;
     this.pending = [];
-    this.metrics = { overflowDropped: 0, incompleteWindows: 0, policyRejected: 0, released: 0, revokedPending: 0 };
+    this.metrics = { overflowDropped: 0, incompleteWindows: 0, policyRejected: 0, released: 0, revokedPending: 0, acceptedEvents: 0, rejectedEvents: 0, connections: 0, disconnections: 0 };
   }
   sensorConnected() {
+    if (this.connected) throw new Error('sensor already connected');
     this.connected = true;
+    this.metrics.connections++;
     const now = this.clock();
     // A window beginning before the sensor was connected is only partial.
     this.notBefore = Math.ceil(now / this.aggregator.windowMs) * this.aggregator.windowMs;
     this.aggregator.markIncomplete();
   }
   sensorDisconnected() {
+    if (!this.connected) return;
     this.connected = false;
+    this.metrics.disconnections++;
     this.aggregator.markIncomplete();
   }
   accept(event) {
-    if (!this.connected || event?.t !== 'ble' || event.ts < this.notBefore) return false;
+    if (!this.connected || event?.t !== 'ble' || !Number.isSafeInteger(event.ts) || event.ts < this.notBefore) {
+      this.metrics.rejectedEvents++; return false;
+    }
     const now = this.clock();
     // Reject wildly stale/future events at the boundary.
-    if (event.ts > now + 5000 || event.ts < now - this.aggregator.windowMs * 3) return false;
-    return this.aggregator.ingest(event);
+    if (event.ts > now + 5000 || event.ts < now - this.aggregator.windowMs * 3) {
+      this.metrics.rejectedEvents++; return false;
+    }
+    const accepted = this.aggregator.ingest(event);
+    this.metrics[accepted ? 'acceptedEvents' : 'rejectedEvents']++;
+    return accepted;
   }
   tick() {
     const now = this.clock();
@@ -59,7 +69,8 @@ export class LocalActivityPipeline {
     return released;
   }
   diagnostics() {
-    return Object.freeze({ ...this.metrics, pending: this.pending.length, connected: this.connected });
+    return Object.freeze({ ...this.metrics, pending: this.pending.length, connected: this.connected,
+      retiredWindowsDropped: this.aggregator.droppedClosedWindows });
   }
   revokeConsent() {
     this.policy = { ...this.policy, consent: false };
