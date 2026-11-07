@@ -1,3 +1,4 @@
+import {createHash} from 'node:crypto';
 import { initializeStore } from './sqlite-schema.mjs';
 import { DatabaseSync } from 'node:sqlite';
 import { existsSync, mkdirSync, lstatSync, chmodSync } from 'node:fs';
@@ -193,6 +194,26 @@ export class DurableRegionalIngest {
     });
     return Object.freeze({envelopes,hasMore:rows.length>limit,
       next:data.length?data.at(-1).report_id:after});
+  }
+
+  /**
+   * Archive-only consistency fingerprint for *trusted local* replicas.
+   * Includes signed v2 rows, not legacy v1 accepted reports without envelopes.
+   * Do not expose this digest through public endpoints: it is linkable
+   * metadata about which signed reports a region has retained.
+   */
+  signedArchiveSummary({area}={}) {
+    if(typeof area!=='string' || !/^[a-z0-9][a-z0-9._-]{2,63}$/.test(area))
+      throw new Error('Invalid private archive summary area');
+    const hash=createHash('sha256');
+    let count=0;
+    const rows=this.db.prepare(`SELECT report_id FROM signed_archive
+      WHERE area=? ORDER BY report_id ASC`).iterate(area);
+    for(const row of rows){
+      hash.update(row.report_id);
+      count++;
+    }
+    return Object.freeze({count,digest:hash.digest('hex')});
   }
 
   stats() {
