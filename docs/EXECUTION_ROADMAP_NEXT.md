@@ -1,5 +1,7 @@
 # Palantiny-network — execution roadmap after hardening
 
+**Canonical complete slice plan:** [PUBLIC_RELEASE_EXECUTION_PLAN.md](PUBLIC_RELEASE_EXECUTION_PLAN.md), [machine-tracked dependencies and states](../config/release-execution-tracker.json), `npm run release:plan-check`. This file is the near-term priority summary.
+
 **Updated:** 2026-11-07 · **Status:** public source / pre-public, permissioned **synthetic** network research prototype. This roadmap is an ordered engineering plan, **not** a promise that public release is near or that blocked gates have passed. Track security findings in [HARDENING_AUDIT_2026_11_07.md](HARDENING_AUDIT_2026_11_07.md) and every code decision in [ENGINEERING_EXECUTION_LOG.md](ENGINEERING_EXECUTION_LOG.md).
 
 ## End-state architecture (roles, not a central collector)
