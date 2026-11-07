@@ -5,7 +5,7 @@ import { LocalActivityPipeline } from '../src/activity-pipeline.mjs';
 const WINDOW=60_000;
 const BASE=1_800_000;
 const event=(ts,id)=>({t:'ble',ts,id,rssi:-60});
-const policy={consent:true,area:'test-region',delayMs:0,minAliases:1};
+const policy={consent:true,area:'test-region',delayMs:0,minAliases:20};
 
 test('overflow is observable and oldest pending windows are discarded',()=>{
  let now=BASE+10;
@@ -13,7 +13,8 @@ test('overflow is observable and oldest pending windows are discarded',()=>{
  p.sensorConnected();
  for(let i=1;i<=4;i++){
   now=BASE+(i+1)*WINDOW+1;
-  assert.equal(p.accept(event(BASE+i*WINDOW+10,'alias-'+i)),true);
+  for(let j=0;j<20;j++)
+   assert.equal(p.accept(event(BASE+i*WINDOW+10,'alias-'+i+'-'+j)),true);
  }
  // All four complete windows are pending; only two can be retained.
  now=BASE+6*WINDOW;
@@ -36,7 +37,7 @@ test('incomplete windows and consent revocation are accounted for',()=>{
  assert.equal(p.diagnostics().incompleteWindows,1);
  p.sensorConnected();
  now=BASE+3*WINDOW+1;
- p.accept(event(now,'two'));
+ for(let j=0;j<20;j++)p.accept(event(now,'two-'+j));
  now=BASE+4*WINDOW+1;
  p.tick();
  assert.equal(p.diagnostics().pending,1);
