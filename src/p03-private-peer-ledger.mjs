@@ -82,6 +82,11 @@ function lock(directory,fn){
  try{return fn();}
  finally{closeSync(fd);unlinkSync(p);}
 }
+/** A durable rename requires syncing the directory entry, not only the temp file. */
+function syncDirectory(directory){
+ const fd=openSync(directory,'r');
+ try{fsyncSync(fd);}finally{closeSync(fd);}
+}
 function save(directory,data){
  const dest=ledgerPath(directory);
  // Refuse symlinks and unsafe files on every mutation.
@@ -98,6 +103,10 @@ function save(directory,data){
   finally{closeSync(fd);}
   renameSync(temp,dest);
   written=true;
+  // A successful rename is atomic, but without this fsync it may be lost
+  // after a power failure. If fsync fails, report an ambiguous commit:
+  // the caller must re-read and investigate rather than blindly retry.
+  syncDirectory(directory);
  }finally{
   if(!written)try{unlinkSync(temp);}catch{}
  }
@@ -112,9 +121,16 @@ export function initializePeerLedger(directory,pilotId){
   return structuredClone(data);
  });
 }
-function mutate(directory,pilotId,change){
+function mutate(directory,pilotId,change,{expectedRevision}={}){
+ if(expectedRevision!==undefined&&
+   (!Number.isSafeInteger(expectedRevision)||expectedRevision<0))
+  throw Error('Expected revision must be a nonnegative safe integer');
  return lock(directory,()=>{
   const data=load(directory,pilotId);
+  if(expectedRevision!==undefined&&data.revision!==expectedRevision)
+   throw Error('Stale peer enrollment revision');
+  if(data.revision===Number.MAX_SAFE_INTEGER)
+   throw Error('Peer enrollment revision exhausted');
   const next=change(structuredClone(data));
   next.revision=data.revision+1;
   validLedger(next,pilotId);
@@ -122,7 +138,7 @@ function mutate(directory,pilotId,change){
   return structuredClone(next);
  });
 }
-export function proposePrivatePeer(directory,pilotId,{peerId,remoteIp,seedAddress}={}){
+export function proposePrivatePeer(directory,pilotId,{peerId,remoteIp,seedAddress,expectedRevision}={}){
  return mutate(directory,pilotId,data=>{
   if(data.entries.some(e=>e.peerId===peerId))
    throw Error('Peer ID already exists or is permanently revoked in this ledger');
@@ -132,24 +148,24 @@ export function proposePrivatePeer(directory,pilotId,{peerId,remoteIp,seedAddres
   validEntry(candidate);
   data.entries.push(candidate);
   return data;
- });
+ },{expectedRevision});
 }
-export function approvePrivatePeer(directory,pilotId,peerId,{verifiedOutOfBand=false}={}){
+export function approvePrivatePeer(directory,pilotId,peerId,{verifiedOutOfBand=false,expectedRevision}={}){
  if(verifiedOutOfBand!==true)throw Error('Explicit independent identity verification required');
  return mutate(directory,pilotId,data=>{
   const e=data.entries.find(e=>e.peerId===peerId);
   if(!e||e.state!=='candidate')throw Error('Only unapproved candidates can be approved');
   e.state='approved';e.approvedAt=new Date().toISOString();
   return data;
- });
+ },{expectedRevision});
 }
-export function revokePrivatePeer(directory,pilotId,peerId){
+export function revokePrivatePeer(directory,pilotId,peerId,{expectedRevision}={}){
  return mutate(directory,pilotId,data=>{
   const e=data.entries.find(e=>e.peerId===peerId);
   if(!e||e.state==='revoked')throw Error('Only existing active peers can be revoked');
   e.state='revoked';e.revokedAt=new Date().toISOString();
   return data;
- });
+ },{expectedRevision});
 }
 export function approvedPrivatePeers(directory,pilotId){
  const data=readPrivatePeerLedger(directory,pilotId);
