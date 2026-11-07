@@ -1,3 +1,10 @@
+## 2026-11-07 — D01 offline signed synthetic coverage primitive (PR pending)
+
+- Starting point: main at 20f3bc6; existing H2 PR #74 open and not yet green, so chose independent D01 offline work.
+- ADR-D01-001: fixed-field signed fictional-region coverage; local-only approved key map, bounded expiry and 16-region limit. No libp2p/DHT runtime or listener changes.
+- Positive/negative tests: valid signed listed cell; reject wrong cell, untrusted key, tampering, expiry, extra fields, malformed signature, real location, duplicates, unsorted cells, future issue and excessive TTL.
+- CI and merge: pending; do not merge before green workflow. No release gate changes. Peer ID/public-key binding and independent host evidence remain open.
+
 ## 2026-11-07 — H1b-1 immutable CI and CycloneDX evidence merged
 
 - **PR:** [#72](https://github.com/vedantd/palantinty-network/pull/72), merge commit `f6f76491ff65031230315d0ea094d67b62f26b85`.
