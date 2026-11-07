@@ -16,6 +16,8 @@ jobs:
           node-version: '22'
       - name: Install integrity-pinned production dependencies (no scripts)
         run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Check locked npm package provenance and integrity metadata
+        run: npm run build:lock-check
       - run: timeout 90s npm test
       - name: Validate execution DAG and public release gates
         run: npm run release:plan-check
