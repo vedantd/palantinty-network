@@ -1,3 +1,7 @@
+## H02a private trust-ledger durability checkpoint (2026-11-07; CI pending)
+
+The operator-local synthetic P03 approval ledger now accepts optional under-lock expected revisions on transitions and fsyncs the state directory after atomic rename. Tests cover stale operator decisions, rejected invalid revisions, exhausted counters and simulated orphaned temporary files. See [ADR](ADR_H02A_LEDGER_CAS_DURABILITY.md). This is not an anti-rollback counter, real-time connection teardown, independent power-loss proof or public enrollment. H02a/H02b and all public release gates remain partial/blocked.
+
 ## D01 synthetic-only signed regional coverage checkpoint (merged PR #81, 2026-11-07)
 
 Ed25519 signature verification for short-lived fictional region indexer coverage, explicit locally reviewed public-key trust anchors, sorted bounded regions, tamper and expiry denial, and negative tests have passed in [merged PR #81](https://github.com/vedantd/palantinty-network/pull/81), [CI 42401745685](https://github.com/vedantd/palantinty-network/actions/runs/42401745685) (**206/206 passed**). D01b is **partial**, not done. This does not prove libp2p Peer ID binding, actual geographic service, or discoverability. See [D01 ADR](D01_PRIVATE_COVERAGE_ADVERTISEMENTS.md); D01a/D01b formal slices and public gates are **not** complete.
