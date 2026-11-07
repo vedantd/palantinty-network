@@ -16,14 +16,14 @@ import { verifyEnvelope } from './protocol.mjs';
 export class DurableRegionalIngest {
   constructor({ dbPath, authorizedKeys, now = () => Date.now(),
     maxAgeMs = 24 * 60 * 60_000, releaseDelayMs = 15 * 60_000,
-    minOperators = 2, maxStoredReports = 100_000 } = {}) {
+    minOperators = 2, maxStoredReports = 100_000, maxBackfillGap = 1024 } = {}) {
     if (typeof dbPath !== 'string' || !dbPath.trim()) throw new TypeError('dbPath required');
     if (!(authorizedKeys instanceof Set) || authorizedKeys.size === 0 ||
         ![...authorizedKeys].every(k => /^[a-f0-9]{64}$/.test(k)))
       throw new TypeError('Explicit set of authorized Ed25519 signing key IDs required');
     for (const [name,value,min] of [
       ['maxAgeMs',maxAgeMs,60_000],['releaseDelayMs',releaseDelayMs,15*60_000],
-      ['minOperators',minOperators,2],['maxStoredReports',maxStoredReports,1]]) {
+      ['minOperators',minOperators,2],['maxStoredReports',maxStoredReports,1],['maxBackfillGap',maxBackfillGap,0]]) {
       if (!Number.isSafeInteger(value) || value < min) throw new RangeError(name);
     }
     this.authorizedKeys = new Set(authorizedKeys);
@@ -32,6 +32,7 @@ export class DurableRegionalIngest {
     this.releaseDelayMs = releaseDelayMs;
     this.minOperators = minOperators;
     this.maxStoredReports = maxStoredReports;
+    this.maxBackfillGap = maxBackfillGap;
 
     const file = path.resolve(dbPath);
     const directory = path.dirname(file);
@@ -93,7 +94,13 @@ export class DurableRegionalIngest {
       }
       const high=this.db.prepare('SELECT highest_sequence AS seq FROM contributor_sequences WHERE key_id=?')
         .get(body.keyId)?.seq ?? 0;
-      if (body.sequence <= high) {
+      // Signed reports may arrive out of order across independent indexers.
+      // Preserve a bounded hole-fill range, but reject reused sequences and
+      // sequences too far behind the high watermark. Existing immutable rows
+      // remain the authority for replay identification.
+      const seen=this.db.prepare('SELECT 1 FROM accepted_reports WHERE key_id=? AND sequence=?')
+        .get(body.keyId,body.sequence);
+      if (seen || body.sequence < high - this.maxBackfillGap) {
         this.db.exec('ROLLBACK');
         return { accepted:false,ack:false,code:'stale_sequence' };
       }
@@ -114,7 +121,7 @@ export class DurableRegionalIngest {
         VALUES(?,?,?,?,?,?,?,?)`).run(body.reportId,body.keyId,body.sequence,
         r.area,r.bucketStart,r.bucketSeconds,r.activityIndex,clock);
       this.db.prepare(`INSERT INTO contributor_sequences(key_id,highest_sequence)
-        VALUES(?,?) ON CONFLICT(key_id) DO UPDATE SET highest_sequence=excluded.highest_sequence`)
+        VALUES(?,?) ON CONFLICT(key_id) DO UPDATE SET highest_sequence=MAX(contributor_sequences.highest_sequence,excluded.highest_sequence)`)
         .run(body.keyId,body.sequence);
       this.db.exec('COMMIT');
       return { accepted:true,ack:true,duplicate:false,code:'accepted',reportId:body.reportId };

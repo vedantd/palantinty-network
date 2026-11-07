@@ -111,6 +111,16 @@ npm run network:reconnect
 
 See [M08 reconnect design and limitations](docs/M08_RECONNECT.md).
 
+### M09a: Recover a missed signed report (synthetic only)
+
+A contributor's retained signed outbox can replay an earlier report to an independent indexer even after that indexer has accepted a newer sequence. The demo verifies gap-fill, replay-window bounds, monotonic watermarks and idempotence over encrypted libp2p. This requires the **original contributor's stored history**; full indexer-to-indexer anti-entropy remains unimplemented.
+
+```bash
+npm run network:replay
+```
+
+[Reconciliation design and limitations](docs/M09_REPLAY.md).
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.

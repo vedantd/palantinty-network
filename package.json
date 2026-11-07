@@ -17,7 +17,8 @@
     "network:durable": "node apps/durable-network-demo.mjs",
     "dashboard": "node apps/dashboard.mjs",
     "network:gossip": "node apps/gossip-network-demo.mjs",
-    "network:reconnect": "node apps/reconnect-network-demo.mjs"
+    "network:reconnect": "node apps/reconnect-network-demo.mjs",
+    "network:replay": "node apps/history-replay-demo.mjs"
   },
   "license": "MIT",
   "dependencies": {
