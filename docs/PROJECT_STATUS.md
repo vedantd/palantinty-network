@@ -1,3 +1,7 @@
+## H1b-1 immutable CI action references and generated SBOM (PR pending)
+
+GitHub Actions now reference reviewed immutable action commits, with a read-only token, and generate a short-retention CycloneDX SBOM from the H1a lockfile. This is **not** a signed release and does not make the `release-supply-chain` gate verified. Docker image digests, vulnerability reviews, reproducible signed artifacts and incident drill remain. See [H1B_CI_PROVENANCE.md](H1B_CI_PROVENANCE.md).
+
 ## H1a reproducible synthetic pilot dependency installs (merged PR #70, 182/182 CI)
 
 Commits Node 22 npm lockfile v3, exact integrity-pinned resolution for 131 packages, and switches GitHub Actions and both private synthetic Dockerfiles to `npm ci --ignore-scripts`. Includes offline lockfile provenance validator and negative tests, with trusted CI artifact SHA documented. This is **not** a complete supply-chain release process: immutable action/image digests, SBOM, vulnerability triage and signed release artifacts remain H1b. See [H1_REPRODUCIBLE_BUILDS.md](H1_REPRODUCIBLE_BUILDS.md). Public release gates stay blocked.

@@ -1,3 +1,12 @@
+## 2026-11-07 — H1b-1 immutable GitHub Actions and dependency SBOM (CI pending)
+
+- **Starting point:** H1a lockfile npm ci merged (#70), H01a tracker verified, H1b #65 still release-blocking.
+- **Research:** Official GitHub refs/releases for checkout v7.0.1, setup-node v7.1.0 and upload-artifact v7.0.2 inspected on 2026-11-07; action execution moves to Node 24 runtimes but project remains Node 22.
+- **Decision ADR-H1b-1:** Use immutable 40-hex action revisions and read-only PR token, produce CycloneDX SBOM from locked dependencies, retain for 14 days as evidence only.
+- **Implementation:** CI SHA pins, `npm sbom` and immutable artifact upload, regression tests, [H1B_CI_PROVENANCE.md](H1B_CI_PROVENANCE.md).
+- **CI:** Pending until actual full GitHub Actions run completes. No gate unblocked.
+- **Residual:** Docker image digest pinning, dependency audit triage, verifiable signed/tagged release, independent reviewer and all non-supply-chain gates remain open.
+
 ## 2026-11-07 — H1a lockfile and CI verification merged
 
 - **PR:** [#70](https://github.com/vedantd/palantinty-network/pull/70), merged to main at `94fbddc0243831c4cc14174f7f5da0f0d37da689` from `c091096357c33457565926968ce0e6d3148743fa`.
