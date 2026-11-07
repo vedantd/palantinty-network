@@ -54,3 +54,7 @@ Synthetic-only localhost GossipSub with independent durable regional recipients 
 ## M10a — private-network sandbox only
 
 [Read M10 private-network ADR](docs/M10_PRIVATE_NETWORK.md). Explicit `allowPrivateLan:true` allows concrete RFC1918 IPv4 interfaces for **synthetic** direct indexer sync only. The default remains loopback. Both incoming and outgoing indexer sync require a pinned Noise-authenticated Peer ID. Docker Compose runs two separate network namespaces and state volumes. A shared metadata volume in the demo is **not a secure trust bootstrap**. Public, wildcard, DNS, and real sensor publishing remain disabled; don't claim cross-physical-machine validation.
+
+## M10b-1 persistent operator identity
+
+[Read M10b identity/provisioning ADR](docs/M10B_OPERATOR_IDENTITY.md). Nodes persist a private libp2p Ed25519 key under a 0700 directory and 0600 key file, refuse corrupted files/symlinks, and do not silently rotate keys. Operator manifests containing a public Peer ID and RFC1918 address must be **manually verified and pinned out of band** before trusting them. The existing Docker pilot loads a persistent key from each node's separate private volume. Neither manifest nor private IP proves a physical location or authorizes public sensor data.
