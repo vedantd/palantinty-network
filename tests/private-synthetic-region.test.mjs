@@ -37,9 +37,6 @@ test('reject coordinates, real-location labels, unbounded cells and noncanonical
   {scenario:'demoarea',cellIndex:'1'},
   {scenario:'demoarea',cellIndex:1,latitude:42}
  ]){
-  // No coordinate input is accepted by the public API; explicitly detect
-  // extra fields at call sites rather than treating them as authoritative.
-  if(Object.hasOwn(obj,'latitude'))continue;
   assert.throws(()=>syntheticRegionKey(obj));
  }
 });
