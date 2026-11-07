@@ -16,21 +16,31 @@ export function topicForArea(area) {
  * M07 is synthetic, explicitly loopback-only GossipSub transport.
  * No public interface, discovery, real sensor publishing, or persistence.
  */
-export async function createGossipNode({listen='/ip4/127.0.0.1/tcp/0'}={}) {
+export async function createGossipNode({listen='/ip4/127.0.0.1/tcp/0',enableDht=false}={}) {
   if (typeof listen !== 'string' ||
       !/^\/ip4\/127\.0\.0\.1\/tcp\/(?:0|[1-9]\d{0,4})$/.test(listen))
     throw new Error('M07 only allows 127.0.0.1 loopback listeners');
+  if(typeof enableDht!=='boolean')throw new TypeError('enableDht must be boolean');
   const [{createLibp2p},{tcp},{noise},{yamux},{identify},{gossipsub}]=
     await Promise.all([
       import('libp2p'), import('@libp2p/tcp'),
       import('@chainsafe/libp2p-noise'),import('@chainsafe/libp2p-yamux'),
       import('@libp2p/identify'), import('@libp2p/gossipsub')
     ]);
-  return createLibp2p({
+  const services={identify:identify(),pubsub:gossipsub({emitSelf:false})};
+  if(enableDht){
+    const {kadDHT}=await import('@libp2p/kad-dht');
+    services.dht=kadDHT({protocol:'/palantiny-network/kad/1.0.0',
+      clientMode:false,maxInboundStreams:8,maxOutboundStreams:8});
+  }
+  const node=await createLibp2p({
     addresses:{listen:[listen]},transports:[tcp()],
-    connectionEncrypters:[noise()],streamMuxers:[yamux()],
-    services:{identify:identify(),pubsub:gossipsub({emitSelf:false})}
+    connectionEncrypters:[noise()],streamMuxers:[yamux()],services
   });
+  // Loopback-only DHT may serve routing queries; this MUST NOT be enabled
+  // for public listeners before abuse/rate-limit and trust review.
+  if(enableDht)await node.services.dht.setMode('server');
+  return node;
 }
 
 /** Sending to GossipSub is NOT a durable receiver ACK. */
