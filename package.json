@@ -43,7 +43,8 @@
     "roadmap:check": "node apps/render-roadmap-progress.mjs --check",
     "indexer:backup": "node apps/private-indexer-backup.mjs backup",
     "indexer:restore": "node apps/private-indexer-backup.mjs restore",
-    "network:region-dht": "node apps/private-region-discovery-demo.mjs"
+    "network:region-dht": "node apps/private-region-discovery-demo.mjs",
+    "network:region-query": "node apps/private-region-query-demo.mjs"
   },
   "license": "MIT",
   "dependencies": {
