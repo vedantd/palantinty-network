@@ -1,3 +1,11 @@
+## 2026-11-07 — D01b libp2p Peer ID-bound fictional coverage signatures (CI pending)
+
+- Replaces *separate-key trust assertion* in future private DHT discovery with signatures from the indexer's own libp2p Ed25519 identity. A verifier derives the signer Peer ID from the advertised public key and cross-checks it against both the Noise-authenticated stream peer and a local operator-reviewed allowlist.
+- Canonical versioned D01 synthetic coverage payload, domain-separated signature, bounded base64 fields, 15-minute lifetime, strict fake-region validation; no real location semantics.
+- Tests reject wrong signer, replaced public key/signature, unauthorized peer ID, wrong region, legacy fictional routing key, invalid fields and expired advert. [ADR](ADR_D01B_PEER_ID_BOUND_COVERAGE.md).
+- Does not yet register region providers in Kademlia; H03 independent hosts, public launch and BLE data remain blocked. D01b remains **partial**.
+- **CI/merge:** pending.
+
 ## 2026-11-07 — D01a canonical fictional region routing keys (verified PR #89)
 
 - **Scope:** deterministic local fictional region identifiers only, with a bounded scenario/cell index and a domain-separated SHA-256 digest for a future private DHT adapter. No real-location lookup or sensor ingestion.
