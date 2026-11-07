@@ -66,3 +66,8 @@ Prioritize these independently verified hardening items **before** inviting untr
 ### H1c CI policy regression guard (PR pending)
 
 A small test-only H1 follow-up guards against accidental `pull_request_target`, writable tokens, floating Actions, `npm install`, and removal of release assertions. This is not a YAML security analyzer, a signed build, or a verified release gate. H1b supply-chain work and #65 remain open.
+
+
+### P02c preparatory increment — offline evidence manifest preflight (2026-11-07)
+
+A separate PR adds ADR-P02c-002, an offline structural and SHA-256 checker for a future two-host evidence bundle. It requires two distinct claimed operators/keys and both host-side artifacts for six private synthetic scenarios, but explicitly reports **verified: false**. This is a preparatory review aid, **not** independently administered physical-host evidence and not a release-gate transition. Actual operator execution and independent review remain blocked under #67.

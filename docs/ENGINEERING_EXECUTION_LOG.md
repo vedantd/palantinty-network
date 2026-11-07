@@ -120,3 +120,12 @@ Append new entries at the top as individual slices are completed. This file is a
 ## Standing safeguards
 
 Never copy operator keys into GitHub, open wildcard/public listeners, publish real BLE measurements, mark public release gates verified without reviewed independent evidence, or confuse signed records with trustworthy geographical/sensor provenance. Review per-slice CI and preserve decision records.
+
+
+## 2026-11-07 — P02c evidence manifest preflight (PR pending)
+
+- **Starting state:** Inspected current main roadmap and CI workflow, issues #65/#66/#67 and active PRs #74 (H2 watchdog tests), #75 (D01 offline signed region advertisements), #76 (H1 CI policy tests). Avoided overlapping all three active slices. H1 lockfile and least-privilege workflow are already present on main; CI verification for open PR heads was not available through the commit workflow lookup.
+- **Decision:** ADR-P02c-002 adds a narrow offline manifest checker for future independently operated two-host evidence. It never asserts independent hosts or verifies release gates.
+- **Implementation:** Strict two-host/operator/key declarations; six required scenarios with references to both host-side artifacts; relative path, non-symlink regular-file, size and SHA-256 integrity checks. Fixture-based positive and nine negative tests. No networking, BLE or runtime trust change.
+- **Verification:** GitHub Actions full PR workflow pending. No merge before full passing workflow. Synthetic fixtures do not count as real P02c evidence.
+- **Limitations:** Metadata can be fabricated; real independent operator signoffs, actual firewall/private-overlay evidence, logs, host provenance and fault observations remain blocked on physical access. Public synthetic and real-data release profiles remain blocked.
