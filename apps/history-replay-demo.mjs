@@ -29,6 +29,8 @@ try{
  nodes.push(sender,primary,backup);
  registerPrivateIngest(primary,stores[0]);
  registerPrivateIngest(backup,stores[1]);
+ for(const peer of [primary,backup])
+  await sender.peerStore.patch(peer.peerId,{multiaddrs:peer.getMultiaddrs()});
  for(let i=1;i<=3;i++){
   const result=outbox.enqueue({complete:true,
    bucketStart:now-(21-i)*60_000,bucketSeconds:60,observedAliases:20+i*5},
