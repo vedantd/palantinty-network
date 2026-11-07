@@ -1,11 +1,11 @@
-## 2026-11-07 — H02a ledger compare-and-swap and durable rename (PR pending)
+## 2026-11-07 — H02a ledger compare-and-swap and durable rename (verified PR #83)
 
 - **Starting point:** merged H2 watcher regression [#80](https://github.com/vedantd/palantinty-network/pull/80) and offline coverage [#81](https://github.com/vedantd/palantinty-network/pull/81). H02a/H02b remain partial.
 - **Threat:** stale operator decisions could be applied to a newer ledger snapshot; file fsync before rename did not guarantee directory-entry durability.
 - **Implementation:** optional `expectedRevision` checked inside the exclusive writer lock for propose/approve/revoke; reject invalid/stale/overflow revisions; fsync state directory after atomically renaming the committed ledger.
 - **Tests:** stale operations, correct CAS transitions, malformed revision, exhausted revision counter, and orphaned temporary snapshot refusal. [ADR](ADR_H02A_LEDGER_CAS_DURABILITY.md) covers crash/rollback limits.
 - **Residual:** existing CLI does not require CAS; watchdog is still polling, file revision does not stop hostile rollback, and cross-machine revocation and physical-host evidence are incomplete. All release gates remain blocked.
-- **CI/merge:** pending full GitHub Actions; do not claim H02a complete.
+- **CI/merge:** [PR #83](https://github.com/vedantd/palantinty-network/pull/83) merged as `a30979fa7176058ff165fa1ba42c9d3e7ce00952` after complete [CI run 42403138130](https://github.com/vedantd/palantinty-network/actions/runs/42403138130): **209 tests passed, zero failed**, including private Docker integration. H02a remains **partial**; no synthetic or real-sensing release gate advanced.
 
 ## 2026-11-07 — D01 offline signed fictional-region coverage validation (merged PR #81)
 
