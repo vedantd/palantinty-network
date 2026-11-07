@@ -49,6 +49,7 @@ try{
   await until(()=>accepted.length===1,'one signed synthetic report');
   if(accepted.some(v=>!v.syntheticOnly||Object.hasOwn(v,'envelope')))
    throw Error('Signed material leaked from sanitized observer');
+  writeFileSync(coord+'/observer-finished','ok',{flag:'wx'});
   console.log(JSON.stringify({role,syntheticOnly:true,privateNetworkOnly:true,
    peerId:id,accepted:accepted.length,area,realSensorData:false,
    publicParticipation:false}));
@@ -65,6 +66,7 @@ try{
    bucketStart:Date.UTC(2026,10,6,20),bucketSeconds:60,
    activityIndex:35,metric:'ble_alias_activity'},signer,1);
   await publishSynthetic(node,payload);
+  await until(()=>existsSync(coord+'/observer-finished'),'observer signed-report receipt');
   console.log(JSON.stringify({role,syntheticOnly:true,privateNetworkOnly:true,
    peerId:id,published:1,area,realSensorData:false,
    publicParticipation:false}));
