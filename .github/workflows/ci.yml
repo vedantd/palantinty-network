@@ -26,6 +26,13 @@ jobs:
       - run: timeout 35s npm run network:dht
       - run: timeout 35s npm run network:indexer-sync
       - run: timeout 35s npm run network:auto-sync
+      - name: P02c synthetic peers across isolated private bridge containers
+        run: |
+          docker compose -f deploy/compose.p02c.yml down --volumes --remove-orphans
+          timeout 100s docker compose -f deploy/compose.p02c.yml up --build --abort-on-container-exit --exit-code-from observer
+      - name: Tear down P02c isolated private test
+        if: always()
+        run: docker compose -f deploy/compose.p02c.yml down --volumes --remove-orphans
       - name: M10 isolated private-container network
         run: |
           docker compose -f deploy/compose.m10.yml down --volumes --remove-orphans
