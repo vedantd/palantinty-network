@@ -13,9 +13,9 @@ import {registerTrustedIndexerSync,fetchTrustedIndexerSummary}
 import {createTrustedIndexerReconciler} from '../src/indexer-reconciler.mjs';
 
 const NOW=Date.UTC(2026,10,6,20),AREA='synthetic-auto-test';
-const fakeAddress='/ip4/127.0.0.1/tcp/1234/p2p/trustedPeer';
+const fakeAddress='/ip4/127.0.0.1/tcp/1234/p2p/QmWmyoCVmCuVu7Aag84LUGD3rHL86utDXGZMSP1UDS4Jrc';
 const policy={node:{},peerAddress:fakeAddress,
- allowedSourcePeerIds:new Set(['trustedPeer']),area:AREA,
+ allowedSourcePeerIds:new Set([fakeAddress.split('/').at(-1)]),area:AREA,
  intervalMs:100,maxReportsPerRound:2,pageSize:1};
 const digest='a'.repeat(64);
 
@@ -104,9 +104,9 @@ test('invalid peer address, interval and untrusted PeerID fail before scheduling
  const index={ingest(){},signedArchiveSummary:()=>({count:0,digest})};
  assert.throws(()=>createTrustedIndexerReconciler({...policy,index,intervalMs:0}),RangeError);
  assert.throws(()=>createTrustedIndexerReconciler({...policy,index,
-  peerAddress:'/ip4/8.8.8.8/tcp/1234/p2p/trustedPeer'}),/Trusted loopback/);
+  peerAddress:'/ip4/8.8.8.8/tcp/1234/p2p/trustedPeer'}),/Trusted source|private LAN/);
  assert.throws(()=>createTrustedIndexerReconciler({...policy,index,
-  allowedSourcePeerIds:new Set(['someoneElse'])}),/Trusted loopback/);
+  allowedSourcePeerIds:new Set(['someoneElse'])}),/Trusted source|private LAN/);
 });
 
 test('real signed-archive summary matches only identical accepted reports',async()=>{
