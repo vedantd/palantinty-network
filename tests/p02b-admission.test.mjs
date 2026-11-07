@@ -8,7 +8,7 @@ import {generateKeyPair} from '@libp2p/crypto/keys';
 import {peerIdFromPrivateKey} from '@libp2p/peer-id';
 
 test('fail closed on missing, duplicate, malformed or excessive pins',()=>{
- for(const allowedPeerIds of [undefined,[],['not-a-peer'],Array(17).fill('x'),[ 'Qm'+'a'.repeat(44),'Qm'+'a'.repeat(44) ]){
+ for(const allowedPeerIds of [undefined,[],['not-a-peer'],Array(17).fill('x'),[ 'Qm'+'a'.repeat(44),'Qm'+'a'.repeat(44) ]]){
   assert.throws(()=>sandboxSyntheticTransportPolicy({allowedPeerIds}));
  }
 });
