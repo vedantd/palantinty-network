@@ -1,3 +1,11 @@
+## 2026-11-07 — Release-scope execution plan and safety-gated tracker (CI pending)
+
+- **Starting point:** H0 private operator trust PR #64 merged; public release profiles remain blocked, and H1/#65, H2/#66, independent hosts/#67 are open.
+- **Decision ADR-PLAN-001:** Plan all 28 slices through two **separate** release profiles, with machine-readable dependency DAG and an explicit 6-gate synthetic and 7-gate real-sensing mapping. Do not imply eight hours of scheduled sessions can replace independent physical/legal/privacy evidence.
+- **Deliverable:** [PUBLIC_RELEASE_EXECUTION_PLAN.md](PUBLIC_RELEASE_EXECUTION_PLAN.md), `config/release-execution-tracker.json`, `src/release-execution-tracker.mjs`, CLI and negative tests, CI gate. CI and merge state to be appended after verification.
+- **Next:** H01a committed dependency lockfile and `npm ci` (#65), then H2 and private indexer/storage work if blocked. User authorized hourly work through afternoon; each run should inspect current main/CI to avoid overlap.
+- **Safety:** Untrusted Internet listener and real BLE network publishing remain off; release gates remain blocked regardless of coding progress.
+
 ## 2026-11-07 — H0 runtime trust hardening verified and merged
 
 - **PR:** [#64](https://github.com/vedantd/palantinty-network/pull/64) merged to `main` as `a42b9ab23406d2c34d34f70f3d445eb258f60ab9` from approved head `454c59ea014b507143826cad5deb819af2b2690e`.
