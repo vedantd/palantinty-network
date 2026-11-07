@@ -1,3 +1,7 @@
+## H0 private runtime trust enforcement and targeted hardening review (2026-11-07)
+
+The standalone P02c synthetic pilot now requires an exact **approved P03 private peer ledger entry** to pass preflight/start; active processes poll for revocation, revision/configuration drift and emergency shutdown, and close their private libp2p connections on failure. Tests cover startup refusal, ledger mutation and live process revocation. This remains operator-local best-effort enforcement, not atomic or network-wide revocation. See [HARDENING_AUDIT_2026_11_07.md](HARDENING_AUDIT_2026_11_07.md) and [EXECUTION_ROADMAP_NEXT.md](EXECUTION_ROADMAP_NEXT.md). The repository still lacks a committed dependency lockfile, independently administered host evidence, public enrollment and real-sensing review. All release gates stay blocked.
+
 ## P03d offline startup-readiness inspection (pre-public)
 
 An offline, read-only operator inspection now checks the P03c approved pin audit, P02c emergency-stop state, and existence of a distinct persistent local identity. A clean result is **manual-review readiness only**, not permission to run. Repeated reads detect some concurrent drift but are not atomic; runtime trust remains manually provisioned. See [P03D_OFFLINE_STARTUP_INSPECTION.md](P03D_OFFLINE_STARTUP_INSPECTION.md). Physical-host evidence and public gates remain blocked.
