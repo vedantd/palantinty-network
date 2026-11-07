@@ -9,7 +9,7 @@
 ## What you can do today
 
 1. Explore Narasimha's [Palantiny repository](https://github.com/narasim-teja/palantiny) and its own installation instructions. Do not assume it transmits data to Palantiny-Network.
-2. Clone the [Palantiny-Network prototype](https://github.com/vedantd/pulsemesh) separately and install Node.js **22 or newer**.
+2. Clone the [Palantiny-Network prototype](https://github.com/vedantd/palantinty-network) separately and install Node.js **22 or newer**.
 3. Run the independent, *synthetic* network and dashboard demos:
    ```sh
    npm install
@@ -20,7 +20,7 @@
    ```
    The multi-process network demo sends synthetic signed reports; it does not contact other volunteers or transmit real nearby-device observations.
 4. On supported macOS hardware, read [LOCAL_SCAN.md](LOCAL_SCAN.md) and [PALANTINY_INTEGRATION.md](PALANTINY_INTEGRATION.md) for the optional, **local-only** Palantiny CoreBluetooth scan. That CLI is a research diagnostic; it does not enroll a node or broadcast local scans.
-5. To contribute, open an [issue](https://github.com/vedantd/pulsemesh/issues) about calibration, privacy review, the Palantiny adapter, Linux/other sensor support or the future permissioned pilot. Never post identifiers, Bluetooth dumps, precise sensor locations, or real scan artifacts to public issues.
+5. To contribute, open an [issue](https://github.com/vedantd/palantinty-network/issues) about calibration, privacy review, the Palantiny adapter, Linux/other sensor support or the future permissioned pilot. Never post identifiers, Bluetooth dumps, precise sensor locations, or real scan artifacts to public issues.
 
 ## Proposed participation journey (not shipped)
 
