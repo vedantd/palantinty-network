@@ -1,6 +1,10 @@
-## H02b private peer identity rotation (2026-11-07; PR pending)
+## D01a fictional-only canonical region routing (PR #89; CI pending)
 
-A proposed H02b slice rotates an approved remote libp2p identity in a single revision-checked local ledger commit: old approved ID becomes a terminal revoked tombstone; a new independently provisioned ID is only an *unapproved candidate*. CLI checks the old ID matches the current private pilot config; subsequent approval, staging and restart remain deliberately manual. Tests target stale revisions, malicious seeds, reusing old keys, runtime guard shutdown and offline staging. See [rotation ADR](ADR_H02B_PEER_ROTATION.md). **H02b remains partial**, with no public participant admission or change to release gates.
+A new strict helper generates `syn:<scenario>-cXX` canonical **fictional** regional keys, sorted coverage lists, and a domain-separated digest suitable as input to a future private DHT adapter. New tests exercise signed coverage with these generated keys. This is not a geographic coordinate mapping, proof of actual indexer location, CID/provider advertisement, real BLE model, or public network. See [D01a ADR](ADR_D01A_SYNTHETIC_REGIONS.md). D01a is **partial**; all six synthetic and seven real-sensor gates remain blocked.
+
+## H02b private peer identity rotation (verified PR #88; 2026-11-07)
+
+[Merged PR #88](https://github.com/vedantd/palantinty-network/pull/88) ([CI 42412549372](https://github.com/vedantd/palantinty-network/actions/runs/42412549372), **222/222 passing tests**) implements an H02b slice which rotates an approved remote libp2p identity in a single revision-checked local ledger commit: old approved ID becomes a terminal revoked tombstone; a new independently provisioned ID is only an *unapproved candidate*. CLI checks the old ID matches the current private pilot config; subsequent approval, staging and restart remain deliberately manual. Tests target stale revisions, malicious seeds, reusing old keys, runtime guard shutdown and offline staging. See [rotation ADR](ADR_H02B_PEER_ROTATION.md). **H02b remains partial**, with no public participant admission or change to release gates.
 
 ## I01 private indexer recovery prototype (verified PR #86; 2026-11-07)
 
