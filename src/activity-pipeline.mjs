@@ -14,6 +14,7 @@ export class LocalActivityPipeline {
     this.connected = false;
     this.notBefore = Infinity;
     this.pending = [];
+    this.metrics = { overflowDropped: 0, incompleteWindows: 0, policyRejected: 0, released: 0, revokedPending: 0 };
   }
   sensorConnected() {
     this.connected = true;
@@ -35,21 +36,34 @@ export class LocalActivityPipeline {
   }
   tick() {
     const now = this.clock();
-    for (const window of this.aggregator.flush(now)) if (window.complete) this.pending.push(window);
-    if (this.pending.length > this.maxPending) this.pending.splice(0, this.pending.length - this.maxPending);
+    for (const window of this.aggregator.flush(now)) {
+      if (window.complete) this.pending.push(window);
+      else this.metrics.incompleteWindows++;
+    }
+    if (this.pending.length > this.maxPending) {
+      const excess = this.pending.length - this.maxPending;
+      this.pending.splice(0, excess);
+      this.metrics.overflowDropped += excess;
+    }
     const remaining = [], released = [];
     for (const window of this.pending) {
       const outcome = buildPublishableObservation(window, this.policy, now);
       if (outcome.ok) {
         released.push(outcome.report);
+        this.metrics.released++;
         this.onReport(outcome.report);
       } else if (outcome.reason === 'not_ready') remaining.push(window);
+      else this.metrics.policyRejected++;
     }
     this.pending = remaining;
     return released;
   }
+  diagnostics() {
+    return Object.freeze({ ...this.metrics, pending: this.pending.length, connected: this.connected });
+  }
   revokeConsent() {
     this.policy = { ...this.policy, consent: false };
+    this.metrics.revokedPending += this.pending.length;
     this.pending.length = 0;
   }
 }

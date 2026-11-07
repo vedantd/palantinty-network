@@ -1,7 +1,5 @@
 import { JsonLineDecoder } from './jsonl.mjs';
 import { verifyEnvelope } from './protocol.mjs';
-import { RegionalIngest } from './regional-ingest.mjs';
-import { DurableRegionalIngest } from './durable-ingest.mjs';
 
 export const PULSE_PROTOCOL = '/pulsemesh/private-aggregate/0.1.0';
 const MAX_FRAME_BYTES = 16_384;
@@ -35,8 +33,8 @@ function sendFrame(stream, object) {
  * echoes private report content). The ingest verifier accepts allowlisted keys.
  */
 export function registerPrivateIngest(node, ingest) {
-  if (!(ingest instanceof RegionalIngest) && !(ingest instanceof DurableRegionalIngest))
-    throw new TypeError('Regional ingest implementation required');
+  if (!ingest || typeof ingest.ingest !== 'function')
+    throw new TypeError('Regional ingest interface requires ingest(envelope)');
   node.handle(PULSE_PROTOCOL, stream => {
     let received=false;
     const decoder=new JsonLineDecoder({
