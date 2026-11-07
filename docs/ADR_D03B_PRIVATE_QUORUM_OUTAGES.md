@@ -1,6 +1,6 @@
 # ADR-D03b-001 — Private synthetic indexer outage and split-brain quorum
 
-**Date:** 2026-11-07. **Scope:** bounded, approved-only, fictional-region D03 read protocol on localhost. **Status:** implementation and CI acceptance pending.
+**Date:** 2026-11-07. **Scope:** bounded, approved-only, fictional-region D03 read protocol on localhost. **Status:** merged private synthetic demo, PR #96; formal D03b still partial.
 
 ## Threat and failure contract
 
@@ -23,4 +23,4 @@ Run `npm test`, `npm run network:region-query`, `npm run network:region-resilien
 
 ## Residual risk / gates
 
-A timeout can hide a malicious indexer that sends no valid response. Two responding operators can collude or share the same physical administrator, so agreement is not actual field truth or a Byzantine quorum. There is no partition-healing proof, bounded DHT republish/refresh, stable load shedding, Internet-facing NAT/relay/abuse hardening, independent physical hosts (H03), or real BLE release approval. **Do not mark D02b or D03b complete based on local CI.** All six open-synthetic and seven real-sensing public release gates stay blocked.
+A timeout can hide a malicious indexer that sends no valid response. Two responding operators can collude or share the same physical administrator, so agreement is not actual field truth or a Byzantine quorum. [Verified PR #96](https://github.com/vedantd/palantinty-network/pull/96), merged as 8f1e59ccd09ecb0d36cb1065cd5edacfb7f4aff8 with full green [CI 42425997251](https://github.com/vedantd/palantinty-network/actions/runs/42425997251) and [CI 42426000888](https://github.com/vedantd/palantinty-network/actions/runs/42426000888). There is no partition-healing proof, bounded DHT republish/refresh, stable load shedding, Internet-facing NAT/relay/abuse hardening, independent physical hosts (H03), or real BLE release approval. **Do not mark D02b or D03b complete based on local CI.** All six open-synthetic and seven real-sensing public release gates stay blocked.

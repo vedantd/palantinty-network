@@ -50,11 +50,11 @@ flowchart LR
 | **Local sensing** | macOS diagnostic, bounded aggregation, opt-in export rules | Calibrated activity signal and field consent |
 | **P2P transport** | Signed reports, libp2p/Noise/GossipSub, pinned private peers | Untrusted Internet transport, NAT and public bootstrap |
 | **Discovery** | Localhost Kademlia discovers two indexers by a **fictional region CID**, verifies Peer ID-bound signed coverage (#92) | Independent physical hosts, churn/NAT, and privacy-reviewed real geographic mapping |
-| **Regional query** | Two DHT-discovered indexers return peer-ID-signed thresholded synthetic aggregates; disagreement and missing-data checks (#94) | Host independence, partitions, freshness/churn, real geo/privacy validation |
+| **Regional query** | Two to four DHT-discovered indexers can return peer-ID-signed synthetic aggregates; 2-of-3 private outage drill and all-responder disagreement checks (#94/#96) | Host independence, partitions, recovery, freshness/churn, real geo/privacy validation |
 | **Regional storage** | Durable SQLite, signed archive sync, replay protection | Independent physical-host recovery and backups |
 | **Trust** | Private peer approval and revocation watcher; locked CI/SBOM | Race-safe revocation, signed releases, independent review |
 
-**Verified localhost synthetic milestones (#92 and #94):** fictional region key → Kademlia content-provider lookup → two signed and approved indexer identities → Noise-encrypted regional aggregate reads from separate SQLite stores → explicit consistent / no-data / disagreement results. **Next:** harden D03 quorum through partitions and churn, and validate H03 on two actually independent hosts. These were **one-machine tests**, not independent physical operators. A DHT provides **discovery, not location truth, data availability, or a database**.
+**Verified localhost synthetic milestones ([#92](https://github.com/vedantd/palantinty-network/pull/92), [#94](https://github.com/vedantd/palantinty-network/pull/94), [#96](https://github.com/vedantd/palantinty-network/pull/96)):** fictional region → Kademlia provider lookup → approved Peer IDs → signed, bounded regional aggregate reads from separate SQLite stores. A three-indexer private demo now tolerates one stopped indexer while two signed replies agree; it withholds conflicting results even when degraded. **Next:** partition/healing and churn tests, then H03 verification on two actually independent hosts. These were **one-machine tests**, not independent physical operators. A DHT provides **discovery, not location truth, data availability, or a database**.
 
 [Design contract](docs/PUBLIC_RELEASE_EXECUTION_PLAN.md) · [Regional DHT proof](docs/ADR_D02A_PRIVATE_REGION_PROVIDERS.md) · [Indexer sync](docs/M09_INDEXER_SYNC.md)
 
@@ -85,6 +85,7 @@ npm run network:gossip      # signed synthetic mesh and two local indexers
 npm run network:dht         # local-only known-Peer-ID routing
 npm run network:region-dht  # find and verify two indexers for a fictional region
 npm run network:region-query # read two signed regional aggregates; reject disagreement
+npm run network:region-resilience # 3-indexer private outage and split-brain drill
 npm run network:auto-sync   # authenticated, private indexer recovery
 npm run dashboard           # local fictional region history
 ~~~
@@ -96,7 +97,7 @@ See the [prototype demo catalog](docs/PROTOTYPE_DEMOS.md) for more commands, pri
 | Phase | Deliverable | Current state |
 | :-- | :-- | :-- |
 | **01 — Private foundation** | Encrypted synthetic P2P, independent archives, approved peers | **Working demo; hardening ongoing** |
-| **02 — Geographic discovery** | Signed fictional region coverage, private Kademlia lookup and bounded regional aggregate comparison | **Two-indexer synthetic query demonstrated on localhost; D03a/D03b partial** |
+| **02 — Geographic discovery** | Signed fictional region coverage, private Kademlia lookup and bounded regional aggregate comparison | **Three-indexer outage drill verified on localhost; D02b/D03b not completed** |
 | **03 — Operational independence** | Two actual separately administered hosts, recovery, backups and revocation safety | **Not independently verified** |
 | **04 — Open synthetic testnet** | Untrusted enrollment, abuse resistance, live operations and all six release gates | **Blocked** |
 | **05 — Real sensing** | Calibration, consent, retention/deletion, anti-Sybil, legal and privacy reviews | **Blocked; separate seven gates** |
