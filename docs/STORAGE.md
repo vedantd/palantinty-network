@@ -30,3 +30,7 @@ observations into the synthetic indexer.
 incomplete legacy schema and corrupted SQLite cases for both stores. The
 existing durable network demo checks that signed report ACKs survive indexer
 restart. No physical hardware is needed.
+
+## M09b addendum — regional signed archive v2
+
+Regional SQLite schema v2 adds `signed_archive(report_id,area,envelope)`; ingest writes it atomically with reports and contributor replay watermarks. The additive v1-to-v2 upgrade does **not** produce archives for old accepted rows. Such records remain queryable but cannot participate in cryptographically verifiable indexer-to-indexer history recovery. This archive increases metadata retention risk; keep databases private and synthetic-only. See [M09_INDEXER_SYNC.md](M09_INDEXER_SYNC.md). Outbox schema remains v1. Unsupported future schema versions still fail closed.
