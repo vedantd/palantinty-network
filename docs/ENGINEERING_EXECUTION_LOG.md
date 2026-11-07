@@ -1,3 +1,12 @@
+## 2026-11-07 — P03b explicitly staged approved peer configuration
+
+- **Starting point:** P03a (#58) green and merged. Ledger validates explicit candidate/approval/revocation but does not change running transport.
+- **Decision ADR-P03b-001:** Require an operator-selected approved Peer ID and reviewed ledger revision, write a separate private config rather than dynamically changing libp2p trust.
+- **Implementation:** `stagePrivatePilotPeer` checks exact revision, state, local identity, approved IP and address, private path, no overwrite, and refuses implicit LAN permission expansion. CLI stages one peer, reports `activated:false`.
+- **Verification:** Tests cover candidate/revoked refusal, stale revision, no overwrite, path safety, localhost escalation, and preserving emergency-stop marker. Green CI required before merge.
+- **Limitations:** No automatic application to a running node, no public registration, no independent physical-host acceptance. Operator must manually inspect, stop, review and restart.
+- **Next:** P03c operator key transition/revocation reconciliation, then P03d private indexer directory with authenticated provider proof.
+
 # Palantiny-network autonomous engineering ledger
 
 Append new entries at the top as individual slices are completed. This file is an implementation log, **not** proof of security review or public deployment.

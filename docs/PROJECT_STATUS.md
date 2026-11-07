@@ -1,3 +1,7 @@
+## P03b explicit private peer staging (pre-public)
+
+A revision-bound operator CLI now stages one **approved** P03a Peer ID into a fresh 0600 synthetic pilot config. No running node trust is modified, no emergency-stop marker cleared, and no default private LAN opt-in is expanded. See [P03_PRIVATE_PEER_STAGING.md](P03_PRIVATE_PEER_STAGING.md); public enrollment and all release gates remain blocked.
+
 ## P03a operator-local private peer enrollment (pre-public)
 
 A standalone, strict private on-disk enrollment ledger now models candidate → approved → revoked Peer IDs with explicit out-of-band operator approval, bounded file permissions and exclusive writes. It exports only approved pinned peer data, but **does not yet change the running libp2p node's trust policy**. No public registration or geographic DHT lookup is enabled. See [P03_PRIVATE_ENROLLMENT.md](P03_PRIVATE_ENROLLMENT.md) and [ENGINEERING_EXECUTION_LOG.md](ENGINEERING_EXECUTION_LOG.md). Release gates remain blocked.
