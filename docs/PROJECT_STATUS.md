@@ -1,3 +1,7 @@
+## P03d offline startup-readiness inspection (pre-public)
+
+An offline, read-only operator inspection now checks the P03c approved pin audit, P02c emergency-stop state, and existence of a distinct persistent local identity. A clean result is **manual-review readiness only**, not permission to run. Repeated reads detect some concurrent drift but are not atomic; runtime trust remains manually provisioned. See [P03D_OFFLINE_STARTUP_INSPECTION.md](P03D_OFFLINE_STARTUP_INSPECTION.md). Physical-host evidence and public gates remain blocked.
+
 ## P03b explicit private peer staging (pre-public)
 
 A revision-bound operator CLI now stages one **approved** P03a Peer ID into a fresh 0600 synthetic pilot config. No running node trust is modified, no emergency-stop marker cleared, and no default private LAN opt-in is expanded. See [P03_PRIVATE_PEER_STAGING.md](P03_PRIVATE_PEER_STAGING.md); public enrollment and all release gates remain blocked.

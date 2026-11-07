@@ -1,3 +1,11 @@
+## 2026-11-07 — P03d offline private startup-readiness inspection (CI pending)
+
+- **Starting state:** `main` at `7524de1aed5388f9c55625191bd9443c53c4c2bf`; no open PRs. Inspected P03c audit, P03a ledger, P02c host config and emergency-stop operations, existing tests, project status and prior CI evidence.
+- **Decision ADR-P03d-001:** Add read-only operator inspection, not a runtime authorization gate. See [P03D_OFFLINE_STARTUP_INSPECTION.md](P03D_OFFLINE_STARTUP_INSPECTION.md).
+- **Implementation:** `src/p03-startup-inspection.mjs` validates private config and stop state, requires an existing distinct operator identity, audits exact approved remote pins and repeats reads to detect some concurrent drift.
+- **Tests:** `tests/p03-startup-inspection.test.mjs` covers approved, unknown, candidate, revoked, stop-marker, missing config and missing local identity. **GitHub Actions pending; do not merge before green.**
+- **Outstanding:** Repeated reads are not atomic and the runtime does not consume this inspection; manual restart may race with revocation. No independent physical-host evidence; public release gates blocked.
+
 ## 2026-11-07 — P03c CI and merge evidence
 
 - **PR:** #60 merged into `main` after review of its read-only audit implementation and positive/negative tests. Source head `2d72cc58486aa89748f9df22413136639bf8a63e`; squash merge `0a1c63cd768c2434ab4452d1b1c16b528e3bde16`.
