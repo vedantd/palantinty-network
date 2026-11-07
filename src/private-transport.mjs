@@ -12,7 +12,7 @@ const UTF8 = new TextEncoder();
  * The handler is a *confidential* report receiver, not a public topic.
  */
 export async function createPrivateNode({
-  listen = '/ip4/127.0.0.1/tcp/0', allowPrivateLan=false
+  listen = '/ip4/127.0.0.1/tcp/0', allowPrivateLan=false,privateKey
 } = {}) {
   // Never bind wildcard/public interfaces. RFC1918 requires explicit opt-in.
   parseTrustedListen(listen,{allowPrivateLan});
@@ -22,7 +22,8 @@ export async function createPrivateNode({
   ]);
   return createLibp2p({
     addresses:{listen:[listen]},transports:[tcp()],
-    connectionEncrypters:[noise()],streamMuxers:[yamux()]
+    connectionEncrypters:[noise()],streamMuxers:[yamux()],
+    ...(privateKey?{privateKey}:{})
   });
 }
 function sendFrame(stream, object) {
