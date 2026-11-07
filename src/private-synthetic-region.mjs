@@ -6,8 +6,13 @@ const SCENARIO=/^[a-z][a-z0-9]{2,11}$/;
 const KEY=/^syn:([a-z][a-z0-9]{2,11})-c([0-9a-z]{2})$/;
 const MAX_CELL=63;
 const LOOKUP_DOMAIN='palantiny.synthetic-region-lookup.v1\0';
+const exact=(x,keys)=>x!==null&&typeof x==='object'&&!Array.isArray(x)&&
+ Object.keys(x).length===keys.length&&keys.every(k=>Object.hasOwn(x,k));
 
-export function syntheticRegionKey({scenario,cellIndex}={}){
+export function syntheticRegionKey(options={}){
+ if(!exact(options,['scenario','cellIndex']))
+  throw Error('Only synthetic scenario and cell index are permitted');
+ const {scenario,cellIndex}=options;
  if(typeof scenario!=='string'||!SCENARIO.test(scenario)||
     !Number.isSafeInteger(cellIndex)||cellIndex<0||cellIndex>MAX_CELL)
   throw Error('Expected a fictional synthetic scenario and bounded cell index');
@@ -28,7 +33,10 @@ export function parseSyntheticRegionKey(key){
  * Deterministic, sorted set of canonical fictional region keys for signing.
  * The existing D01 coverage-advertisement protocol caps regions at 16.
  */
-export function syntheticCoverageRegions({scenario,cellIndices}={}){
+export function syntheticCoverageRegions(options={}){
+ if(!exact(options,['scenario','cellIndices']))
+  throw Error('Only synthetic scenario and cell indices are permitted');
+ const {scenario,cellIndices}=options;
  if(!Array.isArray(cellIndices)||cellIndices.length<1||cellIndices.length>16||
     new Set(cellIndices).size!==cellIndices.length)
   throw Error('Expected 1..16 distinct synthetic region indices');
