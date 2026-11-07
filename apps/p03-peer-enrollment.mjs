@@ -6,12 +6,12 @@
 import {readP02cHostConfig} from '../src/p02c-host-config.mjs';
 import {
  initializePeerLedger,readPrivatePeerLedger,proposePrivatePeer,
- approvePrivatePeer,revokePrivatePeer,approvedPrivatePeers
+ approvePrivatePeer,revokePrivatePeer,rotatePrivatePeer,approvedPrivatePeers
 } from '../src/p03-private-peer-ledger.mjs';
 
 const [action,filename,...args]=process.argv.slice(2);
-const USAGE='Usage: node apps/p03-peer-enrollment.mjs <init|list|propose|approve|revoke|pins> <private-host-config.json> [peerId ip seed | peerId --verified-out-of-band | peerId]';
-if(!['init','list','propose','approve','revoke','pins'].includes(action)||!filename){
+const USAGE='Usage: node apps/p03-peer-enrollment.mjs <init|list|propose|approve|revoke|rotate|pins> <private-host-config.json> [peerId ip seed | peerId --verified-out-of-band | peerId | OLD NEW IP SEED EXPECTED_REVISION]';
+if(!['init','list','propose','approve','revoke','rotate','pins'].includes(action)||!filename){
  console.error(USAGE);process.exitCode=2;
 }else{
  try{
@@ -37,6 +37,17 @@ if(!['init','list','propose','approve','revoke','pins'].includes(action)||!filen
    case 'revoke':
     if(args.length!==1)throw Error(USAGE);
     result=revokePrivatePeer(d,p,args[0]);break;
+   case 'rotate':{
+    if(args.length!==5||!/^(0|[1-9][0-9]{0,15})$/.test(args[4]))
+     throw Error(USAGE);
+    if(args[0]!==conf.remotePeerId)
+     throw Error('Rotation must revoke the currently configured remote Peer ID');
+    result=rotatePrivatePeer(d,p,{
+     oldPeerId:args[0],newPeerId:args[1],
+     remoteIp:args[2],seedAddress:args[3],
+     expectedRevision:Number(args[4])
+    });break;
+   }
   }
   console.log(JSON.stringify({...result,publicTestnetReady:false,syntheticOnly:true},null,2));
  }catch(error){
