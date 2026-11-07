@@ -8,6 +8,7 @@ import {spawn} from 'node:child_process';
 import {once} from 'node:events';
 import {openPersistentPeerIdentity} from '../src/operator-identity.mjs';
 import {validateP02cHostConfig,readP02cHostConfig} from '../src/p02c-host-config.mjs';
+import {initializePeerLedger,proposePrivatePeer,approvePrivatePeer} from '../src/p03-private-peer-ledger.mjs';
 
 const projectRoot=path.resolve(import.meta.dirname,'..');
 const runScript=path.join(projectRoot,'apps/p02c-host-pilot.mjs');
@@ -104,6 +105,18 @@ test('real separate host-runner processes retain PeerIDs, deliver synthetic repo
    assert.equal(readP02cHostConfig(p).remotePeerId,configs[i].remotePeerId);
    return p;
   });
+  // Each independent process must have an explicit approved local pin.
+  for(let i=0;i<dirs.length;i++){
+   const config=configs[i];
+   initializePeerLedger(dirs[i],config.pilotId);
+   proposePrivatePeer(dirs[i],config.pilotId,{
+    peerId:config.remotePeerId,remoteIp:config.remoteIp,
+    seedAddress:config.remoteSeed
+   });
+   approvePrivatePeer(dirs[i],config.pilotId,config.remotePeerId,{
+    verifiedOutOfBand:true
+   });
+  }
   for(let round=1;round<=2;round++){
    const observer=launch(['observe',names[0]]);
    running.push(observer);
