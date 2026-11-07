@@ -151,6 +151,17 @@ npm run network:auto-sync
 
 [Automatic reconciliation decisions and limitations](docs/M09_AUTOMATIC_RECONCILIATION.md).
 
+### M10a: two independently networked private-container nodes (synthetic only)
+
+The new private-network pilot connects two isolated Docker containers across a private RFC1918 bridge. Each has its own durable regional SQLite index, uses Noise-encrypted libp2p with explicitly pinned peer IDs, and automatically reconciles signed synthetic reports. No public IP binding or real-sensor publishing.
+
+```bash
+docker compose -f deploy/compose.m10.yml up --build --abort-on-container-exit --exit-code-from replica
+docker compose -f deploy/compose.m10.yml down --volumes
+```
+
+The shared Docker coordination volume distributes **test-only public identities**, not a secure enrollment protocol. [Read M10 deployment controls and limitations](docs/M10_PRIVATE_NETWORK.md).
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.
