@@ -1,11 +1,19 @@
-## 2026-11-07 — H02b private old-ID tombstone and candidate-only rotation (PR pending)
+## 2026-11-07 — D01a canonical fictional region routing keys (PR #89 pending)
+
+- **Scope:** deterministic local fictional region identifiers only, with a bounded scenario/cell index and a domain-separated SHA-256 digest for a future private DHT adapter. No real-location lookup or sensor ingestion.
+- **Implementation:** `syntheticRegionKey`, `parseSyntheticRegionKey`, `syntheticCoverageRegions`, `syntheticRegionRoutingDigest`; strict extra-field refusal, 64 bounded cells per fictional scenario and sorted maximum 16 coverage records.
+- **Integration:** existing D01b private Ed25519 coverage adverts accept generated keys; legacy `syn:fictional-a` examples remain supported by the old offline signing protocol, but are not canonical routing keys. [ADR](ADR_D01A_SYNTHETIC_REGIONS.md).
+- **Tests:** deterministic round-trip, malformed geolocation/coordinate rejection, coverage signing/verifying, stable domain-separated routing keys; full GitHub CI pending.
+- **Residual:** only fictional region keys and non-secret digests; real coarse-grain geography, signed libp2p identity binding, DHT provider semantics, independent indexer participation and all launch gates remain unsolved. D01a **partial**, public synthetic 0/6 and real 0/7.
+
+## 2026-11-07 — H02b private old-ID tombstone and candidate-only rotation (verified PR #88)
 
 - **Context:** Previous [#85](https://github.com/vedantd/palantinty-network/pull/85) added pre/post-await private dial and publish approval checks; [#83](https://github.com/vedantd/palantinty-network/pull/83) added revision-checked ledger mutations and durable rename. H02b remains partial.
 - **Invariant:** retiring an approved remote libp2p Peer ID must never result in implicit approval of a replacement or re-admission of the old ID. The previous separate revoke + propose steps can be a single controlled state transition.
 - **Implementation:** `rotatePrivatePeer` requires the current `expectedRevision` under exclusive lock, changes old approved to a terminal revoked tombstone and appends a validated new *candidate*, committing once. CLI checks old matches current pinned remote. New identity still needs independent verification, explicit approval, fresh revision-bound staging and manual restart.
 - **Tests:** atomic one-revision swap, stale/wrong/previously revoked replacement refusal, runtime guard one-way trip, new candidate cannot be staged, later approval and separate staged config, and CLI old-ID check. [ADR](ADR_H02B_PEER_ROTATION.md) captures recovery/runbook and limits.
 - **Residual:** no live, independently administered machine rotation; polling remains best-effort; file anti-rollback, signed operator attestation, remote network bans and public enrollment remain unsolved. No public release gate promoted.
-- **CI/merge:** pending full GitHub Actions including private Docker suites.
+- **CI/merge:** [PR #88](https://github.com/vedantd/palantinty-network/pull/88) merged as `ef69597205f223636973a8de7c76971b69ce70a2` after full [CI run 42412549372](https://github.com/vedantd/palantinty-network/actions/runs/42412549372): **222/222 tests passed**, including private Docker suites. H02b remains **partial**; public release gates unchanged.
 
 ## 2026-11-07 — I01a private synthetic indexer backup/restore prototype (verified PR #86)
 
