@@ -1,4 +1,5 @@
 import {verifyEnvelope} from './protocol.mjs';
+import {createSyntheticIngressBudget} from './synthetic-ingress-budget.mjs';
 
 const UTF8=new TextEncoder(),DECODER=new TextDecoder('utf-8',{fatal:true});
 const MAX_PACKET=8_192;
@@ -83,18 +84,27 @@ export function createSyntheticRateLimiter({
  * public BLE identifiers, or privileged regional archive writes.
  */
 export function observeSyntheticTopic(node,{
- area,onSynthetic=()=>{},limiter=createSyntheticRateLimiter()
+ area,onSynthetic=()=>{},limiter=createSyntheticRateLimiter(),
+ budget=createSyntheticIngressBudget()
 }={}){
  const topic=syntheticTopic(area);
- if(typeof onSynthetic!=='function'||typeof limiter?.allow!=='function')
-  throw new TypeError('Observer callback and limiter required');
- const counters={accepted:0,rejected:0,limited:0};
+ if(typeof onSynthetic!=='function'||typeof limiter?.allow!=='function'||
+    typeof budget?.allowPacket!=='function'||typeof budget?.firstReport!=='function')
+  throw new TypeError('Observer callback, limiter and ingress budget required');
+ const counters={accepted:0,rejected:0,limited:0,duplicates:0,globalLimited:0};
  const handler=event=>{
   if(event.detail?.topic!==topic)return;
+  // Global quota is charged before JSON decoding, independent of peer IDs.
+  if(!budget.allowPacket(event.detail.data)){
+   counters.globalLimited++;return;
+  }
   const peer=event.detail?.from?.toString()??'unknown';
   if(!limiter.allow(peer)){counters.limited++;return;}
   try{
    const report=decodeSyntheticPacket(event.detail.data,{area});
+   if(!budget.firstReport(report.reportId)){
+    counters.duplicates++;return;
+   }
    counters.accepted++;
    try{onSynthetic(report);}catch{} // No callback can corrupt pubsub handling.
   }catch{counters.rejected++;}
