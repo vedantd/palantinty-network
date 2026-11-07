@@ -52,3 +52,11 @@ Release gate states are maintained in [config/public-release-gates.json](../conf
 **What comes next:** making private operation truly reproducible and revocation-safe, validating real independent hosts, then enabling authenticated private location-based indexer discovery and queries.
 
 **What we are not enabling yet:** arbitrary Internet nodes joining the network, public real-sensor sharing, persistent public location maps, verified people counts or tracking individual devices.
+
+## Tracked, actionable blockers
+
+- [H1 dependencies / reproducible artifacts (#65)](https://github.com/vedantd/palantinty-network/issues/65)
+- [H2 transactional peer revocation (#66)](https://github.com/vedantd/palantinty-network/issues/66)
+- [P02c independent physical-host evidence (#67)](https://github.com/vedantd/palantinty-network/issues/67)
+
+Prioritize these independently verified hardening items **before** inviting untrusted synthetic participants. They do not block normal open-source code contributions.
