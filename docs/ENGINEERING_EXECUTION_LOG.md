@@ -1,3 +1,10 @@
+## 2026-11-07 — H2 one-way private watchdog rollback regression (rebased from #74)
+
+- **Scope:** Port PR #74's two safety tests onto current merged main without overwriting the completed README/roadmap changes; no runtime logic changed.
+- **Checks:** An observed invalid config or drifted pinned remote must permanently trip the current running guard, exactly once, even if a restored config passes a fresh standalone approval check. Uses separately provisioned ephemeral operator identities and local approval state.
+- **Decision:** [ADR-H2-001](ADR_H2_WATCHDOG_ONE_WAY_TRIP.md). This does **not** prove atomic revocation, remote disconnect, instantaneous observation of transient mutations, or Internet admission safety. H02a/H02b and #66 remain partial; all public release gates blocked.
+- **CI/merge:** Pending full GitHub Actions.
+
 ## 2026-11-07 — Public-facing README and evidence-based progress visualization (verified PR #78)
 
 - Replaced long README demo inventory with an architecture-first public landing page, accessible vector banner, existing editable Excalidraw network diagram and scoped runnable quickstart.
