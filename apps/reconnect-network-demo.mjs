@@ -34,8 +34,8 @@ try {
  const subs=[subscribeRegionalAggregates(primary,{area,ingest:indices[0]}),
   subscribeRegionalAggregates(backup,{area,ingest:indices[1]})];
  closers.push(...subs.map(s=>()=>s.close()));
- const address=node=>node.getMultiaddrs()[0].toString()+
-  '/p2p/'+node.peerId.toString();
+ const address=node=>{const base=node.getMultiaddrs()[0].toString();
+  return base.includes('/p2p/')?base:base+'/p2p/'+node.peerId.toString();};
  await connectLocalSeed(publisher,address(primary));
  await connectLocalSeed(publisher,address(backup));
  const topic=topicForArea(area);
