@@ -39,6 +39,10 @@ The first decentralized-message slice is being exercised: synthetic GossipSub re
 
 Regional schema v2 retains accepted signed envelopes atomically and offers bounded private pages only to allowlisted Noise-authenticated localhost indexer peers. Manual source-to-target reconciliation now works **without the original contributor staying online**, and duplicates remain idempotent. Legacy v1 accepted reports are not reconstructable as signed history. This remains synthetic, manually started, loopback-only, and insufficient for automatic or public decentralized participation. See [M09_INDEXER_SYNC.md](M09_INDEXER_SYNC.md).
 
+## M09c checkpoint — scheduled, bounded trusted-indexer reconciliation
+
+M09c introduces a process-local scheduler for small, authenticated indexer-to-indexer archive sync cycles, safe page-level retry, no overlapping passes, and private signed-archive count/digest consistency checks. It can repair synthetic missing history automatically after a source becomes available. **Not** crash-persistent cursor state, a public service, guaranteed convergence or real-data privacy validation. See [M09_AUTOMATIC_RECONCILIATION.md](M09_AUTOMATIC_RECONCILIATION.md).
+
 ## Recent engineering milestones
 
 - PR #18: transport receiver interface decoupling and pipeline loss diagnostics.
