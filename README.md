@@ -172,6 +172,12 @@ npm run operator:identity -- /path/to/private-directory
 
 [Security decisions and operator onboarding guide](docs/M10B_OPERATOR_IDENTITY.md). No two-physical-machine validation has been performed yet.
 
+### M10b-2: restart/reconnect drill with preserved node identities
+
+The CI private-network pilot now runs twice while retaining **both operators' identity keys and SQLite history**, rejects stale coordination markers, and checks the source/replica Peer IDs remain stable and the archive is consistent. This remains one Docker host, not a validated physical two-machine deployment.
+
+[Restart-drill evidence and physical-host checklist](docs/M10B_RESTART_DRILL.md).
+
 ## Try the prototype
 
 Requires **Node.js 22 or newer**.

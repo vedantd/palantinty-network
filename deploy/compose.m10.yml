@@ -7,6 +7,7 @@ services:
     image: palantiny-m10-local:latest
     environment:
       PALANTINY_M10_ROLE: source
+      PALANTINY_M10_RUN_ID: ${PALANTINY_M10_RUN_ID:-initial}
     volumes:
       - coordination:/coord
       - source-state:/state
@@ -22,6 +23,7 @@ services:
     depends_on: [source]
     environment:
       PALANTINY_M10_ROLE: replica
+      PALANTINY_M10_RUN_ID: ${PALANTINY_M10_RUN_ID:-initial}
     volumes:
       - coordination:/coord
       - replica-state:/state

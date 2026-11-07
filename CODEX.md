@@ -58,3 +58,7 @@ Synthetic-only localhost GossipSub with independent durable regional recipients 
 ## M10b-1 persistent operator identity
 
 [Read M10b identity/provisioning ADR](docs/M10B_OPERATOR_IDENTITY.md). Nodes persist a private libp2p Ed25519 key under a 0700 directory and 0600 key file, refuse corrupted files/symlinks, and do not silently rotate keys. Operator manifests containing a public Peer ID and RFC1918 address must be **manually verified and pinned out of band** before trusting them. The existing Docker pilot loads a persistent key from each node's separate private volume. Neither manifest nor private IP proves a physical location or authorizes public sensor data.
+
+## M10b-2 restart drill
+
+[Read the restart validation and physical-host checklist](docs/M10B_RESTART_DRILL.md). The two-container CI pilot now runs in two generations without deleting private volumes, checks stable **distinct** Peer IDs, rejects stale coordination success markers, and verifies repeated authenticated signed-archive convergence. Do not present it as actual independent machine testing; a physically deployed operator application and real host test are still required.

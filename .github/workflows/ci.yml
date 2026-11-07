@@ -24,7 +24,11 @@ jobs:
       - name: M10 isolated private-container network
         run: |
           docker compose -f deploy/compose.m10.yml down --volumes --remove-orphans
-          timeout 150s docker compose -f deploy/compose.m10.yml up --build --abort-on-container-exit --exit-code-from replica
+          set -o pipefail
+          PALANTINY_M10_RUN_ID=first timeout 150s docker compose -f deploy/compose.m10.yml up --build --abort-on-container-exit --exit-code-from replica 2>&1 | tee /tmp/palantiny-m10-first.log
+          docker compose -f deploy/compose.m10.yml down --remove-orphans
+          PALANTINY_M10_RUN_ID=second timeout 150s docker compose -f deploy/compose.m10.yml up --build --abort-on-container-exit --exit-code-from replica 2>&1 | tee /tmp/palantiny-m10-second.log
+          node apps/m10-verify-restart.mjs /tmp/palantiny-m10-first.log /tmp/palantiny-m10-second.log
       - name: Tear down private-container test
         if: always()
         run: docker compose -f deploy/compose.m10.yml down --volumes --remove-orphans

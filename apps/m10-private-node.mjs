@@ -19,6 +19,8 @@ import {isTrustedAddressIp} from '../src/private-lan-policy.mjs';
 
 const area='synthetic-m10-private-pilot',now=Date.UTC(2026,10,6,20);
 const role=process.env.PALANTINY_M10_ROLE;
+const runId=process.env.PALANTINY_M10_RUN_ID??'initial';
+if(!/^[a-zA-Z0-9_-]{1,64}$/.test(runId))throw Error('Invalid test generation ID');
 if(!['source','replica'].includes(role))throw Error('PALANTINY_M10_ROLE must be source or replica');
 const coord='/coord',state='/state';
 mkdirSync(coord,{recursive:true});
@@ -76,16 +78,23 @@ try{
     if(!index.ingest(env).ack)throw Error('Failed synthetic source setup');
    }
   }
-  storeFile('source.json',{address,keyIds:keys.map(x=>x.keyId),area});
-  const peerId=await until(()=>getFile('replica.json')?.peerId,'replica public Peer ID');
+  storeFile('source.json',{runId,address,keyIds:keys.map(x=>x.keyId),area});
+  const peerId=await until(()=>{const peer=getFile('replica.json');
+   return peer?.runId===runId?peer.peerId:null;
+  },'fresh replica public Peer ID');
   service=registerTrustedIndexerSync(node,{
    index,area,allowPrivateLan:true,allowedPeers:new Set([peerId])
   });
-  await until(()=>getFile('result.json')?.converged===true,'replica independent index convergence');
-  console.log(JSON.stringify({role,privateIp:ip,accepted:index.stats().accepted,
+  await until(()=>{const result=getFile('result.json');
+   return result?.runId===runId&&result?.converged===true;
+  },'current-generation replica index convergence');
+  console.log(JSON.stringify({role,runId,peerId:node.peerId.toString(),
+   privateIp:ip,accepted:index.stats().accepted,
    trustedReplica:peerId,synthetic:true,converged:true}));
  }else{
-  const manifest=await until(()=>getFile('source.json'),'source public bootstrap manifest');
+  const manifest=await until(()=>{const source=getFile('source.json');
+    return source?.runId===runId?source:null;
+   },'fresh source public bootstrap manifest');
   if(manifest.area!==area||!Array.isArray(manifest.keyIds)||manifest.keyIds.length!==2)
    throw Error('Invalid source bootstrap manifest');
   const index=new DurableRegionalIngest({
@@ -93,7 +102,7 @@ try{
    authorizedKeys:new Set(manifest.keyIds),now:()=>now
   });
   indexes.push(index);
-  storeFile('replica.json',{peerId:node.peerId.toString()});
+  storeFile('replica.json',{runId,peerId:node.peerId.toString()});
   reconciler=createTrustedIndexerReconciler({
    node,index,peerAddress:manifest.address,area,allowPrivateLan:true,
    allowedSourcePeerIds:new Set([manifest.address.split('/').at(-1)]),
@@ -104,9 +113,10 @@ try{
    'replicated signed reports and matching source digest');
   reconciler.stop();
   const stats=reconciler.stats();
-  storeFile('result.json',{converged:true,accepted:index.stats().accepted,
+  storeFile('result.json',{runId,converged:true,accepted:index.stats().accepted,
     sourcePeer:manifest.address.split('/').at(-1)});
-  console.log(JSON.stringify({role,privateIp:ip,accepted:index.stats().accepted,
+  console.log(JSON.stringify({role,runId,peerId:node.peerId.toString(),
+   privateIp:ip,accepted:index.stats().accepted,
    syncRounds:stats.rounds,agreements:stats.agreements,synthetic:true,converged:true}));
  }
 }finally{
