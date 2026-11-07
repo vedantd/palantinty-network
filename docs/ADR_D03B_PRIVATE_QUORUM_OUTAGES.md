@@ -17,7 +17,7 @@ The prior D03a client always queried the first two discovered indexers. A tempor
 
 ## Verification and rollback
 
-Unit tests exercise 2-of-3 transport loss, empty history, single survivor refusal, three-way split-brain, all-response comparison, duplicate IDs, stale/invalid third responses, unthresholded data, and disconnected live peer preflight. `npm run network:region-resilience` exercises five libp2p nodes on localhost: one client, one bootstrap, three independently keyed SQLite indexers. All three announce the same fictional region with private Kademlia providers. Queries initially agree, then one real indexer process is stopped, the remaining two still agree under degraded status, and a one-sided signed report triggers disagreement without publishing a consensus.
+Unit tests exercise 2-of-3 transport loss, empty history, single survivor refusal, three-way split-brain, all-response comparison, duplicate IDs, stale/invalid third responses, unthresholded data, and disconnected live peer preflight. `npm run network:region-resilience` exercises five libp2p nodes on localhost: one client, one bootstrap, three independently keyed SQLite indexers. All three announce the same fictional region with private Kademlia providers. Queries initially agree, then one actual libp2p indexer instance is stopped, the remaining two still agree under degraded status, and a one-sided signed report triggers disagreement without publishing a consensus.
 
 Run `npm test`, `npm run network:region-query`, `npm run network:region-resilience`, plus complete GitHub Actions and private Docker integration. To roll back, revert the D03b selection/fault-classification commit and remove the demo/CI command; no schema migration or public listener is involved.
 
