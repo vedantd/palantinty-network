@@ -1,3 +1,12 @@
+## 2026-11-07 — H02b private old-ID tombstone and candidate-only rotation (PR pending)
+
+- **Context:** Previous [#85](https://github.com/vedantd/palantinty-network/pull/85) added pre/post-await private dial and publish approval checks; [#83](https://github.com/vedantd/palantinty-network/pull/83) added revision-checked ledger mutations and durable rename. H02b remains partial.
+- **Invariant:** retiring an approved remote libp2p Peer ID must never result in implicit approval of a replacement or re-admission of the old ID. The previous separate revoke + propose steps can be a single controlled state transition.
+- **Implementation:** `rotatePrivatePeer` requires the current `expectedRevision` under exclusive lock, changes old approved to a terminal revoked tombstone and appends a validated new *candidate*, committing once. CLI checks old matches current pinned remote. New identity still needs independent verification, explicit approval, fresh revision-bound staging and manual restart.
+- **Tests:** atomic one-revision swap, stale/wrong/previously revoked replacement refusal, runtime guard one-way trip, new candidate cannot be staged, later approval and separate staged config, and CLI old-ID check. [ADR](ADR_H02B_PEER_ROTATION.md) captures recovery/runbook and limits.
+- **Residual:** no live, independently administered machine rotation; polling remains best-effort; file anti-rollback, signed operator attestation, remote network bans and public enrollment remain unsolved. No public release gate promoted.
+- **CI/merge:** pending full GitHub Actions including private Docker suites.
+
 ## 2026-11-07 — I01a private synthetic indexer backup/restore prototype (verified PR #86)
 
 - **Starting point:** [#85](https://github.com/vedantd/palantinty-network/pull/85) merged to improve private dial/publish authorization rechecks; H02b remains partial. Start I01 offline snapshot/recovery without opening public networking.
