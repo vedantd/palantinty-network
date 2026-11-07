@@ -1,3 +1,7 @@
+## H02b private asynchronous network-operation guard (2026-11-07; CI pending)
+
+The pinned, synthetic-only host pilot now rechecks operator approval immediately before and after awaited dial and publish actions, at libp2p connection-open events, and before emitting received-report evidence. Tests simulate P03 ledger revocation or pinned seed drift during an awaited network action; the local one-way guard shuts down on observed failure. See [ADR](ADR_H02B_ASYNC_TRUST_BOUNDARIES.md). This does not revoke an already transmitted packet, prove instantaneous remote disconnect, or advance the H02b/public release gates.
+
 ## H02a private trust-ledger durability checkpoint (merged PR #83; 2026-11-07)
 
 The operator-local synthetic P03 approval ledger now accepts optional under-lock expected revisions on transitions and fsyncs the state directory after atomic rename. [PR #83](https://github.com/vedantd/palantinty-network/pull/83) merged with [CI run 42403138130](https://github.com/vedantd/palantinty-network/actions/runs/42403138130) (**209/209 tests passed**). Tests cover stale operator decisions, rejected invalid revisions, exhausted counters and simulated orphaned temporary files. See [ADR](ADR_H02A_LEDGER_CAS_DURABILITY.md). This is not an anti-rollback counter, real-time connection teardown, independent power-loss proof or public enrollment. H02a/H02b and all public release gates remain partial/blocked.
