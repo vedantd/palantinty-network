@@ -34,3 +34,7 @@ Canonical project name: **Palantiny-Network**. It extends the independently main
 project owner whether to prioritize field calibration and signal validity
 or a distributed end-to-end demo. The checkpoint proposes field evidence
 before further infrastructure.
+
+## M07 current slice
+
+Synthetic-only localhost GossipSub with independent durable regional recipients is implemented in `src/gossip-network.mjs` and `apps/gossip-network-demo.mjs`; see [M07 decision record](docs/M07_GOSSIPSUB.md). Do not treat GossipSub publish success as durable delivery or real-data onboarding. Continue M08 discovery and restart hardening only after passing the five-node CI integration test.
