@@ -14,16 +14,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      # H1 bootstrap only: capture the lockfile npm resolves in the trusted
-      # GitHub Actions runner. Replace this with npm ci after reviewing it.
-      - run: npm install --no-audit --no-fund
-      - name: H1 bootstrap lockfile artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: h1-package-lock
-          path: package-lock.json
-          if-no-files-found: error
-          retention-days: 1
+      - name: Install integrity-pinned production dependencies (no scripts)
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - run: timeout 90s npm test
       - name: Validate execution DAG and public release gates
         run: npm run release:plan-check
