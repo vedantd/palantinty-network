@@ -66,3 +66,8 @@ Local stop/revoke/resume and connection-health telemetry have been added for the
 ## P02c-4 synthetic outage and incident review checkpoint
 
 Adds an automated two-process localhost baseline → outage → recovery test, local peer revocation check, and a bounded offline incident transcript reviewer. This does not validate independently operated physical hosts or private-overlay firewall partition, and does not close any release gate. See [P02C_INCIDENT_DRILL.md](P02C_INCIDENT_DRILL.md).
+
+
+## P03a local enrollment checkpoint
+
+A bounded, durable offline candidate/approve/revoke registry establishes operator-reviewed private synthetic peer state, with no network advertising, no runtime-config activation and no open enrollment. See [P03_PRIVATE_ENROLLMENT.md](P03_PRIVATE_ENROLLMENT.md). P03 public lifecycle and all release gates remain incomplete.
