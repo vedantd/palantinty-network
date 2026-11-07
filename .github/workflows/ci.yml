@@ -17,3 +17,4 @@ jobs:
       - run: npm run network:durable
       - run: npm run network:gossip
       - run: npm run network:reconnect
+      - run: npm run network:replay
