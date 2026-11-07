@@ -26,6 +26,8 @@
 
 **Naming:** The project name is **Palantiny-Network** (repo/package slug: `palantiny-network`). Existing `pulsemesh.*` protocol/schema identifiers remain unchanged for backward compatibility; they are internal versioned wire formats, not user-facing branding. The GitHub repository URL currently retains its original `vedantd/pulsemesh` slug until repository settings are renamed.
 
+**Decentralized network slice M07:** [Synthetic GossipSub mesh with two independently persisted regional indexers](docs/M07_GOSSIPSUB.md). Run `npm run network:gossip`. This tests peer-to-peer publication **without a mandatory collector** but remains localhost-only, synthetic, and best-effort; peer discovery and durable reconciliation are not yet implemented.
+
 **Engineering audit:** [M01–M06 review, hardening decisions, and remaining risks](docs/ENGINEERING_REVIEW.md).
 
 **Engineering cleanup:** [P0 refactor notes](docs/REFACTOR_NOTES.md) describe the receiver interface, local data-loss counters, and remaining reliability gates.
@@ -87,6 +89,17 @@ Imagine a future network that people can join by running Palantiny plus a separa
 | Interactive regional dashboard | Synthetic local demo | Fictional zones, delayed signed-indexer history, read-only localhost API; no public heatmap |
 
 We intentionally **do not** modify Palantiny's remote access settings or expose its local device database. The relay leaves the original Palantiny server local.
+
+### M07: Five-peer GossipSub network (synthetic only)
+
+Two contributing peers publish signed test reports over encrypted GossipSub to a mesh of five libp2p peers, including two independent regional indexers. Each indexer validates, persists and derives the same coarse regional result. This is **not public networking** or a guarantee of delivery.
+
+```bash
+npm install
+npm run network:gossip
+```
+
+See [M07 scope, threat boundaries and decisions](docs/M07_GOSSIPSUB.md).
 
 ## Try the prototype
 
