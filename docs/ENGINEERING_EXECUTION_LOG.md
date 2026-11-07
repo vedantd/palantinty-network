@@ -1,3 +1,10 @@
+## 2026-11-07 — D03a authenticated synthetic aggregate quorum (verified PR #94)
+
+- **Design:** Extend D02a fictional CID provider discovery into a private read-only, Noise-authenticated D03 protocol. Require two distinct approved Peer IDs and current peer-bound coverage. The indexer signs the response's request nonce, region, bounds, expiry and aggregate rows with its **own** libp2p Ed25519 key.
+- **Privacy:** 8 KiB frames, at most 16 rows, 24-hour lookback ending at least 15 minutes ago, 2+ separate signed contributors per bucket, strictly allowlisted aggregate schema. Never expose raw signed archives, signer IDs, device identifiers or real BLE data. Empty readings stay unknown.
+- **Verification:** Unit adversarial tests for forged signature/key/peer, tamper, wrong nonce, expiry, early/unthresholded bucket, duplicate indexer, invalid range and schema; end-to-end four-node demo exercises two separately keyed SQLite archives, agreement, no-data and explicit one-sided divergence refusal. [PR #94](https://github.com/vedantd/palantinty-network/pull/94) merged as `b44caa910d1116596e9c102f2f9b7aac75eab2a1`; full green [CI 42423722670](https://github.com/vedantd/palantinty-network/actions/runs/42423722670) and [CI 42423706799](https://github.com/vedantd/palantinty-network/actions/runs/42423706799), both private-container suites included. [ADR](ADR_D03A_PRIVATE_SYNTHETIC_QUERY.md).
+- **Residual and next:** D03a/D03b **partial** pending churn/partitions and actual independent-host testing (H03). No automatic fallback to a single indexer, no public listeners, no sensor truth, no real geography. All 6 synthetic and 7 real-data launch gates remain blocked; no public deployment assertion.
+
 ## 2026-11-07 — D02a real private Kademlia region-to-two-indexer demonstration (verified PR #92)
 
 - **Actual goal:** replace known-peer-ID `findPeer` routing with `contentRouting.provide/findProviders` for a canonical fictional region CID. Four separately keyed localhost peers: client, bootstrap, indexer A and B; client knows only bootstrap address and a separately approved set of indexer Peer IDs.
