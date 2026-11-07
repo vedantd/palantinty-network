@@ -14,6 +14,7 @@ import {openLocalIdentity} from '../src/identity.mjs';
 import {signReport} from '../src/protocol.mjs';
 import {assertPilotEnabled,isPilotDisabled,watchPilotStop} from '../src/p02c-pilot-operations.mjs';
 import {assertApprovedPrivatePilot,watchApprovedPrivatePilot} from '../src/p03-runtime-trust-guard.mjs';
+import {runPrivatePilotOperation} from '../src/p03-private-operation-gate.mjs';
 import {createPinnedSyntheticGossipNode} from '../src/pinned-synthetic-node.mjs';
 import {observeSyntheticTopic,publishSynthetic,syntheticTopic} from '../src/synthetic-testnet.mjs';
 
@@ -24,7 +25,7 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
  console.error('Usage: node apps/p02c-host-pilot.mjs <preflight|observe|publish> <private-config.json> [round-number]');
  process.exitCode=2;
 }else{
- let node,observer,watchdog,trustWatch,healthTimer;
+ let node,observer,watchdog,trustWatch,healthTimer,onPeerConnected;
  let shutdown=false;
  const emit=event=>console.log(JSON.stringify({
   schema:'palantiny.p02c-pilot-evidence.v1',syntheticOnly:true,
@@ -84,6 +85,12 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
    if(node.peerId.toString()!==identity.peerId)
     throw Error('Persistent identity mismatch at libp2p startup');
    checkTrust();
+   // Verify local trust at each newly established libp2p connection.
+   onPeerConnected=()=>{
+    if(shutdown)return;
+    try{checkTrust();}catch{} // Guard already initiates fail-closed shutdown.
+   };
+   node.addEventListener('connection:open',onPeerConnected);
    emit({event:'started',addresses:node.getMultiaddrs().map(addr=>addr.toString()),
     privateNetworkOnly:true,deliveryObserved:false});
    const reportHealth=()=>{
@@ -99,6 +106,8 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
    if(command==='observe'){
     const received=[];
     observer=observeSyntheticTopic(node,{area:config.area,onSynthetic:report=>{
+     if(shutdown)return;
+     try{checkTrust();}catch{return;}
      received.push(report);
      emit({event:'received-synthetic-report',reportId:report.reportId,
       area:report.area,deliveryObserved:true});
@@ -117,7 +126,8 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
     for(let attempt=1;attempt<=4&&!connected;attempt++){
      checkTrust();
      try{
-      await node.dial(seed,{signal:AbortSignal.timeout(4000)});
+      await runPrivatePilotOperation(checkTrust,
+       ()=>node.dial(seed,{signal:AbortSignal.timeout(4000)}));
       connected=true;
      }catch(e){
       if(attempt===4)throw Error('Verified private seed unreachable',{cause:e});
@@ -145,13 +155,15 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
      bucketSeconds:60,activityIndex:35,metric:'ble_alias_activity'
     },signer,round);
     checkTrust();
-    const published=await publishSynthetic(node,envelope);
+    const published=await runPrivatePilotOperation(checkTrust,
+     ()=>publishSynthetic(node,envelope));
     emit({event:'synthetic-published-no-ack',reportId:published.reportId,
      round,delivered:false,deliveryObserved:false,
      note:'Publisher cannot certify receipt: compare with independently captured observer log'});
     // A single GossipSub publish is lossy. Keep the peer alive briefly
     // to complete gossip processing, without inventing an ACK.
     await sleep(1000);
+    checkTrust();
    }
   }
  }catch(e){
@@ -163,6 +175,7 @@ if(!['preflight','observe','publish'].includes(command)||!filename||
   watchdog?.close();
   if(healthTimer)clearInterval(healthTimer);
   observer?.close();
+  if(node&&onPeerConnected)node.removeEventListener('connection:open',onPeerConnected);
   if(node)await node.stop().catch(()=>{process.exitCode=1;});
  }
 }
