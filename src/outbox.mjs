@@ -49,7 +49,10 @@ export class SignedOutbox {
     this.db.exec('BEGIN IMMEDIATE');
     try {
       this.db.prepare('UPDATE config SET enabled=? WHERE id=1').run(enabled?1:0);
-      if(!enabled) this.db.prepare("DELETE FROM outgoing WHERE status='queued'").run();
+      // Revocation removes retained signed history, not only queued reports.
+      // Otherwise re-enabling consent could resurrect previously published
+      // signed envelopes and permit unintended reconciliation.
+      if(!enabled) this.db.prepare('DELETE FROM outgoing').run();
       this.db.exec('COMMIT');
     } catch(e) {this.db.exec('ROLLBACK');throw e;}
   }
