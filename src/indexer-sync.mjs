@@ -1,6 +1,6 @@
 import {JsonLineDecoder} from './jsonl.mjs';
 import {verifyEnvelope} from './protocol.mjs';
-import {parseLocalSeed} from './peer-bootstrap.mjs';
+import {parseTrustedIndexerSeed,isTrustedRemoteAddress} from './private-lan-policy.mjs';
 
 export const INDEXER_SYNC_PROTOCOL='/palantiny-network/indexer-sync/0.1.0';
 const MAX_FRAME=16_384;
@@ -50,7 +50,7 @@ function validatePage(response,{area,after,limit}) {
  * The peer identity is read from the encrypted transport connection, never
  * from an untrusted request field. No generic indexer data-export endpoint.
  */
-export function registerTrustedIndexerSync(node,{index,area,allowedPeers}={}) {
+export function registerTrustedIndexerSync(node,{index,area,allowedPeers,allowPrivateLan=false}={}) {
  if(!index||typeof index.signedArchivePage!=='function'||
    !(allowedPeers instanceof Set)||allowedPeers.size===0||
    [...allowedPeers].some(p=>typeof p!=='string'||!p.trim())||
@@ -61,7 +61,7 @@ export function registerTrustedIndexerSync(node,{index,area,allowedPeers}={}) {
    const remotePeer=connection?.remotePeer?.toString();
    const remoteAddr=connection?.remoteAddr?.toString()??'';
    if(!remotePeer||!allowedPeers.has(remotePeer)||
-      !remoteAddr.includes('/ip4/127.0.0.1/')){
+      !isTrustedRemoteAddress(remoteAddr,{allowPrivateLan})){
      metrics.denied++;
      stream.abort(new Error('Unauthorized indexer peer'));return;
    }
@@ -145,14 +145,15 @@ async function fetchPage(node,peer,{area,after,limit,timeoutMs=5000}) {
 
 /** Get a bounded, archive-only consistency summary from a trusted indexer. */
 export async function fetchTrustedIndexerSummary({
-  node,peerAddress,allowedSourcePeerIds,area,timeoutMs=5000
+  node,peerAddress,allowedSourcePeerIds,area,timeoutMs=5000,
+  allowPrivateLan=false
 }={}) {
   if(!(allowedSourcePeerIds instanceof Set)||allowedSourcePeerIds.size===0)
     throw new TypeError('Explicit trusted source indexer PeerIDs required');
   if(typeof area!=='string'||!AREA.test(area))throw new Error('Invalid regional sync area');
   if(!Number.isSafeInteger(timeoutMs)||timeoutMs<100||timeoutMs>60_000)
     throw new RangeError('Indexer summary timeout invalid');
-  const peer=parseLocalSeed(peerAddress);
+  const peer=parseTrustedIndexerSeed(peerAddress,{allowPrivateLan});
   if(!allowedSourcePeerIds.has(peerAddress.split('/').at(-1)))
     throw new Error('Untrusted source indexer PeerID');
   return fetchFrame(node,peer,{schema:SUMMARY_REQUEST,area},{
@@ -177,7 +178,8 @@ export async function fetchTrustedIndexerSummary({
  */
 export async function synchronizeTrustedIndexer({
  node,index,peerAddress,allowedSourcePeerIds,area,maxReports=MAX_REPORTS,
- pageSize=MAX_PAGE,timeoutMs=5000,afterReportId='',onPage=()=>{}
+ pageSize=MAX_PAGE,timeoutMs=5000,afterReportId='',onPage=()=>{},
+ allowPrivateLan=false
 }={}) {
  if(!index||typeof index.ingest!=='function')throw new TypeError('Durable indexer required');
  if(!(allowedSourcePeerIds instanceof Set)||allowedSourcePeerIds.size===0)
@@ -190,7 +192,7 @@ export async function synchronizeTrustedIndexer({
  if(typeof afterReportId!=='string'||(afterReportId!==''&&!HASH.test(afterReportId)))
    throw new Error('Invalid reconciliation cursor');
  if(typeof onPage!=='function')throw new TypeError('onPage must be a function');
- const target=parseLocalSeed(peerAddress);
+ const target=parseTrustedIndexerSeed(peerAddress,{allowPrivateLan});
  const peerId=peerAddress.split('/').at(-1);
  if(!allowedSourcePeerIds.has(peerId))throw new Error('Untrusted source indexer PeerID');
  let after=afterReportId,confirmed=0,accepted=0,duplicate=0,pages=0,hasMore=false;
