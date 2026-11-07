@@ -95,6 +95,27 @@ export class SignedOutbox {
       return {envelope,attempts:row.attempts};
     });
   }
+  /**
+   * Local-only bounded history for sending the SAME signed report to a newly
+   * connected independent indexer. ACKed reports remain necessary for this
+   * recovery; this does not grant network peers access to outbox SQLite.
+   */
+  signedHistory({area,afterSequence=0,limit=100}={}) {
+    if(typeof area!=='string' || !/^[a-z0-9][a-z0-9._-]{2,63}$/.test(area) ||
+       !Number.isSafeInteger(afterSequence) || afterSequence<0 ||
+       !Number.isSafeInteger(limit) || limit<1 || limit>500)
+      throw new Error('Invalid signed history request');
+    if(!this.enabled)return [];
+    const rows=this.db.prepare(`SELECT payload FROM outgoing
+      WHERE sequence>? AND json_extract(payload,'$.body.report.area')=?
+      ORDER BY sequence ASC LIMIT ?`).all(afterSequence,area,limit);
+    return rows.map(row=>{
+      const envelope=JSON.parse(row.payload);
+      const body=verifyEnvelope(envelope);
+      if(body.report.area!==area)throw new Error('Historical report area mismatch');
+      return envelope;
+    });
+  }
   retry(reportId, {baseDelayMs=1000,maxDelayMs=60_000}={}) {
     if (!/^[a-f0-9]{64}$/.test(reportId)) throw new Error('Invalid report ID');
     const row=this.db.prepare("SELECT attempts FROM outgoing WHERE report_id=? AND status='queued'").get(reportId);
