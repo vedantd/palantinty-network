@@ -20,10 +20,11 @@ npm run peer:enrollment -- propose /private/pilot/host-config.json VERIFIED_ID 1
 npm run peer:enrollment -- approve /private/pilot/host-config.json VERIFIED_ID --verified-out-of-band
 npm run peer:enrollment -- pins /private/pilot/host-config.json
 npm run peer:enrollment -- revoke /private/pilot/host-config.json VERIFIED_ID
+npm run peer:enrollment -- rotate /private/pilot/host-config.json OLD_ID NEW_ID 10.10.2.10 /ip4/10.10.2.10/tcp/40124/p2p/NEW_ID EXPECTED_REVISION
 npm run peer:enrollment -- list /private/pilot/host-config.json
 ```
 
-Use actual independently checked addresses and Peer IDs, not the placeholders. The command reads an existing private 0600 pilot config and stores a 0600 ledger in the 0700 operator state directory. It never starts a listener or contacts another node. Only explicitly approved records appear in the `pins` export.
+Use actual independently checked addresses and Peer IDs, not the placeholders. **Rotate** is an offline, one-ledger-revision preparation step: the old approved Peer ID becomes permanently revoked and the new distinct pinned Peer ID becomes *candidate*, never automatically approved or activated. Rotation requires an explicit reviewed `expectedRevision`; follow [the manual operator rotation ADR](ADR_H02B_PEER_ROTATION.md) for approval, staging and safe restart. The command reads an existing private 0600 pilot config and stores a 0600 ledger in the 0700 operator state directory. It never starts a listener or contacts another node. Only explicitly approved records appear in the `pins` export.
 
 ## Fail-closed constraints
 
@@ -32,7 +33,7 @@ Use actual independently checked addresses and Peer IDs, not the placeholders. T
 - Exclusive local writer lock; bounded input file; 0600 atomic rename with parent directory fsync; refuse symlinks and permissive state directory. API callers can pass an optional expectedRevision to propose/approve/revoke, checked while locked. Existing operator CLI does not require CAS. This is not anti-rollback or distributed revocation.
 - Revisions advance only on valid transitions, including revocation. A corrupted ledger is not reset or silently repaired.
 - A crashed writer may leave a lock that requires manual inspection; automatic lock stealing is deliberately out of scope. Atomic rename does not replace a durable, independently audited database.
-- **No runtime integration yet:** The pinned synthetic pilot still uses its existing private config. Exporting this ledger is not authorization by the transport. P03b should safely reconcile reviewed approved pins into an offline, operator-controlled configuration change with restart and rollback tests.
+- **Private runtime integrated:** the P02c synthetic pilot checks approved peer pins on startup, watches local trust drift, and shuts down on observed revision change. P03b can stage **new** approved pinned configs offline; it cannot activate them. Rotation never restarts a node or bypasses emergency stops. Revocation is still polling-based and not atomic across remote nodes.
 - **No public readiness:** Open synthetic enrollment, transport admission, multi-host verification, actual revocation propagation, and real-data sharing remain blocked.
 
 ## Verification
