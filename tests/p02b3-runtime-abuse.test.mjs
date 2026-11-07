@@ -83,8 +83,12 @@ test('rotating unlisted Noise PeerIds cannot join an approved live node', {timeo
   assert.ok(transientDials<=attackers.length);
   const conn=await trusted.dial(victim.peerId,{signal:AbortSignal.timeout(7_000)});
   assert.equal(conn.remotePeer.toString(),victim.peerId.toString());
-  assert.deepEqual(victim.getConnections().map(
-   connection=>connection.remotePeer.toString()),[trusted.peerId.toString()]);
+  await until(()=>victim.getConnections().some(connection=>
+   connection.remotePeer.toString()===trusted.peerId.toString()),
+   'authorized inbound connection after unauthorized-peer pressure');
+  assert.ok(victim.getConnections().every(connection=>
+   connection.remotePeer.toString()===trusted.peerId.toString()),
+   'only a pinned peer may remain connected');
  }finally{
   await Promise.allSettled([...attackers,...nodes].map(node=>node.stop()));
  }
