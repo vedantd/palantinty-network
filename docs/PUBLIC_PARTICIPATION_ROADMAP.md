@@ -71,3 +71,8 @@ Adds an automated two-process localhost baseline → outage → recovery test, l
 ## P03a local enrollment checkpoint
 
 A bounded, durable offline candidate/approve/revoke registry establishes operator-reviewed private synthetic peer state, with no network advertising, no runtime-config activation and no open enrollment. See [P03_PRIVATE_ENROLLMENT.md](P03_PRIVATE_ENROLLMENT.md). P03 public lifecycle and all release gates remain incomplete.
+
+
+## P03b operator-reviewed peer activation staging
+
+Only approved private peer pins from an explicitly reviewed P03a ledger revision may be staged into a new pilot configuration. The running process does not reload it automatically. Public enrollment, automated discovery and real sensor sharing remain disabled. See [P03_PRIVATE_PEER_STAGING.md](P03_PRIVATE_PEER_STAGING.md).
