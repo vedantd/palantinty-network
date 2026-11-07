@@ -39,3 +39,8 @@ P02b: enforce bounded libp2p connection/stream resources, peer admission policy,
 ## P02b-1 next security slice
 
 A separate pinned localhost-only synthetic-node factory has been added, using a Noise PeerId allowlist and bounded libp2p connection/stream settings. See [P02B_PEER_ADMISSION.md](P02B_PEER_ADMISSION.md). This is **not** public admission, public transport, real sensing, or a validated hostile-network defense.
+
+
+## P02b-2 application-level global limits
+
+The isolated synthetic observer now additionally applies a fixed global per-window message/byte budget before decoding and a bounded duplicate-report memory after signed verification. See [P02B_INGRESS_BUDGET.md](P02B_INGRESS_BUDGET.md). It is not proof of public admission safety or network-wide flood resistance.
