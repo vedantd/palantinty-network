@@ -21,6 +21,7 @@ npm test
 | `npm run network:region-dht` | Discover two approved signed indexers by fictional region via Kademlia | [D02a](ADR_D02A_PRIVATE_REGION_PROVIDERS.md) |
 | `npm run network:region-query` | Read and compare bounded signed synthetic aggregates from two discovered indexers; test missing data and disagreement | [D03a](ADR_D03A_PRIVATE_SYNTHETIC_QUERY.md) |
 | `npm run network:region-resilience` | Three private DHT-discovered SQLite indexers; a stopped instance leaves signed 2-of-3 quorum, but disagreement is withheld | [D03b](ADR_D03B_PRIVATE_QUORUM_OUTAGES.md) |
+| `npm run network:region-restart` | Same-key SQLite indexer restarts on a new private port, reannounces DHT region CID, verifies fresh signed coverage and refuses old endpoint proof | [D02b](ADR_D02B_PRIVATE_PROVIDER_RESTART.md) |
 | `npm run network:indexer-sync` | Private signed archive transfer and verification | [Indexer sync](M09_INDEXER_SYNC.md) |
 | `npm run network:auto-sync` | Bounded automatic indexer reconciliation | [Automatic reconciliation](M09_AUTOMATIC_RECONCILIATION.md) |
 | `npm run network:synthetic` | Isolated synthetic-testnet topic and strict envelopes | [Protocol](P02_SYNTHETIC_PROTOCOL.md) |
