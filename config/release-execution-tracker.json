@@ -200,13 +200,15 @@
     {
       "id": "D02b",
       "title": "Churn/NAT-resilient provider selection",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "D02a",
         "H03"
       ],
       "gateIds": [],
-      "evidence": []
+      "evidence": [
+        "https://github.com/vedantd/palantinty-network/pull/99"
+      ]
     },
     {
       "id": "D03a",
