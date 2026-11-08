@@ -97,6 +97,11 @@ try{
  await indexerC.stop();
  handlers.splice(4,2).forEach(handler=>handler.close());
  stores[2].close();
+ // Reload rather than keep the original key object in memory: this tests
+ // actual identity persistence and rejects any silent operator-key rotation.
+ const reloadedIdentity=await openPersistentPeerIdentity(path.join(root,'index-c'),{create:false});
+ if(reloadedIdentity.peerId!==persistentKey)
+  throw Error('D02b on-disk identity changed across restart');
  const degraded=await queryDiscoveredPrivateRegion(client,query);
  if(degraded.status!=='consistent'||degraded.sources!==2||
     degraded.unavailableCount!==1)
@@ -113,7 +118,7 @@ try{
  let restarted, newAddr;
  for(let attempt=0;attempt<4;attempt++){
   const candidate=await createGossipNode({
-   enableDht:true,privateKey:ids[4].privateKey
+   enableDht:true,privateKey:reloadedIdentity.privateKey
   });
   const addr=candidate.getMultiaddrs()[0].toString();
   if(addr!==oldAddr){restarted=candidate;newAddr=addr;break;}
@@ -124,11 +129,11 @@ try{
  if(restarted.peerId.toString()!==persistentKey)
   throw Error('D02b persistent identity rotated unexpectedly');
  const restartedCoverage=registerPrivateRegionCoverage(restarted,{
-  privateKey:ids[4].privateKey,regions:[region],
+  privateKey:reloadedIdentity.privateKey,regions:[region],
   approvedClientPeerIds:allowedClients
  });
  const restartedQuery=registerPrivateSyntheticQuery(restarted,{
-  privateKey:ids[4].privateKey,region,ingest:restored,
+  privateKey:reloadedIdentity.privateKey,region,ingest:restored,
   approvedClientPeerIds:allowedClients,clock:()=>now
  });
  handlers.push(restartedCoverage,restartedQuery);
@@ -143,7 +148,7 @@ try{
      newest.issuedAt<now||!newest.verified)
    throw Error('D02b fresh signed provider endpoint not verified');
   return found;
- },65_000);
+ },18_000);
  const recovered=await queryDiscoveredPrivateRegion(client,{
   ...query,discovery:refreshed
  });
