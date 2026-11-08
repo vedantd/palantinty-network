@@ -205,6 +205,13 @@ async function readPeer(node,discovered,req,approvedIndexerPeerIds,timeoutMs,clo
  if(connections.some(c=>
     c.remotePeer.toString()!==peerId||!isLoopback(c.remoteAddr.toString())))
   throw Error('D03 refuses non-loopback or unauthenticated peer connection');
+ // Fresh signed D02a coverage is address-bound: a restart at a new port must
+ // never inherit the prior node incarnation's still-unexpired authorization.
+ const address=discovered.authenticatedAddress;
+ if(!isLoopback(address)||!connections.some(c=>
+    c.remoteAddr.toString().replace(/\/p2p\/[a-zA-Z0-9]+$/,'')===
+    address.replace(/\/p2p\/[a-zA-Z0-9]+$/,'')))
+  throw Error('D03 stale authenticated indexer endpoint; rediscovery required');
  let stream;
  try{
   stream=await node.dialProtocol(id,PRIVATE_SYNTHETIC_QUERY_PROTOCOL,{
