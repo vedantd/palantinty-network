@@ -24,6 +24,7 @@ const region=syntheticRegionKey({scenario:'demoregion',cellIndex:1});
 const area=syntheticAreaForRegion(region);
 const boot=(a,b)=>a.peerStore.patch(b.peerId,{multiaddrs:b.getMultiaddrs()})
  .then(()=>a.dial(b.peerId));
+const endpoint=addr=>addr.replace(/\/p2p\/[a-zA-Z0-9]+$/,'');
 async function retry(action,deadlineMs=25_000){
  let last,deadline=Date.now()+deadlineMs;
  while(Date.now()<deadline){
@@ -92,7 +93,7 @@ try{
  if(missing.status!=='no-data'||missing.rows.length)
   throw Error('D03 missing measurements must never be reported as zero');
  // A valid old signature/Peer ID cannot authorize a new listen address.
- const oldAddr=indexerC.getMultiaddrs()[0].toString();
+ const oldAddr=endpoint(indexerC.getMultiaddrs()[0].toString());
  const persistentKey=ids[4].peerId;
  await indexerC.stop();
  handlers.splice(4,2).forEach(handler=>handler.close());
@@ -120,7 +121,7 @@ try{
   const candidate=await createGossipNode({
    enableDht:true,privateKey:reloadedIdentity.privateKey
   });
-  const addr=candidate.getMultiaddrs()[0].toString();
+  const addr=endpoint(candidate.getMultiaddrs()[0].toString());
   if(addr!==oldAddr){restarted=candidate;newAddr=addr;break;}
   await candidate.stop();
  }
