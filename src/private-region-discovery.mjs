@@ -33,9 +33,15 @@ export function currentVerifiedProviderEndpoint(node,provider){
   .map(c=>c.remoteAddr?.toString()).filter(Boolean);
  if(endpoints.some(a=>!isLoopback(a)))
   throw Error('D02b refuses non-loopback authenticated connection');
- const live=endpoints.find(a=>advertised.some(b=>stripPeerSuffix(a)===stripPeerSuffix(b)));
- if(!live)throw Error('D02b stale provider address; fresh signed discovery required');
- return stripPeerSuffix(live);
+ if(!endpoints.length)
+  throw Error('D02b requires a live Noise-authenticated provider connection');
+ // Kademlia address records are untrusted *hints* and may lag a restart.
+ // A fresh live Noise peer and new signed coverage prove the endpoint even
+ // when the provider record still advertises its old port. Do not authorize
+ // any query from that stale hint itself.
+ const matched=endpoints.find(a=>advertised.some(b=>
+  stripPeerSuffix(a)===stripPeerSuffix(b)));
+ return stripPeerSuffix(matched??endpoints.at(-1));
 }
 const frame=x=>{
  const bytes=UTF8.encode(JSON.stringify(x)+'\n');
