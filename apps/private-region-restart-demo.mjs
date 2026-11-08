@@ -146,7 +146,11 @@ try{
   const newest=found.results.find(x=>x.peerId===persistentKey);
   if(!newest||newest.authenticatedAddress!==newAddr||
      newest.issuedAt<now||!newest.verified)
-   throw Error('D02b fresh signed provider endpoint not verified');
+   throw Error('D02b fresh signed provider endpoint not verified: '+
+    JSON.stringify({actual:newest?.authenticatedAddress,
+     expected:newAddr,issuedAt:newest?.issuedAt,
+     earliest:now,verified:newest?.verified,
+     oldAddr,found:found.results.length}));
   return found;
  },18_000);
  const recovered=await queryDiscoveredPrivateRegion(client,{
