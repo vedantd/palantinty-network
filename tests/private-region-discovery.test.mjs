@@ -50,7 +50,7 @@ test('approved peer set and minimum independent providers fail closed',async()=>
   /timeout/);
 });
 
-test('D02b provider address must match a live Noise-authenticated connection',()=>{
+test('D02b stale DHT hints never replace live Noise-authenticated endpoint proof',()=>{
  const id='12D3KooWRoutedPeerID';
  const old='/ip4/127.0.0.1/tcp/41001';
  const fresh='/ip4/127.0.0.1/tcp/41003';

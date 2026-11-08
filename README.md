@@ -49,12 +49,12 @@ flowchart LR
 | :-- | :-- | :-- |
 | **Local sensing** | macOS diagnostic, bounded aggregation, opt-in export rules | Calibrated activity signal and field consent |
 | **P2P transport** | Signed reports, libp2p/Noise/GossipSub, pinned private peers | Untrusted Internet transport, NAT and public bootstrap |
-| **Discovery** | Localhost Kademlia discovers two indexers by a **fictional region CID**, verifies Peer ID-bound signed coverage (#92) | Independent physical hosts, churn/NAT, and privacy-reviewed real geographic mapping |
-| **Regional query** | Two to four DHT-discovered indexers can return peer-ID-signed synthetic aggregates; 2-of-3 private outage drill and all-responder disagreement checks (#94/#96) | Host independence, partitions, recovery, freshness/churn, real geo/privacy validation |
+| **Discovery** | Kademlia region-provider lookup plus fresh Noise/Ed25519 coverage checks; same-key new-port indexer recovery (#92/#99) | Provider churn, partitions, WAN/NAT, independent operators, real geography |
+| **Regional query** | Two to four approved indexers return signed synthetic aggregates, 2-of-3 outage and split-brain refusal, plus signed recovery after one indexer restart (#94/#96/#99) | Cross-host recovery, partitions, long-duration availability and real sensor validation |
 | **Regional storage** | Durable SQLite, signed archive sync, replay protection | Independent physical-host recovery and backups |
 | **Trust** | Private peer approval and revocation watcher; locked CI/SBOM | Race-safe revocation, signed releases, independent review |
 
-**Verified localhost synthetic milestones ([#92](https://github.com/vedantd/palantinty-network/pull/92), [#94](https://github.com/vedantd/palantinty-network/pull/94), [#96](https://github.com/vedantd/palantinty-network/pull/96)):** fictional region → Kademlia provider lookup → approved Peer IDs → signed, bounded regional aggregate reads from separate SQLite stores. A three-indexer private demo now tolerates one stopped indexer while two signed replies agree; it withholds conflicting results even when degraded. **Next:** partition/healing and churn tests, then H03 verification on two actually independent hosts. These were **one-machine tests**, not independent physical operators. A DHT provides **discovery, not location truth, data availability, or a database**.
+**Verified localhost synthetic milestones ([#92](https://github.com/vedantd/palantinty-network/pull/92), [#94](https://github.com/vedantd/palantinty-network/pull/94), [#96](https://github.com/vedantd/palantinty-network/pull/96), [#99](https://github.com/vedantd/palantinty-network/pull/99)):** fictional region → Kademlia providers → approved Peer IDs → signed regional aggregates across independently keyed SQLite indexers. A three-indexer private network tolerates one unavailable indexer and withholds conflicting results. It now also **restarts that indexer under the same persisted identity and archive at a new listener port**, reannounces the region and requires new signed coverage before restoring three-indexer reads. DHT addresses remain untrusted hints. **Next:** partition/rejoin, provider churn and independent physical-host verification. These were **one-machine tests**, not independent physical operators. A DHT provides **discovery, not location truth, data availability, or a database**.
 
 [Design contract](docs/PUBLIC_RELEASE_EXECUTION_PLAN.md) · [Regional DHT proof](docs/ADR_D02A_PRIVATE_REGION_PROVIDERS.md) · [Indexer sync](docs/M09_INDEXER_SYNC.md)
 
@@ -64,7 +64,7 @@ flowchart LR
 
 The chart is generated from the [28-slice execution tracker](config/release-execution-tracker.json) and [release evidence ledger](config/public-release-gates.json). **Slice counts are not completion percentages**; CI passing does not count as external release approval.
 
-**Verified on `main`:** release policy and threat model, private approved-peer enforcement, reproducible locked dependencies, and [#94 signed two-indexer regional aggregate comparisons](https://github.com/vedantd/palantinty-network/pull/94) with [full CI evidence](https://github.com/vedantd/palantinty-network/actions/runs/42423722670). Several working prototypes remain *partial* until their full acceptance tests and deployment evidence are available. The [landing-page PR #78](https://github.com/vedantd/palantinty-network/pull/78) passed **198 automated tests** and private Docker integration in [CI run 42399271410](https://github.com/vedantd/palantinty-network/actions/runs/42399271410). The live CI badge reflects subsequent changes.
+**Verified on `main`:** private approved-peer enforcement, locked dependencies and synthetic libp2p demonstrations, including [#99 restarted-indexer recovery](https://github.com/vedantd/palantinty-network/pull/99) with [full CI evidence](https://github.com/vedantd/palantinty-network/actions/runs/42428759831). Several working prototypes remain *partial* until their full acceptance tests and deployment evidence are available. The [landing-page PR #78](https://github.com/vedantd/palantinty-network/pull/78) passed **198 automated tests** and private Docker integration in [CI run 42399271410](https://github.com/vedantd/palantinty-network/actions/runs/42399271410). The live CI badge reflects subsequent changes.
 
 > [!NOTE]
 > **No public release gates have passed:** open synthetic testnet **0/6**, real-sensor public release **0/7** additional gates. This is a deliberately blocked-by-default status.
@@ -86,6 +86,7 @@ npm run network:dht         # local-only known-Peer-ID routing
 npm run network:region-dht  # find and verify two indexers for a fictional region
 npm run network:region-query # read two signed regional aggregates; reject disagreement
 npm run network:region-resilience # 3-indexer private outage and split-brain drill
+npm run network:region-restart    # same-key/indexer archive recovery with fresh signed coverage
 npm run network:auto-sync   # authenticated, private indexer recovery
 npm run dashboard           # local fictional region history
 ~~~
@@ -97,7 +98,7 @@ See the [prototype demo catalog](docs/PROTOTYPE_DEMOS.md) for more commands, pri
 | Phase | Deliverable | Current state |
 | :-- | :-- | :-- |
 | **01 — Private foundation** | Encrypted synthetic P2P, independent archives, approved peers | **Working demo; hardening ongoing** |
-| **02 — Geographic discovery** | Signed fictional region coverage, private Kademlia lookup and bounded regional aggregate comparison | **Three-indexer outage drill verified on localhost; D02b/D03b not completed** |
+| **02 — Geographic discovery** | Fictional region lookup, indexer quorum, direct query, private restart/reannouncement | **Same-identity new-port recovery proven on localhost; D02b/D03b remain partial** |
 | **03 — Operational independence** | Two actual separately administered hosts, recovery, backups and revocation safety | **Not independently verified** |
 | **04 — Open synthetic testnet** | Untrusted enrollment, abuse resistance, live operations and all six release gates | **Blocked** |
 | **05 — Real sensing** | Calibration, consent, retention/deletion, anti-Sybil, legal and privacy reviews | **Blocked; separate seven gates** |

@@ -1,6 +1,6 @@
 # ADR-D02b-1 — Live authenticated endpoint binding for private DHT indexer restarts
 
-**Date:** 2026-11-07. **Stage:** synthetic-only localhost proof; broader D02b and H03 exit evidence remain incomplete.
+**Date:** 2026-11-07. **Status:** merged synthetic-only localhost proof in [PR #99](https://github.com/vedantd/palantinty-network/pull/99); broader D02b and H03 remain incomplete.
 
 ## Problem
 
@@ -25,3 +25,7 @@ Negative tests reject missing authenticated connections, fake/unknown IDs, publi
 This implementation binds a signed coverage claim to a live private endpoint **during lookup**. The first CI attempt exposed that Kademlia may continue to return an old port even after a provider reannounces; therefore DHT address freshness itself is **not proven or required**. Stale or poisoned provider addresses remain only routing hints; no observation or authorization is accepted without fresh authenticated direct exchange. It does not prove DHT eventual convergence under partitions, WAN reachability, NAT/relay traversal, operation under active eclipse/Sybil attackers or real cross-host restart. Endpoint and Peer ID matching is not a substitute for peer-revocation authority, quorum independence or application availability monitoring. The client must refresh discovery after address changes.
 
 Rollback by reverting the D02b endpoint-binding commits and removing the new private demo CI step; no new database schema or public protocol version is introduced. Formal D02b stays partial only after merge/CI; H03 physical-host acceptance and all six synthetic plus seven real-sensing launch gates remain blocked.
+
+## Verified acceptance evidence
+
+[PR #99](https://github.com/vedantd/palantinty-network/pull/99), merged as `6600554d3921ee5192e15542f6817146a4397b41`, passed [CI 42428747756](https://github.com/vedantd/palantinty-network/actions/runs/42428747756), [CI 42428752673](https://github.com/vedantd/palantinty-network/actions/runs/42428752673) and [CI 42428759831](https://github.com/vedantd/palantinty-network/actions/runs/42428759831). The full private synthetic demo, standard tests, and isolated P02c/M10 Docker integration all succeeded. This does not certify DHT cache refresh latency or independent host recovery.
