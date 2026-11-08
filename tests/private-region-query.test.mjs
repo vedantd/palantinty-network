@@ -206,3 +206,33 @@ test('D03b disconnected approved indexers fail closed before any stream',async()
   ]}
  }),/duplicate indexer/);
 });
+
+test('D02b stale signed endpoint is rejected even after the same approved Peer ID reconnects',async()=>{
+ const f=await keys();
+ let attempts=0;
+ const newEndpoint='/ip4/127.0.0.1/tcp/41004';
+ const oldEndpoint='/ip4/127.0.0.1/tcp/41003';
+ const connections=new Map([
+  [f.aId,[{remotePeer:{toString:()=>f.aId},
+    remoteAddr:{toString:()=>newEndpoint}}]],
+  [f.bId,[{remotePeer:{toString:()=>f.bId},
+    remoteAddr:{toString:()=>'/ip4/127.0.0.1/tcp/41005'}}]]
+ ]);
+ const node={handle:()=>{},getMultiaddrs:()=>[{
+  toString:()=>'/ip4/127.0.0.1/tcp/3000'
+ }],getConnections:id=>connections.get(id.toString())??[],
+ dialProtocol:async()=>{attempts++;throw Error('must reject before outbound stream');}};
+ const discovery={region:REGION,results:[
+  {peerId:f.aId,verified:true,region:REGION,expiresAt:NOW+30_000,
+   authenticatedAddress:oldEndpoint},
+  {peerId:f.bId,verified:true,region:REGION,expiresAt:NOW+30_000,
+   authenticatedAddress:'/ip4/127.0.0.1/tcp/41005'}
+ ]};
+ await assert.rejects(queryDiscoveredPrivateRegion(node,{
+  region:REGION,start:request.start,end:request.end,limit:4,clock:()=>NOW,
+  approvedIndexerPeerIds:new Set([f.aId,f.bId]),discovery
+ }),/refused invalid or unauthenticated/);
+ // Only the unaffected peer may reach a dial attempt.  A stale address
+ // never gets a signed-query request even with valid historic coverage.
+ assert.equal(attempts,1);
+});

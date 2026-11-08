@@ -17,6 +17,32 @@ const own=(o,fields)=>o!==null&&typeof o==='object'&&!Array.isArray(o)&&
  Object.keys(o).length===fields.length&&fields.every(k=>Object.hasOwn(o,k));
 const isLoopback=addr=>typeof addr==='string'&&
  /^\/ip4\/127\.0\.0\.1\/tcp\/[0-9]+(?:\/p2p\/[a-zA-Z0-9]+)?$/.test(addr);
+const stripPeerSuffix=addr=>addr.replace(/\/p2p\/[a-zA-Z0-9]+$/,'');
+/**
+ * An untrusted DHT address can never substitute for the remote endpoint of
+ * a live Noise-authenticated libp2p connection.
+ */
+export function currentVerifiedProviderEndpoint(node,provider){
+ const id=provider?.id?.toString();
+ const advertised=provider?.multiaddrs?.map(a=>a.toString())??[];
+ if(!id||advertised.length<1||advertised.length>8||
+    advertised.some(a=>!isLoopback(a)))
+  throw Error('D02b unsafe or missing private provider addresses');
+ const connections=node.getConnections?.(provider.id)??[];
+ const endpoints=connections.filter(c=>c.remotePeer?.toString()===id)
+  .map(c=>c.remoteAddr?.toString()).filter(Boolean);
+ if(endpoints.some(a=>!isLoopback(a)))
+  throw Error('D02b refuses non-loopback authenticated connection');
+ if(!endpoints.length)
+  throw Error('D02b requires a live Noise-authenticated provider connection');
+ // Kademlia address records are untrusted *hints* and may lag a restart.
+ // A fresh live Noise peer and new signed coverage prove the endpoint even
+ // when the provider record still advertises its old port. Do not authorize
+ // any query from that stale hint itself.
+ const matched=endpoints.find(a=>advertised.some(b=>
+  stripPeerSuffix(a)===stripPeerSuffix(b)));
+ return stripPeerSuffix(matched??endpoints.at(-1));
+}
 const frame=x=>{
  const bytes=UTF8.encode(JSON.stringify(x)+'\n');
  if(bytes.byteLength>MAX_FRAME)throw Error('Private region frame exceeds size limit');
@@ -133,6 +159,12 @@ async function fetchCoverage(node,provider,{region,approvedIndexerPeerIds,timeou
  const stream=await node.dialProtocol(provider.id,PRIVATE_REGION_COVERAGE_PROTOCOL,{
   signal:AbortSignal.timeout(timeoutMs)
  });
+ let authenticatedAddress;
+ try{authenticatedAddress=currentVerifiedProviderEndpoint(node,provider);}
+ catch(error){
+  await stream.abort(error);
+  throw error;
+ }
  return new Promise((resolve,reject)=>{
   let done=false;
   const settle=(error,result)=>{
@@ -159,7 +191,9 @@ async function fetchCoverage(node,provider,{region,approvedIndexerPeerIds,timeou
       if(!valid)throw Error('Indexer coverage is not cryptographically authorized');
       settle(null,Object.freeze({peerId,region,
        advertisedRegions:[...response.advert.payload.regions],
+       issuedAt:response.advert.payload.issuedAt,
        expiresAt:response.advert.payload.expiresAt,
+       authenticatedAddress,
        verified:true,privateTransport:true}));
      }catch(error){settle(error);}
     })();
@@ -219,7 +253,10 @@ export async function discoverPrivateRegionIndexers(node,{
  }
  if(found.length<minIndexers)
   throw Error('Only '+found.length+'/'+minIndexers+
-   ' approved indexers discovered for private region '+region);
+   ' approved indexers discovered for private region '+region+
+   '; rejected='+JSON.stringify(rejected.map(x=>({
+    peerId:x.peerId,reason:String(x.reason).slice(0,120)
+   }))).slice(0,1200));
  return Object.freeze({schema:'palantiny.private-region-discovery.v1',
   region,cid:cid.toString(),results:found,rejected,
   verifiedCount:found.length,usesCentralRegionRegistry:false,
