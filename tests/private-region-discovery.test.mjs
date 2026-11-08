@@ -61,16 +61,16 @@ test('D02b provider address must match a live Noise-authenticated connection',()
   remotePeer:{toString:()=>id},remoteAddr:{toString:()=>addr}
  }]});
  assert.equal(currentVerifiedProviderEndpoint(node(fresh),provider(fresh)),fresh);
- assert.throws(()=>currentVerifiedProviderEndpoint(node(fresh),provider(old)),
-  /stale provider address/);
+ // The stale DHT hint is NOT authorization. A live Noise channel to
+ // the approved Peer ID can still supply a fresh signed coverage response.
+ assert.equal(currentVerifiedProviderEndpoint(node(fresh),provider(old)),fresh);
  assert.throws(()=>currentVerifiedProviderEndpoint(node(fresh),provider('/ip4/10.0.0.5/tcp/4500')),
   /unsafe/);
  assert.throws(()=>currentVerifiedProviderEndpoint(node(fresh),provider('/ip4/0.0.0.0/tcp/4500')),
   /unsafe/);
  assert.throws(()=>currentVerifiedProviderEndpoint({getConnections:()=>[]},provider(fresh)),
-  /stale/);
- assert.throws(()=>currentVerifiedProviderEndpoint(node(old),provider(fresh)),
-  /stale/);
+  /live Noise/);
+ assert.equal(currentVerifiedProviderEndpoint(node(old),provider(fresh)),old);
  assert.throws(()=>currentVerifiedProviderEndpoint({
   getConnections:()=>[{remotePeer:{toString:()=>id},
    remoteAddr:{toString:()=>'/ip4/10.0.0.12/tcp/41003'}}]
@@ -78,5 +78,5 @@ test('D02b provider address must match a live Noise-authenticated connection',()
  assert.throws(()=>currentVerifiedProviderEndpoint({
   getConnections:()=>[{remotePeer:{toString:()=> 'untrusted-peer'},
    remoteAddr:{toString:()=>fresh}}]
- },provider(fresh)),/stale/);
+ },provider(fresh)),/live Noise/);
 });
