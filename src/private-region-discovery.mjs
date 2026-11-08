@@ -247,7 +247,10 @@ export async function discoverPrivateRegionIndexers(node,{
  }
  if(found.length<minIndexers)
   throw Error('Only '+found.length+'/'+minIndexers+
-   ' approved indexers discovered for private region '+region);
+   ' approved indexers discovered for private region '+region+
+   '; rejected='+JSON.stringify(rejected.map(x=>({
+    peerId:x.peerId,reason:String(x.reason).slice(0,120)
+   }))).slice(0,1200));
  return Object.freeze({schema:'palantiny.private-region-discovery.v1',
   region,cid:cid.toString(),results:found,rejected,
   verifiedCount:found.length,usesCentralRegionRegistry:false,
