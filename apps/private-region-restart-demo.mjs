@@ -80,6 +80,9 @@ try{
   region,approvedIndexerPeerIds,minIndexers:3,timeoutMs:12_000
  }));
  if(discovery.results.length!==3)throw Error('D03b requires three DHT region providers');
+ const originalCoverage=discovery.results.find(x=>x.peerId===indexerC.peerId.toString());
+ if(!originalCoverage?.authenticatedAddress)
+  throw Error('D02b baseline peer endpoint missing');
  const query={region,discovery,approvedIndexerPeerIds,
   start:now-60*60_000,end:now-16*60_000,limit:4,clock:()=>now};
  const consistent=await queryDiscoveredPrivateRegion(client,query);
@@ -145,13 +148,17 @@ try{
    region,approvedIndexerPeerIds,minIndexers:3,timeoutMs:12_000
   });
   const newest=found.results.find(x=>x.peerId===persistentKey);
-  if(!newest||newest.authenticatedAddress!==newAddr||
+  // Inbound Noise connections can report the caller's ephemeral source
+  // port as remoteAddr; it need not match the peer's advertised LISTEN port.
+  // It must instead differ from the pre-restart authenticated connection.
+  if(!newest||newest.authenticatedAddress===originalCoverage.authenticatedAddress||
      newest.issuedAt<now||!newest.verified)
-   throw Error('D02b fresh signed provider endpoint not verified: '+
+   throw Error('D02b new live signed coverage not verified: '+
     JSON.stringify({actual:newest?.authenticatedAddress,
-     expected:newAddr,issuedAt:newest?.issuedAt,
-     earliest:now,verified:newest?.verified,
-     oldAddr,found:found.results.length}));
+     previous:originalCoverage.authenticatedAddress,
+     issuedAt:newest?.issuedAt,earliest:now,verified:newest?.verified,
+     listenerBefore:oldAddr,listenerAfter:newAddr,
+     found:found.results.length}));
   return found;
  },18_000);
  const recovered=await queryDiscoveredPrivateRegion(client,{
